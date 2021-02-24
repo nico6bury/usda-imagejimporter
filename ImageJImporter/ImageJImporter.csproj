@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cell.cs" />
+    <Compile Include="Controller.cs" />
+    <Compile Include="FileIO.cs" />
     <Compile Include="View.cs">
       <SubType>Form</SubType>
     </Compile>
