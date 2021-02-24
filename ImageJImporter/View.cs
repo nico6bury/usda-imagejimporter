@@ -63,7 +63,7 @@ namespace ImageJImporter
         /// <param name="sender">the object that sent this event</param>
         /// <param name="e">if there are any arguments for the event, they're
         /// stored here</param>
-        public void OpenFile(object sender, EventArgs e)
+        private void OpenFile(object sender, EventArgs e)
         {
             //get the file name from the user
             string filename = "";
