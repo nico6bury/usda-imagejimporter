@@ -63,15 +63,19 @@ namespace ImageJImporter
         /// <param name="sender">the object that sent this event</param>
         /// <param name="e">if there are any arguments for the event, they're
         /// stored here</param>
-        private void OpenFile(object sender, EventArgs e)
+        public void OpenFile(object sender, EventArgs e)
         {
             //get the file name from the user
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.ShowHelp = true;
             string filename = "";
 
-            using (openFileDialog)
+            /// so a while ago, I was having some problems in which openFileDialog.Show()
+            /// would result in the program freezing with no error message or anything. It
+            /// was fixed by creating openFileDialog in the using statement, which means it
+            /// is disposed of before this method ends. Thanks to Max for helping me with this
+            //create and use OpenFileDialog, a class provided by Microsoft for selecting a file
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
+                openFileDialog.ShowHelp = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     filename = openFileDialog.FileName;
@@ -89,6 +93,9 @@ namespace ImageJImporter
                 //tell the controller we need to open the file named in args
                 handleFileIO(Request.OpenFile, args);
             }//end if filename is not blank
+
+            //the file should be opened by now, so we can enable the other buttons
+            uxSeedDisplayGroup.Enabled = true;
         }//end event handler for opening a file
 
         /// <summary>
