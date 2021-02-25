@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ImageJImporter
 {
@@ -40,6 +41,11 @@ namespace ImageJImporter
         /// function pointer for the SetWordWrap in view. set up in program.cs
         /// </summary>
         public SetBool setWordWrap;
+
+        /// <summary>
+        /// function pointer for the CloseSeedList in view. set up in program.cs
+        /// </summary>
+        public DoAThing closeSeedList;
 
         /// <summary>
         /// this is the standard constructor for this class. It requires a FileIO
@@ -80,6 +86,8 @@ namespace ImageJImporter
                     //break out of the switch statement
                     break;
                 case Request.CloseFile:
+                    //tell the view to close the file
+                    closeSeedList();
 
                     //break out of the switch statement
                     break;
@@ -92,7 +100,9 @@ namespace ImageJImporter
 
         /// <summary>
         /// This method is called to handle the event of the user needing access to
-        /// the seed data which has already been loaded
+        /// the seed data which has already been loaded.
+        /// Warning: The type of incoming data from the args array is generally
+        /// not checked, so make sure to send the right data types in the right order
         /// </summary>
         /// <param name="request">The type of request which is being made</param>
         public void HandleSeedDataRequest(Request request, object[] args)
@@ -118,6 +128,19 @@ namespace ImageJImporter
                     //break out of the switch statement
                     break;
                 case Request.SaveSeedData:
+                    //take the data outside the args array
+                    List<Cell> allSeeds = (List<Cell>)args[0];
+                    int seedIndexS = (int)args[1];
+                    string seedLine = (string)args[2];
+
+                    //generate an updated cell object from the string
+                    Cell newSeed = fileIO.ParseCell(seedLine);
+
+                    //put the new seed back into the list
+                    allSeeds[seedIndexS] = newSeed;
+
+                    //tell the view to update it's list with the one we send it
+                    updateSeedList(allSeeds);
 
                     //break out of the switch statement
                     break;
@@ -171,6 +194,10 @@ namespace ImageJImporter
                     //break out of the switch statement
                     break;
                 default:
+                    //shows an error message to the user without actually throwing an error
+                    showMessage($"It seems something went wrong when trying to open or close the form. {request} is not " +
+                        "a valid request type.", "Invalid Open/Close Request Revieved",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
 
                     //break out of the switch statement
                     break;

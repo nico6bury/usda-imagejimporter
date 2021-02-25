@@ -38,6 +38,7 @@ namespace ImageJImporter
     public delegate void HandleOpenClose(Request request);
     public delegate bool ReturnBool();
     public delegate void SetBool(bool value);
+    public delegate void DoAThing();
     static class Program
     {
         /// <summary>
@@ -71,6 +72,7 @@ namespace ImageJImporter
             ChangeSeedSelected changeSeedSelected = view.ChangeSeedSelected;
             ReturnBool wordsWrap = view.DoWordsWrap;
             SetBool wordWrap = view.SetWordWrap;
+            DoAThing closeFile = view.CloseSeedList;
 
             //this connects the delegates to the controller
             controller.showMessage = showMessage;
@@ -78,6 +80,7 @@ namespace ImageJImporter
             controller.changeSeedSelected = changeSeedSelected;
             controller.wordsWrap = wordsWrap;
             controller.setWordWrap = wordWrap;
+            controller.closeSeedList = closeFile;
 
             //this causes the application to actually run
             Application.Run(view);

@@ -38,6 +38,12 @@ namespace ImageJImporter
         private int currentSeedIndex;
 
         /// <summary>
+        /// holds the current seed list we're displaying. set to null if nothing
+        /// displayed
+        /// </summary>
+        private List<Cell> currentSeedList;
+
+        /// <summary>
         /// constructor for this class. Just initializes things
         /// </summary>
         public View()
@@ -58,6 +64,7 @@ namespace ImageJImporter
         /// <param name="icon">which icon to display</param>
         public void ShowMessage(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
         {
+            //displays a message box to the user with the variables set from the parameters
             MessageBox.Show(text, caption, buttons, icon);
         }//end ShowMessage
 
@@ -67,10 +74,36 @@ namespace ImageJImporter
         /// <param name="data"></param>
         public void UpdateSeedList(List<Cell> data)
         {
+            /// Note about the data type of uxSeedList: 
+            /// uxSeedList is a ListBox, which means that
+            /// the items it displays are not updated when
+            /// items in its data source are updated. Instead,
+            /// whenever one or all the items are updated, you
+            /// have to set the data source to null and then whatever
+            /// you want it to display
+            
             uxSeedList.DataSource = null;
-            uxSeedList.DataSource = data;
+            currentSeedList = data;
+            uxSeedList.DataSource = currentSeedList;
+
+            //makes the controls which allow editing/viewing interactable by the user
             uxSeedDisplayGroup.Enabled = true;
         }//end UpdateSeedList(data)
+
+        /// <summary>
+        /// closes the file and mostly resets things
+        /// </summary>
+        public void CloseSeedList()
+        {
+            //clear the seeds displayed in the list
+            uxSeedList.DataSource = null;
+
+            //clear the text in the editing/viewing box
+            uxTextViewer.Text = "";
+
+            //disable the elements for editing seeds so they can't be interacted with by the user
+            uxSeedDisplayGroup.Enabled = false;
+        }//end CloseSeedList()
 
         /// <summary>
         /// updates which seed should be displayed in the editing box
@@ -113,6 +146,7 @@ namespace ImageJImporter
         /// <returns>word wrap property for seed data viewer</returns>
         public bool DoWordsWrap()
         {
+            //returns whether or not text is allowed to wrap across lines currently
             return uxTextViewer.WordWrap;
         }//end DoWordsWrap()
 
@@ -122,6 +156,7 @@ namespace ImageJImporter
         /// <param name="wordWrap"></param>
         public void SetWordWrap(bool wordWrap)
         {
+            //sets whether or not text is allowed to wrap across lines
             uxTextViewer.WordWrap = wordWrap;
         }//end SetWordWrap(wordWrap)
 
@@ -197,6 +232,7 @@ namespace ImageJImporter
         /// stored here</param>
         private void CloseFile(object sender, EventArgs e)
         {
+            //tell the controller to tell us to close the file
             handleFileIO(Request.CloseFile, new object[0]);
         }//end event handler for closing a file
 
@@ -247,16 +283,42 @@ namespace ImageJImporter
         /// stored here</param>
         private void SaveSeedData(object sender, EventArgs e)
         {
-            handleSeedData(Request.SaveSeedData, new object[0]);
+            //set up the object array we'll pass to the controller
+            object[] data = new object[3];
+
+            //add the full list to the object array
+            data[0] = currentSeedList;
+
+            //add the index of the seed to the array
+            data[1] = currentSeedIndex;
+
+            //format the text for the new seed to add to the array
+            StringBuilder lineBuilder = new StringBuilder();
+            Cell selectedSeed = (Cell)uxSeedList.Items[currentSeedIndex];
+            
+            //add back the seed number plus the tab after it
+            lineBuilder.Append(selectedSeed.SeedNum);
+            lineBuilder.Append("\t");
+
+            //add the rest of the edited text to the line
+            lineBuilder.Append(uxTextViewer.Text);
+
+            //actually put that line into the array
+            data[2] = lineBuilder.ToString();
+
+            //tell the controller that we want it to tell us to update one of the seeds
+            handleSeedData(Request.SaveSeedData, data);
         }//end event handler for saving seed data
 
         private void OpenForm(object sender, EventArgs e)
         {
+            //tell the controller that we just started up, so it needs to send us info on what to do
             handleOpenClose(Request.StartApplication);
         }//end event handler for opening the form
 
         private void CloseForm(object sender, FormClosingEventArgs e)
         {
+            //tell the controller than we're about to close so it can do stuff before that happens
             handleOpenClose(Request.CloseApplication);
         }//end event handler for closing the form
 
