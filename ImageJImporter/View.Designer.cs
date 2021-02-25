@@ -37,6 +37,8 @@ namespace ImageJImporter
             this.uxMenuSaveFile = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuSaveFileAs = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuCloseFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toggleWordWrappingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxSeedList = new System.Windows.Forms.ListBox();
             this.uxEditSeed = new System.Windows.Forms.Button();
             this.uxViewSeed = new System.Windows.Forms.Button();
@@ -52,7 +54,8 @@ namespace ImageJImporter
             // 
             this.ViewFormMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.ViewFormMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.toolsToolStripMenuItem});
             this.ViewFormMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.ViewFormMenuStrip.Name = "ViewFormMenuStrip";
             this.ViewFormMenuStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
@@ -106,12 +109,31 @@ namespace ImageJImporter
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toggleWordWrappingToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 21);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // toggleWordWrappingToolStripMenuItem
+            // 
+            this.toggleWordWrappingToolStripMenuItem.Name = "toggleWordWrappingToolStripMenuItem";
+            this.toggleWordWrappingToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.toggleWordWrappingToolStripMenuItem.Text = "Toggle Word Wrapping";
+            this.toggleWordWrappingToolStripMenuItem.ToolTipText = "Toggles whether or not the text in the seed display will wrap across lines";
+            this.toggleWordWrappingToolStripMenuItem.Click += new System.EventHandler(this.ToggleWordWrap);
+            // 
             // uxSeedList
             // 
+            this.uxSeedList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxSeedList.FormattingEnabled = true;
+            this.uxSeedList.ItemHeight = 20;
             this.uxSeedList.Location = new System.Drawing.Point(12, 28);
             this.uxSeedList.Name = "uxSeedList";
-            this.uxSeedList.Size = new System.Drawing.Size(200, 277);
+            this.uxSeedList.ScrollAlwaysVisible = true;
+            this.uxSeedList.Size = new System.Drawing.Size(200, 264);
             this.uxSeedList.TabIndex = 1;
             this.uxToolTip.SetToolTip(this.uxSeedList, "This is a list of all the seeds loaded into the program. You have to select a see" +
         "d here before you can edit or view its information.");
@@ -143,12 +165,16 @@ namespace ImageJImporter
             // 
             // uxTextViewer
             // 
+            this.uxTextViewer.AcceptsReturn = true;
+            this.uxTextViewer.AcceptsTab = true;
+            this.uxTextViewer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxTextViewer.Location = new System.Drawing.Point(6, 19);
             this.uxTextViewer.Multiline = true;
             this.uxTextViewer.Name = "uxTextViewer";
             this.uxTextViewer.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.uxTextViewer.Size = new System.Drawing.Size(318, 218);
             this.uxTextViewer.TabIndex = 5;
+            this.uxTextViewer.TabStop = false;
             this.uxToolTip.SetToolTip(this.uxTextViewer, "This allows you to view the data for the seed you are editing. You can also save " +
         "the data for this seed by clicking a button.");
             this.uxTextViewer.WordWrap = false;
@@ -198,6 +224,8 @@ namespace ImageJImporter
             this.MainMenuStrip = this.ViewFormMenuStrip;
             this.Name = "View";
             this.Text = "ImageJ Importer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
+            this.Load += new System.EventHandler(this.OpenForm);
             this.ViewFormMenuStrip.ResumeLayout(false);
             this.ViewFormMenuStrip.PerformLayout();
             this.uxSeedDisplayGroup.ResumeLayout(false);
@@ -222,6 +250,8 @@ namespace ImageJImporter
         private System.Windows.Forms.Button uxSaveSeed;
         private System.Windows.Forms.GroupBox uxSeedDisplayGroup;
         private System.Windows.Forms.ToolStripMenuItem uxMenuCloseFile;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toggleWordWrappingToolStripMenuItem;
     }
 }
 

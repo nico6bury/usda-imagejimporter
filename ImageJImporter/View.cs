@@ -26,12 +26,27 @@ namespace ImageJImporter
         public HandleSeedData handleSeedData;
 
         /// <summary>
+        /// function pointer for HandleOpenCloseRequest in controller. set up in
+        /// program.cs
+        /// </summary>
+        public HandleOpenClose handleOpenClose;
+
+        /// <summary>
+        /// holds which seed index we're currently looking at. Set to -1 if not looking
+        /// at any seeds (for instance if the file is closed)
+        /// </summary>
+        private int currentSeedIndex;
+
+        /// <summary>
         /// constructor for this class. Just initializes things
         /// </summary>
         public View()
         {
             //this basically makes all the controls visible (buttons, textbox, etc)
             InitializeComponent();
+
+            //set local variables to initial values
+            currentSeedIndex = -1;
         }//end constructor
 
         /// <summary>
@@ -54,7 +69,61 @@ namespace ImageJImporter
         {
             uxSeedList.DataSource = null;
             uxSeedList.DataSource = data;
+            uxSeedDisplayGroup.Enabled = true;
         }//end UpdateSeedList(data)
+
+        /// <summary>
+        /// updates which seed should be displayed in the editing box
+        /// </summary>
+        /// <param name="index"></param>
+        public void ChangeSeedSelected(int index, Request request)
+        {
+            //check to make sure the request is valid
+            if (request == Request.ViewSeedData || request == Request.EditSeedData)
+            {
+                //grab correct seed from list. If item is not seed, then it will be set to null
+                Cell requestedSeed = uxSeedList.Items[index] as Cell;
+
+                //check to make sure requestedSeed isn't null (this could otherwise cause problems later)
+                if (requestedSeed == null)
+                {
+                    throw new ArgumentNullException("Data for requested seed at index is null");
+                }//end if requestedSeed is null
+
+                //set the text to be that of the seed's data
+                uxTextViewer.Text = requestedSeed.FormatData(false);
+
+                //set the textbox to ReadOnly if request is view, editable otherwise
+                uxTextViewer.ReadOnly = (request == Request.ViewSeedData);
+
+                //update current seed index
+                currentSeedIndex = index;
+            }//end if request is either to view or edit seed data
+            else
+            {
+                MessageBox.Show($"{request} is not a valid request for seed index selection.",
+                        "Invalid Request", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }//end else an invalid request was sent
+        }//end ChangeSeedSelected(index)
+
+        /// <summary>
+        /// just returns whether or not text is allowed to wrap to the next line
+        /// in the textbox for viewing seed data
+        /// </summary>
+        /// <returns>word wrap property for seed data viewer</returns>
+        public bool DoWordsWrap()
+        {
+            return uxTextViewer.WordWrap;
+        }//end DoWordsWrap()
+
+        /// <summary>
+        /// sets the WordWrap property of the textbox for viewing seed data
+        /// </summary>
+        /// <param name="wordWrap"></param>
+        public void SetWordWrap(bool wordWrap)
+        {
+            uxTextViewer.WordWrap = wordWrap;
+        }//end SetWordWrap(wordWrap)
 
         /// <summary>
         /// this method runs when the uxMenuOpenFile button is clicked. It uses
@@ -93,9 +162,6 @@ namespace ImageJImporter
                 //tell the controller we need to open the file named in args
                 handleFileIO(Request.OpenFile, args);
             }//end if filename is not blank
-
-            //the file should be opened by now, so we can enable the other buttons
-            uxSeedDisplayGroup.Enabled = true;
         }//end event handler for opening a file
 
         /// <summary>
@@ -143,7 +209,14 @@ namespace ImageJImporter
         /// stored here</param>
         private void ViewSeedData(object sender, EventArgs e)
         {
-            handleSeedData(Request.ViewSeedData, new object[0]);
+            //create the array of arguments to send to the controller
+            object[] args = new object[1];
+
+            //add information to the args
+            args[0] = uxSeedList.SelectedIndex;
+
+            //tell the controller to tell us what to do
+            handleSeedData(Request.ViewSeedData, args);
         }//end event handler for viewing seed data
 
         /// <summary>
@@ -155,7 +228,14 @@ namespace ImageJImporter
         /// stored here</param>
         private void EditSeedData(object sender, EventArgs e)
         {
-            handleSeedData(Request.EditSeedData, new object[0]);
+            //create the array of arguments to send to the controller
+            object[] args = new object[1];
+
+            //add information to the args
+            args[0] = uxSeedList.SelectedIndex;
+
+            //tell the controller to tell us what to do
+            handleSeedData(Request.EditSeedData, args);
         }//end event handler for editing seed data
 
         /// <summary>
@@ -169,5 +249,27 @@ namespace ImageJImporter
         {
             handleSeedData(Request.SaveSeedData, new object[0]);
         }//end event handler for saving seed data
+
+        private void OpenForm(object sender, EventArgs e)
+        {
+            handleOpenClose(Request.StartApplication);
+        }//end event handler for opening the form
+
+        private void CloseForm(object sender, FormClosingEventArgs e)
+        {
+            handleOpenClose(Request.CloseApplication);
+        }//end event handler for closing the form
+
+        /// <summary>
+        /// just toggles whether the text in the textbox wraps
+        /// </summary>
+        /// <param name="sender">the object that sent this event</param>
+        /// <param name="e">if there are any arguments for the event, they're
+        /// stored here</param>
+        private void ToggleWordWrap(object sender, EventArgs e)
+        {
+            //toggle word wrap property of uxTextViewer
+            uxTextViewer.WordWrap = !uxTextViewer.WordWrap;
+        }//end ToggleWordWrap event handler
     }//end class
 }//end namespace

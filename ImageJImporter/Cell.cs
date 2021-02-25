@@ -140,11 +140,29 @@ namespace ImageJImporter
         /// <returns>string formatted in same way as imageJ output files</returns>
         public string FormatData()
         {
+            return FormatData(true);
+        }//end FormatData()
+
+        /// <summary>
+        /// returns a string formatted in the same way as teh imageJ output files.
+        /// Gives you the option to not include the seed number in the result
+        /// </summary>
+        /// <param name="includeSeedNum">pass true if you want to include
+        /// the seed number in the output, or false otherwise</param>
+        /// <returns>string formatted in same way as imageJ output files</returns>
+        public string FormatData(bool includeSeedNum)
+        {
+            //initializes the string builder
             StringBuilder sb = new StringBuilder();
-            sb.Append(SeedNum);
+
+            //adds the seed num if we need to
+            if (includeSeedNum)
+            {
+                sb.Append(SeedNum);
+                sb.Append("\t");
+            }//end if we need to include the seed number
 
             //adds tab plus area value to one decimal place
-            sb.Append("\t");
             sb.Append(Area.ToString("N1"));
 
             //adds tab plus x value to one decimal place

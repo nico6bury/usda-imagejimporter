@@ -27,6 +27,21 @@ namespace ImageJImporter
         public UpdateSeedList updateSeedList;
 
         /// <summary>
+        /// function pointer for ChangeSeedSelected in view. set up in program.cs
+        /// </summary>
+        public ChangeSeedSelected changeSeedSelected;
+
+        /// <summary>
+        /// function pointer for DoWordsWrap in view. set up in program.cs
+        /// </summary>
+        public ReturnBool wordsWrap;
+
+        /// <summary>
+        /// function pointer for the SetWordWrap in view. set up in program.cs
+        /// </summary>
+        public SetBool setWordWrap;
+
+        /// <summary>
         /// this is the standard constructor for this class. It requires a FileIO
         /// object, which it calls File IO functions from. In order to avoid accidental
         /// reference passing, it creates a copy of the FileIO object provided
@@ -85,10 +100,20 @@ namespace ImageJImporter
             switch (request)
             {
                 case Request.ViewSeedData:
+                    //take the information out of args
+                    int seedIndexV = (int)args[0];
+
+                    //tell the view to change the selected seed
+                    changeSeedSelected(seedIndexV, request);
 
                     //break out of the switch statement
                     break;
                 case Request.EditSeedData:
+                    //take the information out of args
+                    int seedIndexE = (int)args[0];
+
+                    //tell the view to change the selected seed
+                    changeSeedSelected(seedIndexE, request);
 
                     //break out of the switch statement
                     break;
@@ -102,5 +127,54 @@ namespace ImageJImporter
                     break;
             }//end switch case
         }//end HandleSeedDataRequest(request)
+
+        public void HandleOpenCloseRequest(Request request)
+        {
+            switch (request)
+            {
+                case Request.StartApplication:
+                    //grab whatever we can from the config file
+                    List<string> data = fileIO.LoadConfigFile();
+
+                    if(data != null)
+                    {
+                        //the code below is wrapped in a try catch so any configuration errors won't stop
+                        //the program from running normally
+                        try
+                        {
+                            //load all the cell information from the file we got from the config
+                            List<Cell> cells = fileIO.LoadFile(data[0]);
+
+                            //pass that info back to the view
+                            updateSeedList(cells);
+
+                            //try to determine whether we should wrap text
+                            bool wrapText = Convert.ToBoolean(data[1]);
+
+                            //tell the view whether it should wrap text
+                            setWordWrap(wrapText);
+                        }//end try
+                        catch
+                        {
+                            //show a message to the user informing them of an error
+                            showMessage("Something in the configuration file has caused an error. Default file won't be loaded.",
+                                "Default File Load Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+                        }//end catch
+                    }//end if data isn't null
+
+                    //break out of the switch statement
+                    break;
+                case Request.CloseApplication:
+                    //tell fileIO to save whatever needs saved
+                    fileIO.SaveConfigFile(wordsWrap());
+
+                    //break out of the switch statement
+                    break;
+                default:
+
+                    //break out of the switch statement
+                    break;
+            }//end switch case
+        }//end HandleOpenCloseRequest(request)
     }//end class
 }//end namespace

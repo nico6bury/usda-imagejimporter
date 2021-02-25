@@ -18,7 +18,9 @@ namespace ImageJImporter
         CloseFile,
         ViewSeedData,
         EditSeedData,
-        SaveSeedData
+        SaveSeedData,
+        StartApplication,
+        CloseApplication
     }//end enum Request
 
     /// <summary>
@@ -32,6 +34,10 @@ namespace ImageJImporter
     public delegate void HandleSeedData(Request request, object[] args);
     public delegate void ShowFormMessage(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon);
     public delegate void UpdateSeedList(List<Cell> data);
+    public delegate void ChangeSeedSelected(int index, Request request);
+    public delegate void HandleOpenClose(Request request);
+    public delegate bool ReturnBool();
+    public delegate void SetBool(bool value);
     static class Program
     {
         /// <summary>
@@ -52,18 +58,26 @@ namespace ImageJImporter
             //this connects the methods in the controller to the delegates
             HandleFileIO handleFileIO = controller.HandleFileIORequest;
             HandleSeedData handleSeedData = controller.HandleSeedDataRequest;
+            HandleOpenClose handleOpenClose = controller.HandleOpenCloseRequest;
 
             //this connects the delegates to the view
             view.handleFileIO = handleFileIO;
             view.handleSeedData = handleSeedData;
+            view.handleOpenClose = handleOpenClose;
 
             //this connects the method(s) in the view to the delegates
             ShowFormMessage showMessage = view.ShowMessage;
             UpdateSeedList updateSeedList = view.UpdateSeedList;
+            ChangeSeedSelected changeSeedSelected = view.ChangeSeedSelected;
+            ReturnBool wordsWrap = view.DoWordsWrap;
+            SetBool wordWrap = view.SetWordWrap;
 
             //this connects the delegates to the controller
             controller.showMessage = showMessage;
             controller.updateSeedList = updateSeedList;
+            controller.changeSeedSelected = changeSeedSelected;
+            controller.wordsWrap = wordsWrap;
+            controller.setWordWrap = wordWrap;
 
             //this causes the application to actually run
             Application.Run(view);
