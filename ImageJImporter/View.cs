@@ -208,14 +208,21 @@ namespace ImageJImporter
         /// stored here</param>
         private void SaveFile(object sender, EventArgs e)
         {
-            //set up an array of objects to send to the controller
-            object[] data = new object[1];
+            if (uxSeedDisplayGroup.Enabled)
+            {
+                //set up an array of objects to send to the controller
+                object[] data = new object[1];
 
-            //add the current list of seeds to the data
-            data[0] = currentSeedList;
+                //add the current list of seeds to the data
+                data[0] = currentSeedList;
 
-            //tell the controller we want to save our current file with our current cell list
-            handleFileIO(Request.SaveFile, data);
+                //tell the controller we want to save our current file with our current cell list
+                handleFileIO(Request.SaveFile, data);
+            }//end if we have a file open
+            else
+            {
+                NoFileLoadedMessage();
+            }//end else we don't have anything open yet
         }//end event handler for saving a file
 
         /// <summary>
@@ -227,7 +234,26 @@ namespace ImageJImporter
         /// stored here</param>
         private void SaveFileAs(object sender, EventArgs e)
         {
-            handleFileIO(Request.SaveFileAs, new object[0]);
+            if (uxSeedDisplayGroup.Enabled)
+            {
+                throw new NotImplementedException();
+
+                //set up an array of objects to send to the controller
+                object[] data = new object[2];
+
+                //add the current list of seeds to the data
+                data[0] = currentSeedList;
+
+                //add the filename we'll save to the data
+                data[1] = "finish this method";
+
+                //tell the controller we want to save our current file with our current cell list
+                handleFileIO(Request.SaveFileAs, data);
+            }//end if we have a file open
+            else
+            {
+                NoFileLoadedMessage();
+            }//end else we don't have anything open yet
         }//end event handler for creating a new file
 
         /// <summary>
@@ -240,7 +266,7 @@ namespace ImageJImporter
         private void CloseFile(object sender, EventArgs e)
         {
             //tell the controller to tell us to close the file
-            handleFileIO(Request.CloseFile, new object[0]);
+            handleFileIO(Request.CloseFile, null);
         }//end event handler for closing a file
 
         /// <summary>
@@ -302,7 +328,7 @@ namespace ImageJImporter
             //format the text for the new seed to add to the array
             StringBuilder lineBuilder = new StringBuilder();
             Cell selectedSeed = (Cell)uxSeedList.Items[currentSeedIndex];
-            
+
             //add back the seed number plus the tab after it
             lineBuilder.Append(selectedSeed.SeedNum);
             lineBuilder.Append("\t");
@@ -330,6 +356,15 @@ namespace ImageJImporter
         }//end event handler for closing the form
 
         /// <summary>
+        /// shows a message to the user telling them that no file is loaded
+        /// </summary>
+        private void NoFileLoadedMessage()
+        {
+            MessageBox.Show("You don't have a file loaded.", "Invalid Operation",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }//end NoFileLoadedMessage()
+
+        /// <summary>
         /// just toggles whether the text in the textbox wraps
         /// </summary>
         /// <param name="sender">the object that sent this event</param>
@@ -340,5 +375,24 @@ namespace ImageJImporter
             //toggle word wrap property of uxTextViewer
             uxTextViewer.WordWrap = !uxTextViewer.WordWrap;
         }//end ToggleWordWrap event handler
+
+        /// <summary>
+        /// asks the controller to tell us to show the name of the current file
+        /// </summary>
+        /// <param name="sender">the object that sent this event</param>
+        /// <param name="e">if there are any arguments for the event, they're
+        /// stored here</param>
+        private void AskForFilename(object sender, EventArgs e)
+        {
+            if (uxSeedDisplayGroup.Enabled)
+            {
+                //ask the controller to tell us to display the filename
+                handleFileIO(Request.AskFilename, null);
+            }//end if a file is loaded
+            else
+            {
+                NoFileLoadedMessage();
+            }//end else there isn't a file loaded
+        }//end AskForFilename event handler
     }//end class
 }//end namespace

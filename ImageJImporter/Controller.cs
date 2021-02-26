@@ -72,7 +72,10 @@ namespace ImageJImporter
                     //grabs the seed data from the file we got from the view
                     List<Cell> openFileData = fileIO.LoadFile((string)args[0]);
 
-                    //send the seed data back to the view
+                    //we want to reset stuff in the view first
+                    closeSeedList();
+
+                    //send the seed data back to the view so it can show it
                     updateSeedList(openFileData);
 
                     //break out of the switch statement
@@ -93,6 +96,16 @@ namespace ImageJImporter
                 case Request.CloseFile:
                     //tell the view to close the file
                     closeSeedList();
+
+                    //break out of the switch statement
+                    break;
+                case Request.AskFilename:
+                    //ask fileIO what the last file it opened was, and then save it
+                    string filename = fileIO.file;
+
+                    //tell the view to show a message box with the filename we got
+                    showMessage($"The file you are currently viewing is \"{filename}\"",
+                        "Filename Request", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     //break out of the switch statement
                     break;

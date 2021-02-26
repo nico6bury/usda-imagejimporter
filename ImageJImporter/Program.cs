@@ -16,6 +16,7 @@ namespace ImageJImporter
         SaveFile,
         SaveFileAs,
         CloseFile,
+        AskFilename,
         ViewSeedData,
         EditSeedData,
         SaveSeedData,

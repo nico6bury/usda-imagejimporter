@@ -46,6 +46,7 @@ namespace ImageJImporter
             this.uxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.uxSaveSeed = new System.Windows.Forms.Button();
             this.uxSeedDisplayGroup = new System.Windows.Forms.GroupBox();
+            this.uxCurrentFilenameRequest = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewFormMenuStrip.SuspendLayout();
             this.uxSeedDisplayGroup.SuspendLayout();
             this.SuspendLayout();
@@ -78,7 +79,7 @@ namespace ImageJImporter
             // uxMenuOpenFile
             // 
             this.uxMenuOpenFile.Name = "uxMenuOpenFile";
-            this.uxMenuOpenFile.Size = new System.Drawing.Size(121, 22);
+            this.uxMenuOpenFile.Size = new System.Drawing.Size(180, 22);
             this.uxMenuOpenFile.Text = "Open";
             this.uxMenuOpenFile.ToolTipText = "Allows you to load a file into the program. It\'s meant to use .txt files, so I\'m " +
     "not sure what would happen if you imported other file types.";
@@ -87,7 +88,7 @@ namespace ImageJImporter
             // uxMenuSaveFile
             // 
             this.uxMenuSaveFile.Name = "uxMenuSaveFile";
-            this.uxMenuSaveFile.Size = new System.Drawing.Size(121, 22);
+            this.uxMenuSaveFile.Size = new System.Drawing.Size(180, 22);
             this.uxMenuSaveFile.Text = "Save";
             this.uxMenuSaveFile.ToolTipText = "Allows you to save the current data back into the original file you opened.";
             this.uxMenuSaveFile.Click += new System.EventHandler(this.SaveFile);
@@ -95,7 +96,7 @@ namespace ImageJImporter
             // uxMenuSaveFileAs
             // 
             this.uxMenuSaveFileAs.Name = "uxMenuSaveFileAs";
-            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(121, 22);
+            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(180, 22);
             this.uxMenuSaveFileAs.Text = "Save As";
             this.uxMenuSaveFileAs.ToolTipText = "Allows you to save the seed data you\'ve edited as a new .txt file with the same s" +
     "tructure as the original file.";
@@ -104,7 +105,7 @@ namespace ImageJImporter
             // uxMenuCloseFile
             // 
             this.uxMenuCloseFile.Name = "uxMenuCloseFile";
-            this.uxMenuCloseFile.Size = new System.Drawing.Size(121, 22);
+            this.uxMenuCloseFile.Size = new System.Drawing.Size(180, 22);
             this.uxMenuCloseFile.Text = "Close";
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
@@ -112,7 +113,8 @@ namespace ImageJImporter
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toggleWordWrappingToolStripMenuItem});
+            this.toggleWordWrappingToolStripMenuItem,
+            this.uxCurrentFilenameRequest});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 21);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -120,7 +122,7 @@ namespace ImageJImporter
             // toggleWordWrappingToolStripMenuItem
             // 
             this.toggleWordWrappingToolStripMenuItem.Name = "toggleWordWrappingToolStripMenuItem";
-            this.toggleWordWrappingToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.toggleWordWrappingToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.toggleWordWrappingToolStripMenuItem.Text = "Toggle Word Wrapping";
             this.toggleWordWrappingToolStripMenuItem.ToolTipText = "Toggles whether or not the text in the seed display will wrap across lines";
             this.toggleWordWrappingToolStripMenuItem.Click += new System.EventHandler(this.ToggleWordWrap);
@@ -211,6 +213,13 @@ namespace ImageJImporter
             this.uxSeedDisplayGroup.TabStop = false;
             this.uxSeedDisplayGroup.Text = "Seed Display";
             // 
+            // uxCurrentFilenameRequest
+            // 
+            this.uxCurrentFilenameRequest.Name = "uxCurrentFilenameRequest";
+            this.uxCurrentFilenameRequest.Size = new System.Drawing.Size(205, 22);
+            this.uxCurrentFilenameRequest.Text = "Tell Me Current Filename";
+            this.uxCurrentFilenameRequest.Click += new System.EventHandler(this.AskForFilename);
+            // 
             // View
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,6 +261,7 @@ namespace ImageJImporter
         private System.Windows.Forms.ToolStripMenuItem uxMenuCloseFile;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toggleWordWrappingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uxCurrentFilenameRequest;
     }
 }
 
