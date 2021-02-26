@@ -208,7 +208,14 @@ namespace ImageJImporter
         /// stored here</param>
         private void SaveFile(object sender, EventArgs e)
         {
-            handleFileIO(Request.SaveFile, new object[0]);
+            //set up an array of objects to send to the controller
+            object[] data = new object[1];
+
+            //add the current list of seeds to the data
+            data[0] = currentSeedList;
+
+            //tell the controller we want to save our current file with our current cell list
+            handleFileIO(Request.SaveFile, data);
         }//end event handler for saving a file
 
         /// <summary>

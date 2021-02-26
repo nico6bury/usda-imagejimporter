@@ -16,7 +16,7 @@ namespace ImageJImporter
         /// <summary>
         /// this is the name of the file that we most recently used
         /// </summary>
-        public string file { get; private set; }
+        public string file;
 
         /// <summary>
         /// the name this class uses for it's config file
@@ -28,6 +28,13 @@ namespace ImageJImporter
         /// (so it starts C//:... whatever else)
         /// </summary>
         private string configFileAbsolutePath;
+
+        /// <summary>
+        /// this is the file header to put at the top of any imageJ
+        /// file we save. Formatted like this
+        /// </summary>
+        private string imageJFileHeader = " \tArea\tX\tY\tPerim.\tMajor\tMinor\t" +
+            "Angle\tCirc.\tAR\tRound\tSolidity";
 
         /// <summary>
         /// this is the standard constructor for this class.
@@ -110,6 +117,42 @@ namespace ImageJImporter
             }//end else the configuration file does not exist
         }//end LoadConfigFile()
 
+        /// <summary>
+        /// This method saves a .txt file with all the information from the
+        /// cell list provided and the file name provided
+        /// </summary>
+        /// <param name="file">the name we'll save the file as. This method is
+        /// totally fine with overwriting things, so be carefull</param>
+        /// <param name="cells">the list of cells that will be saved</param>
+        public void SaveFile(string file, List<Cell> cells)
+        {
+            //if the file doesn't exist, we'll need to make it before doing anything else
+            if (!File.Exists(file))
+            {
+                //creates the file and closes it so we can access it
+                File.Create(file).Close();
+            }//end if the file doesn't exist
+
+            using(StreamWriter scribe = new StreamWriter(file))
+            {
+                //write the header to the file
+                scribe.WriteLine(imageJFileHeader);
+
+                //start adding each cell, line by line
+                for(int i = 0; i < cells.Count; i++)
+                {
+                    //write the cell data for this line
+                    scribe.WriteLine(cells[i].FormatData(true));
+                }//end looping for each item in cells
+            }//end use of Stream Writer
+        }//end SaveFile(file)
+
+        /// <summary>
+        /// This method loads a .txt file processed by imageJ and returns 
+        /// a list of the Cell objects generated.
+        /// </summary>
+        /// <param name="file">The file to open and read</param>
+        /// <returns>returns a list of cells generated from the file</returns>
         public List<Cell> LoadFile(string file)
         {
             //initializes the list we'll store the data in

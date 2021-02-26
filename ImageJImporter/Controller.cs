@@ -70,14 +70,19 @@ namespace ImageJImporter
             {
                 case Request.OpenFile:
                     //grabs the seed data from the file we got from the view
-                    List<Cell> data = fileIO.LoadFile((string)args[0]);
+                    List<Cell> openFileData = fileIO.LoadFile((string)args[0]);
 
                     //send the seed data back to the view
-                    updateSeedList(data);
+                    updateSeedList(openFileData);
 
                     //break out of the switch statement
                     break;
                 case Request.SaveFile:
+                    //grab the cell data from the args array
+                    List<Cell> saveFileData = (List<Cell>)args[0];
+
+                    //tell the model to save the currently loaded file
+                    fileIO.SaveFile(fileIO.file, saveFileData);
 
                     //break out of the switch statement
                     break;
@@ -170,6 +175,9 @@ namespace ImageJImporter
 
                             //pass that info back to the view
                             updateSeedList(cells);
+
+                            //update fileIO's most recently used file property
+                            fileIO.file = data[0];
 
                             //try to determine whether we should wrap text
                             bool wrapText = Convert.ToBoolean(data[1]);
