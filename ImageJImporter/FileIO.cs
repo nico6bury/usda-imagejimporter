@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace ImageJImporter
 {
     /// <summary>
-    /// this class handles all of the actual heavy lifting by importing files and
+    /// this class handles all of the actual heavy lifting when it comes
+    /// to manipulating files by importing files and
     /// saving them and all that
     /// </summary>
     public class FileIO

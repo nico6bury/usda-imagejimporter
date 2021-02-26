@@ -108,7 +108,10 @@ namespace ImageJImporter
         /// <summary>
         /// updates which seed should be displayed in the editing box
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">the index of the seed in the list of seeds which
+        /// you want to view or edit</param>
+        /// <param name="request">The type of request that was made. Valid request types are
+        /// ViewSeedData and EditSeedData</param>
         public void ChangeSeedSelected(int index, Request request)
         {
             //check to make sure the request is valid
@@ -236,22 +239,42 @@ namespace ImageJImporter
         {
             if (uxSeedDisplayGroup.Enabled)
             {
-                throw new NotImplementedException();
+                //set up a string variable to hold the filename
+                string filename = "";
 
-                //set up an array of objects to send to the controller
-                object[] data = new object[2];
+                //open saveFileDialog to ask user where to save file
+                using(SaveFileDialog saveFile = new SaveFileDialog())
+                {
+                    //tells saveFile to warn the user if they select to overwrite a file
+                    saveFile.OverwritePrompt = true;
 
-                //add the current list of seeds to the data
-                data[0] = currentSeedList;
+                    //only update filename if user clicks ok
+                    if(saveFile.ShowDialog() == DialogResult.OK)
+                    {
+                        //save the name of the file for later
+                        filename = saveFile.FileName;
+                    }//end if the user clicked ok
+                }//end use of save file dialog
 
-                //add the filename we'll save to the data
-                data[1] = "finish this method";
+                //we only want to save if the user selected a file, otherwise nothing happens
+                if(filename != "")
+                {
+                    //set up an array of objects to send to the controller
+                    object[] data = new object[2];
 
-                //tell the controller we want to save our current file with our current cell list
-                handleFileIO(Request.SaveFileAs, data);
+                    //add the current list of seeds to the data
+                    data[0] = currentSeedList;
+
+                    //add the filename we'll save to the data
+                    data[1] = filename;
+
+                    //tell the controller we want to save our current file with our current cell list
+                    handleFileIO(Request.SaveFileAs, data);
+                }//end if we can continue
             }//end if we have a file open
             else
             {
+                //display error message for no file loaded
                 NoFileLoadedMessage();
             }//end else we don't have anything open yet
         }//end event handler for creating a new file
@@ -343,12 +366,24 @@ namespace ImageJImporter
             handleSeedData(Request.SaveSeedData, data);
         }//end event handler for saving seed data
 
+        /// <summary>
+        /// event for when the form opens. Does startup things
+        /// </summary>
+        /// <param name="sender">the object that sent this event</param>
+        /// <param name="e">if there are any arguments for the event, they're
+        /// stored here</param>
         private void OpenForm(object sender, EventArgs e)
         {
             //tell the controller that we just started up, so it needs to send us info on what to do
             handleOpenClose(Request.StartApplication);
         }//end event handler for opening the form
 
+        /// <summary>
+        /// event for right before the form closes. Saves settings for next time
+        /// </summary>
+        /// <param name="sender">the object that sent this event</param>
+        /// <param name="e">if there are any arguments for the event, they're
+        /// stored here</param>
         private void CloseForm(object sender, FormClosingEventArgs e)
         {
             //tell the controller than we're about to close so it can do stuff before that happens
@@ -360,6 +395,7 @@ namespace ImageJImporter
         /// </summary>
         private void NoFileLoadedMessage()
         {
+            //display message box to user saying that no file is loaded
             MessageBox.Show("You don't have a file loaded.", "Invalid Operation",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }//end NoFileLoadedMessage()
@@ -391,6 +427,7 @@ namespace ImageJImporter
             }//end if a file is loaded
             else
             {
+                //display the message for not having a file loaded
                 NoFileLoadedMessage();
             }//end else there isn't a file loaded
         }//end AskForFilename event handler

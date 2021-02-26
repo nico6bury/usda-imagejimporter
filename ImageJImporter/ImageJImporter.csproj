@@ -48,7 +48,9 @@
   <ItemGroup>
     <Compile Include="Cell.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="DelegateDefinitions.cs" />
     <Compile Include="FileIO.cs" />
+    <Compile Include="Request.cs" />
     <Compile Include="View.cs">
       <SubType>Form</SubType>
     </Compile>

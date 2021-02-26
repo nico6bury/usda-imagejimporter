@@ -7,39 +7,9 @@ using System.Windows.Forms;
 namespace ImageJImporter
 {
     /// <summary>
-    /// this enum is used for delegates to tell one part of the program what they
-    /// are requesting from another part of the program
+    /// This class is the only one directly called when the program starts. It contains
+    /// the main method and aggregates or references all other classes.
     /// </summary>
-    public enum Request
-    {
-        OpenFile,
-        SaveFile,
-        SaveFileAs,
-        CloseFile,
-        AskFilename,
-        ViewSeedData,
-        EditSeedData,
-        SaveSeedData,
-        StartApplication,
-        CloseApplication
-    }//end enum Request
-
-    /// <summary>
-    /// The following global variables are called delegates. They're essentially
-    /// function pointers that allow one part of the program to reference a 
-    /// different part of the program. They can be named basically anything as long
-    /// as their return type and parameter list are the same as the function that
-    /// they point to.
-    /// </summary>
-    public delegate void HandleFileIO(Request request, object[] args);
-    public delegate void HandleSeedData(Request request, object[] args);
-    public delegate void ShowFormMessage(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon);
-    public delegate void UpdateSeedList(List<Cell> data);
-    public delegate void ChangeSeedSelected(int index, Request request);
-    public delegate void HandleOpenClose(Request request);
-    public delegate bool ReturnBool();
-    public delegate void SetBool(bool value);
-    public delegate void DoAThing();
     static class Program
     {
         /// <summary>

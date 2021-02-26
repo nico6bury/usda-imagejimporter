@@ -62,8 +62,17 @@ namespace ImageJImporter
         /// <summary>
         /// This method is called to handle the event of the user needing to do
         /// something with the file
+        /// Warning: The type of incoming data from the args array is generally
+        /// not checked, so make sure to send the right data types in the right order
         /// </summary>
-        /// <param name="request">The type of request which is being made</param>
+        /// <param name="request">The type of request which is being made. The following
+        /// types of requests are accepted by this method: OpenFile, SaveFile, SaveFileAs, 
+        /// CloseFile, AskFileName</param>
+        /// <param name="args">the necessary data to complete the request. Make sure data
+        /// within the array is of the correct type and in the correct order. To Open a file, supply
+        /// the filename as a string that you wish to open. To Save a file, provide a list of cells.
+        /// To save a file as something, provide the list of cells to save as well as the filename as
+        /// a string. Requests other than those specified do not require extra data.</param>
         public void HandleFileIORequest(Request request, object[] args)
         {
             switch (request)
@@ -90,6 +99,12 @@ namespace ImageJImporter
                     //break out of the switch statement
                     break;
                 case Request.SaveFileAs:
+                    //grab the data from the args array
+                    List<Cell> curList = (List<Cell>)args[0];
+                    string saveAsFilename = (string)args[1];
+
+                    //tell fileIO to save the file with specified name
+                    fileIO.SaveFile(saveAsFilename, curList);
 
                     //break out of the switch statement
                     break;
@@ -101,10 +116,10 @@ namespace ImageJImporter
                     break;
                 case Request.AskFilename:
                     //ask fileIO what the last file it opened was, and then save it
-                    string filename = fileIO.file;
+                    string requestedFilename = fileIO.file;
 
                     //tell the view to show a message box with the filename we got
-                    showMessage($"The file you are currently viewing is \"{filename}\"",
+                    showMessage($"The file you are currently viewing is \"{requestedFilename}\"",
                         "Filename Request", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     //break out of the switch statement
@@ -122,7 +137,16 @@ namespace ImageJImporter
         /// Warning: The type of incoming data from the args array is generally
         /// not checked, so make sure to send the right data types in the right order
         /// </summary>
-        /// <param name="request">The type of request which is being made</param>
+        /// <param name="request">The type of request which is being made. The following
+        /// types of requests are accepted by this method: ViewSeedData, EditSeedData, 
+        /// SaveSeedData</param>
+        /// <param name="args">the necessary data to complete the request. Make sure data
+        /// within the array is of the correct type and in the correct order. To view seed
+        /// data, supply the index of the seed you wish to view as an int. The same goes for
+        /// editing a seed. To save a seed, provide the list of cells containing the seed you
+        /// wish to save, the index of the seed you wish to save as an int, and a string
+        /// containing a row of values to save to the seed, in the same format as the imageJ
+        /// output files.</param>
         public void HandleSeedDataRequest(Request request, object[] args)
         {
             switch (request)
@@ -169,6 +193,13 @@ namespace ImageJImporter
             }//end switch case
         }//end HandleSeedDataRequest(request)
 
+        /// <summary>
+        /// This method is called to handle the event of the view being opened or closed.
+        /// It mostly deals with loading and saving the settings configuratino file saved by
+        /// fileIO.
+        /// </summary>
+        /// <param name="request">The type of request being made. For this method, StartApplication
+        /// and CloseApplication are valid request types.</param>
         public void HandleOpenCloseRequest(Request request)
         {
             switch (request)
