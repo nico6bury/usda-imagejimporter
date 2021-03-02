@@ -53,6 +53,7 @@ namespace ImageJImporter
 
             //set local variables to initial values
             currentSeedIndex = -1;
+            currentSeedList = null;
         }//end constructor
 
         /// <summary>
