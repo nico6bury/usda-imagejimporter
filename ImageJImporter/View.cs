@@ -43,6 +43,8 @@ namespace ImageJImporter
         /// </summary>
         private List<Row> currentSeedList;
 
+        private System.Drawing.Size defaultListBoxSize;
+
         /// <summary>
         /// constructor for this class. Just initializes things
         /// </summary>
@@ -54,6 +56,7 @@ namespace ImageJImporter
             //set local variables to initial values
             currentSeedIndex = -1;
             currentSeedList = null;
+            defaultListBoxSize = uxSeedList.Size;
         }//end constructor
 
         /// <summary>
@@ -87,6 +90,15 @@ namespace ImageJImporter
             currentSeedList = data;
             uxSeedList.DataSource = currentSeedList;
 
+            if(uxSeedList.Items.Count > 30)
+            {
+                uxSeedList.Size = new Size(defaultListBoxSize.Width, 20 * uxSeedList.Items.Count);
+            }//end if we should resize the listbox
+            else
+            {
+                uxSeedList.Size = defaultListBoxSize;
+            }//end else we want to reset the size
+
             //makes the controls which allow editing/viewing interactable by the user
             uxSeedDisplayGroup.Enabled = true;
         }//end UpdateSeedList(data)
@@ -101,6 +113,9 @@ namespace ImageJImporter
 
             //clear the text in the editing/viewing box
             uxTextViewer.Text = "";
+
+            //reset listbox
+            uxSeedList.Size = defaultListBoxSize;
 
             //disable the elements for editing seeds so they can't be interacted with by the user
             uxSeedDisplayGroup.Enabled = false;
