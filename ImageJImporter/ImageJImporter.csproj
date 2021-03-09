@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cell.cs" />
+    <Compile Include="Row.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="DelegateDefinitions.cs" />
     <Compile Include="FileIO.cs" />

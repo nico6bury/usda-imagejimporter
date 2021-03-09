@@ -9,9 +9,9 @@ namespace ImageJImporter
     /// <summary>
     /// this class represents a single seed, and the data for it is read from a single line
     /// </summary>
-    public class Cell
+    public class Row
     {
-        public int SeedNum;
+        public int RowNum;
         public decimal Area;
         public decimal X;
         public decimal Y;
@@ -27,9 +27,9 @@ namespace ImageJImporter
         /// <summary>
         /// normal constructor which initializes all fields as 0
         /// </summary>
-        public Cell()
+        public Row()
         {
-            SeedNum = 0;
+            RowNum = 0;
             Area = 0;
             X = 0;
             Y = 0;
@@ -51,9 +51,9 @@ namespace ImageJImporter
         /// <param name="seedNum">the number identifying this seed</param>
         /// <param name="properties">the array holding the values for all the decimal
         /// properties for the new Cell</param>
-        public Cell(int seedNum, decimal[] properties)
+        public Row(int seedNum, decimal[] properties)
         {
-            this.SeedNum = seedNum;
+            this.RowNum = seedNum;
             this.Area = properties[0];
             this.X = properties[1];
             this.Y = properties[2];
@@ -75,9 +75,9 @@ namespace ImageJImporter
         /// <param name="seedNum">the number identifying this seed</param>
         /// <param name="properties">the list holding the values for all the decimal
         /// properties for the new Cell</param>
-        public Cell(int seedNum, List<decimal> properties)
+        public Row(int rowNum, List<decimal> properties)
         {
-            this.SeedNum = seedNum;
+            this.RowNum = rowNum;
             this.Area = properties[0];
             this.X = properties[1];
             this.Y = properties[2];
@@ -107,11 +107,11 @@ namespace ImageJImporter
         /// <param name="ar"></param>
         /// <param name="round"></param>
         /// <param name="solidity"></param>
-        public Cell(int seedNum, decimal area, decimal x, decimal y, decimal perim,
+        public Row(int seedNum, decimal area, decimal x, decimal y, decimal perim,
             decimal major, decimal minor, decimal angle, decimal circ, decimal ar,
             decimal round, decimal solidity)
         {
-            this.SeedNum = seedNum;
+            this.RowNum = seedNum;
             this.Area = area;
             this.X = x;
             this.Y = y;
@@ -131,7 +131,8 @@ namespace ImageJImporter
         /// <returns>string representation of the number of this seed</returns>
         public override string ToString()
         {
-            return $"Seed {SeedNum}";
+            return FormatData();
+            //return $"Row {RowNum}";
         }//end ToString()
 
         /// <summary>
@@ -158,7 +159,7 @@ namespace ImageJImporter
             //adds the seed num if we need to
             if (includeSeedNum)
             {
-                sb.Append(SeedNum);
+                sb.Append(RowNum);
                 sb.Append("\t");
             }//end if we need to include the seed number
 

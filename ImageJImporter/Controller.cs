@@ -79,7 +79,7 @@ namespace ImageJImporter
             {
                 case Request.OpenFile:
                     //grabs the seed data from the file we got from the view
-                    List<Cell> openFileData = fileIO.LoadFile((string)args[0]);
+                    List<Row> openFileData = fileIO.LoadFile((string)args[0]);
 
                     //we want to reset stuff in the view first
                     closeSeedList();
@@ -91,7 +91,7 @@ namespace ImageJImporter
                     break;
                 case Request.SaveFile:
                     //grab the cell data from the args array
-                    List<Cell> saveFileData = (List<Cell>)args[0];
+                    List<Row> saveFileData = (List<Row>)args[0];
 
                     //tell the model to save the currently loaded file
                     fileIO.SaveFile(fileIO.file, saveFileData);
@@ -100,7 +100,7 @@ namespace ImageJImporter
                     break;
                 case Request.SaveFileAs:
                     //grab the data from the args array
-                    List<Cell> curList = (List<Cell>)args[0];
+                    List<Row> curList = (List<Row>)args[0];
                     string saveAsFilename = (string)args[1];
 
                     //tell fileIO to save the file with specified name
@@ -171,12 +171,12 @@ namespace ImageJImporter
                     break;
                 case Request.SaveSeedData:
                     //take the data outside the args array
-                    List<Cell> allSeeds = (List<Cell>)args[0];
+                    List<Row> allSeeds = (List<Row>)args[0];
                     int seedIndexS = (int)args[1];
                     string seedLine = (string)args[2];
 
                     //generate an updated cell object from the string
-                    Cell newSeed = fileIO.ParseCell(seedLine);
+                    Row newSeed = fileIO.ParseCell(seedLine);
 
                     //put the new seed back into the list
                     allSeeds[seedIndexS] = newSeed;
@@ -215,7 +215,7 @@ namespace ImageJImporter
                         try
                         {
                             //load all the cell information from the file we got from the config
-                            List<Cell> cells = fileIO.LoadFile(data[0]);
+                            List<Row> cells = fileIO.LoadFile(data[0]);
 
                             //pass that info back to the view
                             updateSeedList(cells);

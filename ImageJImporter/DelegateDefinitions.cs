@@ -49,7 +49,7 @@ namespace ImageJImporter
     /// </summary>
     /// <param name="data">the list of seeds which will be used to update
     /// something</param>
-    public delegate void UpdateSeedList(List<Cell> data);
+    public delegate void UpdateSeedList(List<Row> data);
 
     /// <summary>
     /// Points to a function for updating which seed is selected

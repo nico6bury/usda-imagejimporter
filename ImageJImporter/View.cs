@@ -41,7 +41,7 @@ namespace ImageJImporter
         /// holds the current seed list we're displaying. set to null if nothing
         /// displayed
         /// </summary>
-        private List<Cell> currentSeedList;
+        private List<Row> currentSeedList;
 
         /// <summary>
         /// constructor for this class. Just initializes things
@@ -73,7 +73,7 @@ namespace ImageJImporter
         /// updates the seed list in the view with new cell data
         /// </summary>
         /// <param name="data"></param>
-        public void UpdateSeedList(List<Cell> data)
+        public void UpdateSeedList(List<Row> data)
         {
             /// Note about the data type of uxSeedList: 
             /// uxSeedList is a ListBox, which means that
@@ -119,7 +119,7 @@ namespace ImageJImporter
             if (request == Request.ViewSeedData || request == Request.EditSeedData)
             {
                 //grab correct seed from list. If item is not seed, then it will be set to null
-                Cell requestedSeed = uxSeedList.Items[index] as Cell;
+                Row requestedSeed = uxSeedList.Items[index] as Row;
 
                 //check to make sure requestedSeed isn't null (this could otherwise cause problems later)
                 if (requestedSeed == null)
@@ -351,10 +351,10 @@ namespace ImageJImporter
 
             //format the text for the new seed to add to the array
             StringBuilder lineBuilder = new StringBuilder();
-            Cell selectedSeed = (Cell)uxSeedList.Items[currentSeedIndex];
+            Row selectedSeed = (Row)uxSeedList.Items[currentSeedIndex];
 
             //add back the seed number plus the tab after it
-            lineBuilder.Append(selectedSeed.SeedNum);
+            lineBuilder.Append(selectedSeed.RowNum);
             lineBuilder.Append("\t");
 
             //add the rest of the edited text to the line
