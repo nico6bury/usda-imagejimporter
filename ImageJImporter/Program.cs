@@ -4,6 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * Author: Nicholas Sixbury
+ * File: Program.cs
+ * Purpose: To set up the classes used by the rest of the application and show the form to the user
+ */
+
 namespace ImageJImporter
 {
     /// <summary>

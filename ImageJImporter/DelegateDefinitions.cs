@@ -5,6 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * Author: Nicholas Sixbury
+ * File: DelegateDefinitions.cs
+ * Purpose: To provide type definitions for delegates used throughout the program
+ */
+
 namespace ImageJImporter
 {
     /// <summary>
@@ -26,7 +32,7 @@ namespace ImageJImporter
     public delegate void HandleFileIO(Request request, object[] args);
 
     /// <summary>
-    /// Points to function for handling requests involving specific seed data
+    /// Points to function for handling requests involving specific row data
     /// </summary>
     /// <param name="request">the request being made to whatever function
     /// this delegate points to. Will probably have "Seed" in it somewhere</param>
@@ -45,16 +51,16 @@ namespace ImageJImporter
     public delegate void ShowFormMessage(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon);
 
     /// <summary>
-    /// Points to a function for updating a list of seeds (stored in Cell objects)
+    /// Points to a function for updating a list of rows (stored in Row objects)
     /// </summary>
-    /// <param name="data">the list of seeds which will be used to update
+    /// <param name="data">the list of rows which will be used to update
     /// something</param>
     public delegate void UpdateSeedList(List<Row> data);
 
     /// <summary>
-    /// Points to a function for updating which seed is selected
+    /// Points to a function for updating which row is selected
     /// </summary>
-    /// <param name="index">the index of the seed you want to change</param>
+    /// <param name="index">the index of the row you want to change</param>
     /// <param name="request">the type of request being made. This will probably
     /// be either ViewSeedData or EditSeedData</param>
     public delegate void ChangeSeedSelected(int index, Request request);

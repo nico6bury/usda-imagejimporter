@@ -8,6 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * Author: Nicholas Sixbury
+ * File: View.cs
+ * Purpose: To provide an interface for the user to interact with and enter
+ * information so the program can do what the user wants it to do.
+ */
+
 namespace ImageJImporter
 {
     /// <summary>
@@ -57,6 +64,7 @@ namespace ImageJImporter
             currentSeedIndex = -1;
             currentSeedList = null;
             defaultListBoxSize = uxSeedList.Size;
+            uxSeedList.AutoSize = true;
         }//end constructor
 
         /// <summary>
@@ -85,19 +93,20 @@ namespace ImageJImporter
             /// whenever one or all the items are updated, you
             /// have to set the data source to null and then whatever
             /// you want it to display
-            
+
+            uxSeedList.Size = defaultListBoxSize;
             uxSeedList.DataSource = null;
             currentSeedList = data;
             uxSeedList.DataSource = currentSeedList;
 
-            if(uxSeedList.Items.Count > 30)
-            {
-                uxSeedList.Size = new Size(defaultListBoxSize.Width, 20 * uxSeedList.Items.Count);
-            }//end if we should resize the listbox
-            else
-            {
-                uxSeedList.Size = defaultListBoxSize;
-            }//end else we want to reset the size
+            //if(uxSeedList.Items.Count > 30)
+            //{
+            //    uxSeedList.Size = new Size(defaultListBoxSize.Width, 20 * uxSeedList.Items.Count);
+            //}//end if we should resize the listbox
+            //else
+            //{
+            //    uxSeedList.Size = defaultListBoxSize;
+            //}//end else we want to reset the size
 
             //makes the controls which allow editing/viewing interactable by the user
             uxSeedDisplayGroup.Enabled = true;

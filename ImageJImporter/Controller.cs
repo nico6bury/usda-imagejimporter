@@ -5,6 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * Author: Nicholas Sixbury
+ * File: Controller.cs
+ * Purpose: To keep track of and control other parts of the application. All "business logic" should be handled here.
+ */
+
 namespace ImageJImporter
 {
     /// <summary>
@@ -70,8 +76,8 @@ namespace ImageJImporter
         /// CloseFile, AskFileName</param>
         /// <param name="args">the necessary data to complete the request. Make sure data
         /// within the array is of the correct type and in the correct order. To Open a file, supply
-        /// the filename as a string that you wish to open. To Save a file, provide a list of cells.
-        /// To save a file as something, provide the list of cells to save as well as the filename as
+        /// the filename as a string that you wish to open. To Save a file, provide a list of rows.
+        /// To save a file as something, provide the list of rows to save as well as the filename as
         /// a string. Requests other than those specified do not require extra data.</param>
         public void HandleFileIORequest(Request request, object[] args)
         {
@@ -90,7 +96,7 @@ namespace ImageJImporter
                     //break out of the switch statement
                     break;
                 case Request.SaveFile:
-                    //grab the cell data from the args array
+                    //grab the row data from the args array
                     List<Row> saveFileData = (List<Row>)args[0];
 
                     //tell the model to save the currently loaded file
@@ -143,7 +149,7 @@ namespace ImageJImporter
         /// <param name="args">the necessary data to complete the request. Make sure data
         /// within the array is of the correct type and in the correct order. To view seed
         /// data, supply the index of the seed you wish to view as an int. The same goes for
-        /// editing a seed. To save a seed, provide the list of cells containing the seed you
+        /// editing a seed. To save a seed, provide the list of rows containing the seed you
         /// wish to save, the index of the seed you wish to save as an int, and a string
         /// containing a row of values to save to the seed, in the same format as the imageJ
         /// output files.</param>
@@ -175,8 +181,8 @@ namespace ImageJImporter
                     int seedIndexS = (int)args[1];
                     string seedLine = (string)args[2];
 
-                    //generate an updated cell object from the string
-                    Row newSeed = fileIO.ParseCell(seedLine);
+                    //generate an updated row object from the string
+                    Row newSeed = fileIO.ParseRow(seedLine);
 
                     //put the new seed back into the list
                     allSeeds[seedIndexS] = newSeed;
@@ -214,11 +220,11 @@ namespace ImageJImporter
                         //the program from running normally
                         try
                         {
-                            //load all the cell information from the file we got from the config
-                            List<Row> cells = fileIO.LoadFile(data[0]);
+                            //load all the row information from the file we got from the config
+                            List<Row> rows = fileIO.LoadFile(data[0]);
 
                             //pass that info back to the view
-                            updateSeedList(cells);
+                            updateSeedList(rows);
 
                             //update fileIO's most recently used file property
                             fileIO.file = data[0];

@@ -4,6 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * Author: Nicholas Sixbury
+ * File: Request.cs
+ * Purpose: To provide an enum type for making requests of other parts of the program
+ */
+
 namespace ImageJImporter
 {
     /// <summary>

@@ -61,7 +61,7 @@ namespace ImageJImporter
             this.ViewFormMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.ViewFormMenuStrip.Name = "ViewFormMenuStrip";
             this.ViewFormMenuStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.ViewFormMenuStrip.Size = new System.Drawing.Size(922, 25);
+            this.ViewFormMenuStrip.Size = new System.Drawing.Size(963, 28);
             this.ViewFormMenuStrip.TabIndex = 0;
             this.ViewFormMenuStrip.Text = "menuStrip1";
             // 
@@ -72,15 +72,15 @@ namespace ImageJImporter
             this.uxMenuSaveFile,
             this.uxMenuSaveFileAs,
             this.uxMenuCloseFile});
-            this.fileToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fileToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // uxMenuOpenFile
             // 
             this.uxMenuOpenFile.Name = "uxMenuOpenFile";
-            this.uxMenuOpenFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuOpenFile.Size = new System.Drawing.Size(180, 24);
             this.uxMenuOpenFile.Text = "Open";
             this.uxMenuOpenFile.ToolTipText = "Allows you to load a file into the program. It\'s meant to use .txt files, so I\'m " +
     "not sure what would happen if you imported other file types.";
@@ -89,7 +89,7 @@ namespace ImageJImporter
             // uxMenuSaveFile
             // 
             this.uxMenuSaveFile.Name = "uxMenuSaveFile";
-            this.uxMenuSaveFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuSaveFile.Size = new System.Drawing.Size(180, 24);
             this.uxMenuSaveFile.Text = "Save";
             this.uxMenuSaveFile.ToolTipText = "Allows you to save the current data back into the original file you opened.";
             this.uxMenuSaveFile.Click += new System.EventHandler(this.SaveFile);
@@ -97,7 +97,7 @@ namespace ImageJImporter
             // uxMenuSaveFileAs
             // 
             this.uxMenuSaveFileAs.Name = "uxMenuSaveFileAs";
-            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(180, 24);
             this.uxMenuSaveFileAs.Text = "Save As";
             this.uxMenuSaveFileAs.ToolTipText = "Allows you to save the seed data you\'ve edited as a new .txt file with the same s" +
     "tructure as the original file.";
@@ -106,7 +106,7 @@ namespace ImageJImporter
             // uxMenuCloseFile
             // 
             this.uxMenuCloseFile.Name = "uxMenuCloseFile";
-            this.uxMenuCloseFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuCloseFile.Size = new System.Drawing.Size(180, 24);
             this.uxMenuCloseFile.Text = "Close";
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
@@ -116,14 +116,15 @@ namespace ImageJImporter
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toggleWordWrappingToolStripMenuItem,
             this.uxCurrentFilenameRequest});
+            this.toolsToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 21);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(56, 24);
             this.toolsToolStripMenuItem.Text = "Tools";
             // 
             // toggleWordWrappingToolStripMenuItem
             // 
             this.toggleWordWrappingToolStripMenuItem.Name = "toggleWordWrappingToolStripMenuItem";
-            this.toggleWordWrappingToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.toggleWordWrappingToolStripMenuItem.Size = new System.Drawing.Size(242, 24);
             this.toggleWordWrappingToolStripMenuItem.Text = "Toggle Word Wrapping";
             this.toggleWordWrappingToolStripMenuItem.ToolTipText = "Toggles whether or not the text in the seed display will wrap across lines";
             this.toggleWordWrappingToolStripMenuItem.Click += new System.EventHandler(this.ToggleWordWrap);
@@ -131,12 +132,14 @@ namespace ImageJImporter
             // uxCurrentFilenameRequest
             // 
             this.uxCurrentFilenameRequest.Name = "uxCurrentFilenameRequest";
-            this.uxCurrentFilenameRequest.Size = new System.Drawing.Size(205, 22);
+            this.uxCurrentFilenameRequest.Size = new System.Drawing.Size(242, 24);
             this.uxCurrentFilenameRequest.Text = "Tell Me Current Filename";
             this.uxCurrentFilenameRequest.Click += new System.EventHandler(this.AskForFilename);
             // 
             // uxSeedList
             // 
+            this.uxSeedList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.uxSeedList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxSeedList.FormattingEnabled = true;
             this.uxSeedList.HorizontalScrollbar = true;
@@ -145,19 +148,21 @@ namespace ImageJImporter
             this.uxSeedList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxSeedList.Name = "uxSeedList";
             this.uxSeedList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.uxSeedList.Size = new System.Drawing.Size(884, 264);
+            this.uxSeedList.Size = new System.Drawing.Size(946, 264);
             this.uxSeedList.TabIndex = 1;
             this.uxToolTip.SetToolTip(this.uxSeedList, "This is a list of all the seeds loaded into the program. You have to select a see" +
         "d here before you can edit or view its information.");
             // 
             // uxEditSeed
             // 
+            this.uxEditSeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.uxEditSeed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uxEditSeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxEditSeed.Location = new System.Drawing.Point(704, 220);
+            this.uxEditSeed.Location = new System.Drawing.Point(739, 220);
             this.uxEditSeed.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxEditSeed.Name = "uxEditSeed";
-            this.uxEditSeed.Size = new System.Drawing.Size(185, 43);
+            this.uxEditSeed.Size = new System.Drawing.Size(212, 43);
             this.uxEditSeed.TabIndex = 3;
             this.uxEditSeed.Text = "Edit Row Data";
             this.uxToolTip.SetToolTip(this.uxEditSeed, "Allows you to start editing the seed you have selected in the list to the left.");
@@ -166,12 +171,14 @@ namespace ImageJImporter
             // 
             // uxViewSeed
             // 
+            this.uxViewSeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.uxViewSeed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uxViewSeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxViewSeed.Location = new System.Drawing.Point(6, 220);
             this.uxViewSeed.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxViewSeed.Name = "uxViewSeed";
-            this.uxViewSeed.Size = new System.Drawing.Size(185, 43);
+            this.uxViewSeed.Size = new System.Drawing.Size(212, 43);
             this.uxViewSeed.TabIndex = 2;
             this.uxViewSeed.Text = "View Row Data";
             this.uxToolTip.SetToolTip(this.uxViewSeed, "Allows you to view the data for the seed you have selected without the worry of a" +
@@ -183,13 +190,15 @@ namespace ImageJImporter
             // 
             this.uxTextViewer.AcceptsReturn = true;
             this.uxTextViewer.AcceptsTab = true;
+            this.uxTextViewer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.uxTextViewer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxTextViewer.Location = new System.Drawing.Point(6, 30);
             this.uxTextViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxTextViewer.Multiline = true;
             this.uxTextViewer.Name = "uxTextViewer";
             this.uxTextViewer.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.uxTextViewer.Size = new System.Drawing.Size(883, 182);
+            this.uxTextViewer.Size = new System.Drawing.Size(945, 182);
             this.uxTextViewer.TabIndex = 5;
             this.uxTextViewer.TabStop = false;
             this.uxToolTip.SetToolTip(this.uxTextViewer, "This allows you to view the data for the seed you are editing. You can also save " +
@@ -203,12 +212,14 @@ namespace ImageJImporter
             // 
             // uxSaveSeed
             // 
+            this.uxSaveSeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.uxSaveSeed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uxSaveSeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxSaveSeed.Location = new System.Drawing.Point(365, 220);
+            this.uxSaveSeed.Location = new System.Drawing.Point(393, 220);
             this.uxSaveSeed.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxSaveSeed.Name = "uxSaveSeed";
-            this.uxSaveSeed.Size = new System.Drawing.Size(185, 43);
+            this.uxSaveSeed.Size = new System.Drawing.Size(212, 43);
             this.uxSaveSeed.TabIndex = 4;
             this.uxSaveSeed.Text = "Save Row Data";
             this.uxToolTip.SetToolTip(this.uxSaveSeed, "Allows you to save the data for this seed. Won\'t affect anything unless you also " +
@@ -220,13 +231,13 @@ namespace ImageJImporter
             // 
             this.uxHeaderLog.Dock = System.Windows.Forms.DockStyle.Top;
             this.uxHeaderLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxHeaderLog.Location = new System.Drawing.Point(0, 25);
+            this.uxHeaderLog.Location = new System.Drawing.Point(0, 28);
             this.uxHeaderLog.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxHeaderLog.Multiline = true;
             this.uxHeaderLog.Name = "uxHeaderLog";
             this.uxHeaderLog.ReadOnly = true;
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.uxHeaderLog.Size = new System.Drawing.Size(922, 188);
+            this.uxHeaderLog.Size = new System.Drawing.Size(963, 188);
             this.uxHeaderLog.TabIndex = 7;
             this.uxHeaderLog.Text = "Hello and welcome to v2 of ImageJ Data Importation Program";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
@@ -243,11 +254,11 @@ namespace ImageJImporter
             this.uxSeedDisplayGroup.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.uxSeedDisplayGroup.Enabled = false;
             this.uxSeedDisplayGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxSeedDisplayGroup.Location = new System.Drawing.Point(0, 213);
+            this.uxSeedDisplayGroup.Location = new System.Drawing.Point(0, 216);
             this.uxSeedDisplayGroup.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
             this.uxSeedDisplayGroup.Name = "uxSeedDisplayGroup";
             this.uxSeedDisplayGroup.Padding = new System.Windows.Forms.Padding(4, 4, 6, 0);
-            this.uxSeedDisplayGroup.Size = new System.Drawing.Size(922, 561);
+            this.uxSeedDisplayGroup.Size = new System.Drawing.Size(963, 561);
             this.uxSeedDisplayGroup.TabIndex = 6;
             this.uxSeedDisplayGroup.TabStop = false;
             this.uxSeedDisplayGroup.Text = "Seed Display";
@@ -257,7 +268,7 @@ namespace ImageJImporter
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(939, 528);
+            this.ClientSize = new System.Drawing.Size(980, 487);
             this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxSeedDisplayGroup);
             this.Controls.Add(this.ViewFormMenuStrip);

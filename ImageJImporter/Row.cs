@@ -4,10 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * Author: Nicholas Sixbury
+ * File: 
+ * Purpose: 
+ */
+
 namespace ImageJImporter
 {
     /// <summary>
-    /// this class represents a single seed, and the data for it is read from a single line
+    /// this class represents a single row, and the data for it is read from a single line
     /// </summary>
     public class Row
     {
@@ -48,12 +54,12 @@ namespace ImageJImporter
         /// as an array. Requires array to be formatted for variable values in this order:
         /// Area, X, Y, Perim, Major, Minor, Angle, Circ, AR, Round, Solidity
         /// </summary>
-        /// <param name="seedNum">the number identifying this seed</param>
+        /// <param name="rowNum">the number identifying this seed</param>
         /// <param name="properties">the array holding the values for all the decimal
         /// properties for the new Cell</param>
-        public Row(int seedNum, decimal[] properties)
+        public Row(int rowNum, decimal[] properties)
         {
-            this.RowNum = seedNum;
+            this.RowNum = rowNum;
             this.Area = properties[0];
             this.X = properties[1];
             this.Y = properties[2];
@@ -72,7 +78,7 @@ namespace ImageJImporter
         /// as an list. Requires list to be formatted for variable values in this order:
         /// Area, X, Y, Perim, Major, Minor, Angle, Circ, AR, Round, Solidity
         /// </summary>
-        /// <param name="seedNum">the number identifying this seed</param>
+        /// <param name="rowNum">the number identifying this seed</param>
         /// <param name="properties">the list holding the values for all the decimal
         /// properties for the new Cell</param>
         public Row(int rowNum, List<decimal> properties)
@@ -95,7 +101,7 @@ namespace ImageJImporter
         /// constructor to initialize variables. Allows you to input decimal properties
         /// individually.
         /// </summary>
-        /// <param name="seedNum">the number identifying this seed</param>
+        /// <param name="rowNum">the number identifying this seed</param>
         /// <param name="area"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -107,11 +113,11 @@ namespace ImageJImporter
         /// <param name="ar"></param>
         /// <param name="round"></param>
         /// <param name="solidity"></param>
-        public Row(int seedNum, decimal area, decimal x, decimal y, decimal perim,
+        public Row(int rowNum, decimal area, decimal x, decimal y, decimal perim,
             decimal major, decimal minor, decimal angle, decimal circ, decimal ar,
             decimal round, decimal solidity)
         {
-            this.RowNum = seedNum;
+            this.RowNum = rowNum;
             this.Area = area;
             this.X = x;
             this.Y = y;
@@ -148,16 +154,16 @@ namespace ImageJImporter
         /// returns a string formatted in the same way as teh imageJ output files.
         /// Gives you the option to not include the seed number in the result
         /// </summary>
-        /// <param name="includeSeedNum">pass true if you want to include
+        /// <param name="includeRowNum">pass true if you want to include
         /// the seed number in the output, or false otherwise</param>
         /// <returns>string formatted in same way as imageJ output files</returns>
-        public string FormatData(bool includeSeedNum)
+        public string FormatData(bool includeRowNum)
         {
             //initializes the string builder
             StringBuilder sb = new StringBuilder();
 
             //adds the seed num if we need to
-            if (includeSeedNum)
+            if (includeRowNum)
             {
                 sb.Append(RowNum);
                 sb.Append("\t");
