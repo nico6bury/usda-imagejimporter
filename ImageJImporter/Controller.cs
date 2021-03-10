@@ -218,8 +218,8 @@ namespace ImageJImporter
                     {
                         //the code below is wrapped in a try catch so any configuration errors won't stop
                         //the program from running normally
-                        try
-                        {
+                        //try
+                        //{
                             //load all the row information from the file we got from the config
                             List<Row> rows = fileIO.LoadFile(data[0]);
 
@@ -234,13 +234,13 @@ namespace ImageJImporter
 
                             //tell the view whether it should wrap text
                             setWordWrap(wrapText);
-                        }//end try
-                        catch
-                        {
-                            //show a message to the user informing them of an error
-                            showMessage("Something in the configuration file has caused an error. Default file won't be loaded.",
-                                "Default File Load Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
-                        }//end catch
+                        //}//end try
+                        //catch
+                        //{
+                        //    //show a message to the user informing them of an error
+                        //    showMessage("Something in the configuration file has caused an error. Default file won't be loaded.",
+                        //        "Default File Load Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+                        //}//end catch
                     }//end if data isn't null
 
                     //break out of the switch statement

@@ -68,7 +68,8 @@ namespace ImageJImporter
             currentRowIndex = -1;
             currentRowList = null;
             defaultListBoxSize = uxSeedList.Size;
-            uxSeedList.AutoSize = true;
+            //uxSeedList.AutoSize = true;
+            //uxSeedDisplayGroup.AutoSize = true;
             //uxSeedList.DrawMode = DrawMode.OwnerDrawFixed;
             //uxSeedList.DrawItem += new DrawItemEventHandler(DynamicallySetRowColor);
             //uxSeedList.SelectedIndexChanged += UxSeedList_SelectedIndexChanged;
@@ -179,7 +180,67 @@ namespace ImageJImporter
 
             //makes the controls which allow editing/viewing interactable by the user
             uxSeedDisplayGroup.Enabled = true;
+
+            //build the button grid
+            BuildButtonGrid(currentRowList);
         }//end UpdateSeedList(data)
+
+        private void BuildButtonGrid(List<Row> rows)
+        {
+            //set up our 2d list
+            List<List<Button>> buttonGrid = new List<List<Button>>();
+            //for(int i = 0; i < buttonGrid.Count; i++)
+            //{
+            //    buttonGrid[i] = new List<Button>();
+            //}//end initializing all lists in buttonGrid
+
+            //actually try to start putting info in them
+            int firstDimensionIndex = 0;
+            buttonGrid.Add(new List<Button>());
+            //int secondDimensionIndex = 0;
+            for (int i = 0; i < rows.Count; i++)
+            {
+                Button button = new Button();
+                button.Text = rows[i].RowNum.ToString();
+                buttonGrid[firstDimensionIndex].Add(button);
+
+                if (rows[i].IsNewRowFlag)
+                {
+                    button.BackColor = Color.Black;
+                    button.ForeColor = Color.White;
+                    firstDimensionIndex++;
+                    buttonGrid.Add(new List<Button>());
+                }//end if this row if a new row flag
+                else if (rows[i].IsSeedStartFlag)
+                {
+                    button.BackColor = Color.Aquamarine;
+                    button.ForeColor = Color.DarkSeaGreen;
+                }//end if this row is a seed start flag
+                else if (rows[i].IsSeedEndFlag)
+                {
+                    button.BackColor = Color.DarkSeaGreen;
+                    button.ForeColor = Color.Aquamarine;
+                }//end if this row is a seed end flag
+            }//end looping to populate 2d list of buttons
+
+            //just define the margin between buttons
+            int buttonMargin = 5;
+
+            //now we need to display those buttons by adding them to the groupbox
+            for(int i = 0; i < buttonGrid.Count; i++)
+            {
+                for(int j = 0; j < buttonGrid[i].Count; j++)
+                {
+                    Button thisButton = buttonGrid[i][j];
+
+                    int X = uxStartReference.Location.X + i*(uxStartReference.Size.Width + buttonMargin);
+                    int Y = uxStartReference.Location.Y + j*(uxStartReference.Size.Height + buttonMargin);
+                    thisButton.Location = new Point(X, Y);
+
+                    uxGridDisplay.Controls.Add(thisButton);
+                }//end looping over second dimension
+            }//end looping over first dimension
+        }//end BuildButtonGrid(rows)
 
         /// <summary>
         /// closes the file and mostly resets things
