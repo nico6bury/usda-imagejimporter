@@ -51,6 +51,9 @@
     <Compile Include="DelegateDefinitions.cs" />
     <Compile Include="FileIO.cs" />
     <Compile Include="Request.cs" />
+    <Compile Include="RowButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="View.cs">
       <SubType>Form</SubType>
     </Compile>

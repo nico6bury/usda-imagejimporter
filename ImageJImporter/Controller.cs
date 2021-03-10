@@ -65,6 +65,11 @@ namespace ImageJImporter
             this.fileIO = new FileIO(fileIO);
         }//end constructor
 
+        public string GiveCurrentFilename()
+        {
+            return fileIO.file;
+        }//end GiveCurrentFileName()
+
         /// <summary>
         /// This method is called to handle the event of the user needing to do
         /// something with the file

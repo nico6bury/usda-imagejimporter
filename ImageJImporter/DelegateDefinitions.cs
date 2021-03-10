@@ -92,4 +92,10 @@ namespace ImageJImporter
     /// need external parameters and also doesn't return anything.
     /// </summary>
     public delegate void DoAThing();
+
+    /// <summary>
+    /// Allows you to request a string
+    /// </summary>
+    /// <returns>hopefully returns the string you requested</returns>
+    public delegate string RequestString();
 }//end namespace

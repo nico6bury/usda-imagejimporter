@@ -120,6 +120,22 @@ namespace ImageJImporter
             this.Solidity = editedValues[10];
         }//end 1-arg constructor
 
+        public Row(Row row)
+        {
+            this.RowNum = row.RowNum;
+            this.Area = row.Area;
+            this.X = row.X;
+            this.Y = row.Y;
+            this.Perim = row.Perim;
+            this.Major = row.Major;
+            this.Minor = row.Minor;
+            this.Angle = row.Angle;
+            this.Circ = row.Circ;
+            this.AR = row.AR;
+            this.Round = row.Round;
+            this.Solidity = row.Solidity;
+        }//end 1-arg copy constructor
+
         /// <summary>
         /// constructor to initialize variables. Allows you to input decimal properties
         /// as an array. Requires array to be formatted for variable values in this order:

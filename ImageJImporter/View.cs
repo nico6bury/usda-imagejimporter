@@ -39,6 +39,12 @@ namespace ImageJImporter
         public HandleOpenClose handleOpenClose;
 
         /// <summary>
+        /// function pointer for GiveCurrentFilename in controller. set up in
+        /// program.cs
+        /// </summary>
+        public RequestString requestFileName;
+
+        /// <summary>
         /// holds which seed index we're currently looking at. Set to -1 if not looking
         /// at any seeds (for instance if the file is closed)
         /// </summary>
@@ -55,6 +61,8 @@ namespace ImageJImporter
         private Brush selectedTextColor = Brushes.LightSkyBlue;
 
         private SolidBrush selectedBackgroundColor = new SolidBrush(Color.DodgerBlue);
+
+        private System.Timers.Timer timer;
 
         /// <summary>
         /// constructor for this class. Just initializes things
@@ -73,7 +81,30 @@ namespace ImageJImporter
             //uxSeedList.DrawMode = DrawMode.OwnerDrawFixed;
             //uxSeedList.DrawItem += new DrawItemEventHandler(DynamicallySetRowColor);
             //uxSeedList.SelectedIndexChanged += UxSeedList_SelectedIndexChanged;
+            timer = new System.Timers.Timer(1000)
+            {
+                AutoReset = true,
+                Enabled = true
+            };
+            timer.Elapsed += UpdateCurrentDateTime;
+
+            dellagateName = ChangeDateTimeText;
         }//end constructor
+
+        private void UpdateCurrentDateTime(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            object[] args = new object[1];
+            args[0] = DateTime.Now.ToString();
+            this.BeginInvoke(dellagateName, args);
+        }//end timer elapsed event args
+
+        private delegate void Dellagate(string text);
+        private Dellagate dellagateName;
+
+        private void ChangeDateTimeText(string text)
+        {
+            uxCurrentDateTime.Text = text;
+        }
 
         private void UxSeedList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -188,7 +219,7 @@ namespace ImageJImporter
         private void BuildButtonGrid(List<Row> rows)
         {
             //set up our 2d list
-            List<List<Button>> buttonGrid = new List<List<Button>>();
+            List<List<RowButton>> buttonGrid = new List<List<RowButton>>();
             //for(int i = 0; i < buttonGrid.Count; i++)
             //{
             //    buttonGrid[i] = new List<Button>();
@@ -196,12 +227,13 @@ namespace ImageJImporter
 
             //actually try to start putting info in them
             int firstDimensionIndex = 0;
-            buttonGrid.Add(new List<Button>());
+            buttonGrid.Add(new List<RowButton>());
             //int secondDimensionIndex = 0;
             for (int i = 0; i < rows.Count; i++)
             {
-                Button button = new Button();
-                button.Text = rows[i].RowNum.ToString();
+                RowButton button = new RowButton(rows[i]);
+                button.Size = uxStartReference.Size;
+                button.Click += GridButtonClickEvent;
                 buttonGrid[firstDimensionIndex].Add(button);
 
                 if (rows[i].IsNewRowFlag)
@@ -209,7 +241,7 @@ namespace ImageJImporter
                     button.BackColor = Color.Black;
                     button.ForeColor = Color.White;
                     firstDimensionIndex++;
-                    buttonGrid.Add(new List<Button>());
+                    buttonGrid.Add(new List<RowButton>());
                 }//end if this row if a new row flag
                 else if (rows[i].IsSeedStartFlag)
                 {
@@ -231,16 +263,26 @@ namespace ImageJImporter
             {
                 for(int j = 0; j < buttonGrid[i].Count; j++)
                 {
-                    Button thisButton = buttonGrid[i][j];
+                    RowButton thisButton = buttonGrid[i][j];
 
-                    int X = uxStartReference.Location.X + i*(uxStartReference.Size.Width + buttonMargin);
-                    int Y = uxStartReference.Location.Y + j*(uxStartReference.Size.Height + buttonMargin);
-                    thisButton.Location = new Point(X, Y);
+                    int X = uxStartReference.Location.X + i * (uxStartReference.Size.Height + buttonMargin);
+                    int Y = uxStartReference.Location.Y + j*(uxStartReference.Size.Width + buttonMargin);
+                    thisButton.Location = new Point(Y, X);
 
                     uxGridDisplay.Controls.Add(thisButton);
                 }//end looping over second dimension
             }//end looping over first dimension
         }//end BuildButtonGrid(rows)
+
+        private void GridButtonClickEvent(object sender, EventArgs e)
+        {
+            //get our button from sender and don't do anything if not right type
+            RowButton button = sender as RowButton;
+            if (button == null) return;
+
+            //display the button's row
+            MessageBox.Show($"{button.Row}", $"Row Data of Row {button.Row.RowNum}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }//end GridButton Click Event
 
         /// <summary>
         /// closes the file and mostly resets things
@@ -355,7 +397,24 @@ namespace ImageJImporter
                 //tell the controller we need to open the file named in args
                 handleFileIO(Request.OpenFile, args);
             }//end if filename is not blank
+
+            AppendTextToLog($"\nLoaded \"{requestFileName()}\" with {currentRowList.Count} rows.");
         }//end event handler for opening a file
+
+        private void AppendTextToLog(string text)
+        {
+            string[] newLines = new string[uxHeaderLog.Lines.Length + 1];
+            for(int i = 0; i < uxHeaderLog.Lines.Length; i++)
+            {
+                newLines[i] = uxHeaderLog.Lines[i];
+            }//end adding old lines to new
+            
+            //add new line
+            newLines[newLines.Length - 1] = text;
+
+            //update the textbox
+            uxHeaderLog.Lines = newLines;
+        }//end AppendTextToLog(text)
 
         /// <summary>
         /// this method runs when the uxMenuSaveFile button is clicked. It uses a
@@ -531,6 +590,8 @@ namespace ImageJImporter
         {
             //tell the controller that we just started up, so it needs to send us info on what to do
             handleOpenClose(Request.StartApplication);
+
+            AppendTextToLog($"\nLoaded \"{requestFileName()}\" with {currentRowList.Count} rows.");
         }//end event handler for opening the form
 
         /// <summary>

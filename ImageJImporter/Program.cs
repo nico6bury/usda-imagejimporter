@@ -37,11 +37,13 @@ namespace ImageJImporter
             HandleFileIO handleFileIO = controller.HandleFileIORequest;
             HandleSeedData handleSeedData = controller.HandleSeedDataRequest;
             HandleOpenClose handleOpenClose = controller.HandleOpenCloseRequest;
+            RequestString requestFileName = controller.GiveCurrentFilename;
 
             //this connects the delegates to the view
             view.handleFileIO = handleFileIO;
             view.handleSeedData = handleSeedData;
             view.handleOpenClose = handleOpenClose;
+            view.requestFileName = requestFileName;
 
             //this connects the method(s) in the view to the delegates
             ShowFormMessage showMessage = view.ShowMessage;
