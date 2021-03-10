@@ -31,6 +31,43 @@ namespace ImageJImporter
         public decimal Solidity;
 
         /// <summary>
+        /// whether or not this row is a flag for starting a new row in the
+        /// grid which the seeds sit in when they're scanned
+        /// </summary>
+        public bool IsNewRowFlag
+        {
+            get
+            {
+                if (Area == 121) return true;
+                else return false;
+            }//end getter
+        }//end IsNewRowFlag
+
+        /// <summary>
+        /// whether or not this row is a flag for starting a new seed
+        /// </summary>
+        public bool IsSeedStartFlag
+        {
+            get
+            {
+                if (Area == (decimal)81.7) return true;
+                else return false;
+            }//end getter
+        }//end IsSeedStartFlag
+
+        /// <summary>
+        /// whether or not this row is a flag for ending data for one seed
+        /// </summary>
+        public bool IsSeedEndFlag
+        {
+            get
+            {
+                if (Area == (decimal)95.3) return true;
+                else return false;
+            }//end getter
+        }//end IsSeedEndFlag
+
+        /// <summary>
         /// normal constructor which initializes all fields as 0
         /// </summary>
         public Row()
@@ -48,6 +85,40 @@ namespace ImageJImporter
             Round = 0;
             Solidity = 0;
         }//end no-arg constructor
+
+        /// <summary>
+        /// constructor for constructing row from a string of text. Format is same as
+        /// imageJ output
+        /// </summary>
+        /// <param name="row">the row of text to read in</param>
+        public Row(string row)
+        {
+            //create an array holding all the values in the row
+            string[] values = row.Split(new char[] { '\t' });
+
+            //sets a variable to hold row number
+            this.RowNum = Convert.ToInt32(values[0]);
+
+            //creates an array of decimals and puts converted values into it
+            decimal[] editedValues = new decimal[values.Length - 1];
+            for (int i = 1; i < values.Length; i++)
+            {
+                editedValues[i - 1] = Convert.ToDecimal(values[i]);
+            }//end looping for every value but the first one
+
+            //put all the variable data in
+            this.Area = editedValues[0];
+            this.X = editedValues[1];
+            this.Y = editedValues[2];
+            this.Perim = editedValues[3];
+            this.Major = editedValues[4];
+            this.Minor = editedValues[5];
+            this.Angle = editedValues[6];
+            this.Circ = editedValues[7];
+            this.AR = editedValues[8];
+            this.Round = editedValues[9];
+            this.Solidity = editedValues[10];
+        }//end 1-arg constructor
 
         /// <summary>
         /// constructor to initialize variables. Allows you to input decimal properties
@@ -132,13 +203,12 @@ namespace ImageJImporter
         }//end 12-arg constructor
 
         /// <summary>
-        /// returns the number of this seed as a string
+        /// returns string representation of this row
         /// </summary>
-        /// <returns>string representation of the number of this seed</returns>
+        /// <returns>string representation of this row</returns>
         public override string ToString()
         {
             return FormatData();
-            //return $"Row {RowNum}";
         }//end ToString()
 
         /// <summary>

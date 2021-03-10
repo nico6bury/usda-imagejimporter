@@ -42,15 +42,19 @@ namespace ImageJImporter
         /// holds which seed index we're currently looking at. Set to -1 if not looking
         /// at any seeds (for instance if the file is closed)
         /// </summary>
-        private int currentSeedIndex;
+        private int currentRowIndex;
 
         /// <summary>
         /// holds the current seed list we're displaying. set to null if nothing
         /// displayed
         /// </summary>
-        private List<Row> currentSeedList;
+        private List<Row> currentRowList;
 
         private System.Drawing.Size defaultListBoxSize;
+
+        private Brush selectedTextColor = Brushes.LightSkyBlue;
+
+        private SolidBrush selectedBackgroundColor = new SolidBrush(Color.DodgerBlue);
 
         /// <summary>
         /// constructor for this class. Just initializes things
@@ -61,11 +65,76 @@ namespace ImageJImporter
             InitializeComponent();
 
             //set local variables to initial values
-            currentSeedIndex = -1;
-            currentSeedList = null;
+            currentRowIndex = -1;
+            currentRowList = null;
             defaultListBoxSize = uxSeedList.Size;
             uxSeedList.AutoSize = true;
+            //uxSeedList.DrawMode = DrawMode.OwnerDrawFixed;
+            //uxSeedList.DrawItem += new DrawItemEventHandler(DynamicallySetRowColor);
+            //uxSeedList.SelectedIndexChanged += UxSeedList_SelectedIndexChanged;
         }//end constructor
+
+        private void UxSeedList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            uxSeedList.DataSource = null;
+            uxSeedList.DataSource = currentRowList;
+        }//end 
+
+        private void DynamicallySetRowColor(object sender, DrawItemEventArgs e)
+        {
+            try
+            {
+                //draw the background?
+                e.DrawBackground();
+                //get the graphics from the event args
+                Graphics g = e.Graphics;
+                //default text color
+                Brush textBrush = Brushes.Black;
+                //default background color
+                SolidBrush backBrush = new SolidBrush(Color.Silver);
+
+                //get the current row from the listbox
+                Row row = (Row)(((ListBox)sender).Items[e.Index]);
+
+                ListBox listBox = (ListBox)sender;
+
+                //dynamically set color
+                if (listBox.SelectedIndices.Contains(e.Index))
+                {
+                    textBrush = selectedTextColor;
+                    backBrush = selectedBackgroundColor;
+                }//end if this row is selected
+                else if (row.IsNewRowFlag)
+                {
+                    textBrush = Brushes.Silver;
+                    backBrush.Color = Color.Black;
+                }//end else if IsNewRowFlag
+                else if (row.IsSeedStartFlag)
+                {
+                    textBrush = Brushes.Aquamarine;
+                    backBrush.Color = Color.DarkSeaGreen;
+                }//end else if IsSeedStartFlag
+                else if (row.IsSeedEndFlag)
+                {
+                    textBrush = Brushes.DarkSeaGreen;
+                    backBrush.Color = Color.Aquamarine;
+                }//end else if IsSeedEndFlag
+
+                //draw the background as whatever backBrush is set to
+                g.FillRectangle(backBrush, e.Bounds);
+
+                //actually draw the text stuff
+                e.Graphics.DrawString(row.ToString(),
+                    e.Font, textBrush, e.Bounds);
+
+                //draw other stuff
+                e.DrawFocusRectangle();
+            }
+            catch
+            {
+
+            }
+        }//end DynamicallySetRowColor handler
 
         /// <summary>
         /// Allows outside classes to cause this class to show a message box
@@ -96,8 +165,8 @@ namespace ImageJImporter
 
             uxSeedList.Size = defaultListBoxSize;
             uxSeedList.DataSource = null;
-            currentSeedList = data;
-            uxSeedList.DataSource = currentSeedList;
+            currentRowList = data;
+            uxSeedList.DataSource = currentRowList;
 
             //if(uxSeedList.Items.Count > 30)
             //{
@@ -158,7 +227,7 @@ namespace ImageJImporter
                 uxTextViewer.ReadOnly = (request == Request.ViewSeedData);
 
                 //update current seed index
-                currentSeedIndex = index;
+                currentRowIndex = index;
             }//end if request is either to view or edit seed data
             else
             {
@@ -242,7 +311,7 @@ namespace ImageJImporter
                 object[] data = new object[1];
 
                 //add the current list of seeds to the data
-                data[0] = currentSeedList;
+                data[0] = currentRowList;
 
                 //tell the controller we want to save our current file with our current cell list
                 handleFileIO(Request.SaveFile, data);
@@ -288,7 +357,7 @@ namespace ImageJImporter
                     object[] data = new object[2];
 
                     //add the current list of seeds to the data
-                    data[0] = currentSeedList;
+                    data[0] = currentRowList;
 
                     //add the filename we'll save to the data
                     data[1] = filename;
@@ -368,14 +437,14 @@ namespace ImageJImporter
             object[] data = new object[3];
 
             //add the full list to the object array
-            data[0] = currentSeedList;
+            data[0] = currentRowList;
 
             //add the index of the seed to the array
-            data[1] = currentSeedIndex;
+            data[1] = currentRowIndex;
 
             //format the text for the new seed to add to the array
             StringBuilder lineBuilder = new StringBuilder();
-            Row selectedSeed = (Row)uxSeedList.Items[currentSeedIndex];
+            Row selectedSeed = (Row)uxSeedList.Items[currentRowIndex];
 
             //add back the seed number plus the tab after it
             lineBuilder.Append(selectedSeed.RowNum);

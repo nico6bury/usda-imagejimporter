@@ -182,7 +182,7 @@ namespace ImageJImporter
                     string seedLine = (string)args[2];
 
                     //generate an updated row object from the string
-                    Row newSeed = fileIO.ParseRow(seedLine);
+                    Row newSeed = new Row(seedLine);
 
                     //put the new seed back into the list
                     allSeeds[seedIndexS] = newSeed;
