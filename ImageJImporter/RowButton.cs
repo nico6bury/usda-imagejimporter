@@ -28,7 +28,7 @@ namespace ImageJImporter
         {
             get { return new Row(row); }
             set { row = new Row(value); }
-        }
+        }//end constructor
 
         /// <summary>
         /// constructor for this class. Must initialize with a Row object.

@@ -34,32 +34,36 @@ namespace ImageJImporter
             Controller controller = new Controller(fileIO);
 
             //this connects the methods in the controller to the delegates
-            HandleFileIO handleFileIO = controller.HandleFileIORequest;
-            HandleSeedData handleSeedData = controller.HandleSeedDataRequest;
-            HandleOpenClose handleOpenClose = controller.HandleOpenCloseRequest;
             RequestString requestFileName = controller.GiveCurrentFilename;
 
             //this connects the delegates to the view
-            view.handleFileIO = handleFileIO;
-            view.handleSeedData = handleSeedData;
-            view.handleOpenClose = handleOpenClose;
+            view.openFile = controller.OpenDataFile;
+            view.saveFile = controller.SaveCurrentFile;
+            view.saveFileAs = controller.SaveCurrentListAsNewFile;
+            view.closeFile = controller.CloseCurrentFile;
+            view.viewRows = controller.ViewRowData;
+            view.editRows = controller.EditRowData;
+            view.saveRows = controller.SaveRowData;
+            view.formOpening = controller.OpenView;
+            view.formClosing = controller.CloseView;
             view.requestFileName = requestFileName;
 
             //this connects the method(s) in the view to the delegates
             ShowFormMessage showMessage = view.ShowMessage;
-            UpdateSeedList updateSeedList = view.UpdateSeedList;
-            ChangeSeedSelected changeSeedSelected = view.ChangeSeedSelected;
+            SendRowList updateSeedList = view.UpdateRowList;
             ReturnBool wordsWrap = view.DoWordsWrap;
             SetBool wordWrap = view.SetWordWrap;
-            DoAThing closeFile = view.CloseSeedList;
+            CallMethod closeFile = view.CloseRowList;
 
             //this connects the delegates to the controller
-            controller.showMessage = showMessage;
-            controller.updateSeedList = updateSeedList;
-            controller.changeSeedSelected = changeSeedSelected;
-            controller.wordsWrap = wordsWrap;
-            controller.setWordWrap = wordWrap;
-            controller.closeSeedList = closeFile;
+            controller.showMessage = view.ShowMessage;
+            controller.updateSeedList = view.UpdateRowList;
+            controller.wordsWrap = view.DoWordsWrap;
+            controller.setWordWrap = view.SetWordWrap;
+            controller.closeSeedList = view.CloseRowList;
+            controller.viewRows = view.SetRowViewability;
+            controller.editRows = view.SetRowEditability;
+            controller.appendTextLog = view.AppendTextToLog;
 
             //this causes the application to actually run
             Application.Run(view);

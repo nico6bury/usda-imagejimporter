@@ -23,24 +23,6 @@ namespace ImageJImporter
     /// </summary>
 
     /// <summary>
-    /// Points to function for handling requests related to fileIO
-    /// </summary>
-    /// <param name="request">the request being made to whatever function
-    /// this delegate points to. Will probably have "File" in it somewhere</param>
-    /// <param name="args">the data needed to complete the request. Check the
-    /// function to find out what data is needed</param>
-    public delegate void HandleFileIO(Request request, object[] args);
-
-    /// <summary>
-    /// Points to function for handling requests involving specific row data
-    /// </summary>
-    /// <param name="request">the request being made to whatever function
-    /// this delegate points to. Will probably have "Seed" in it somewhere</param>
-    /// <param name="args">the data needed to complete the request. Check the
-    /// function to find out what data is needed</param>
-    public delegate void HandleSeedData(Request request, object[] args);
-
-    /// <summary>
     /// Points to a function for showing a message box
     /// </summary>
     /// <param name="text">the text in the message box shown</param>
@@ -55,23 +37,7 @@ namespace ImageJImporter
     /// </summary>
     /// <param name="data">the list of rows which will be used to update
     /// something</param>
-    public delegate void UpdateSeedList(List<Row> data);
-
-    /// <summary>
-    /// Points to a function for updating which row is selected
-    /// </summary>
-    /// <param name="index">the index of the row you want to change</param>
-    /// <param name="request">the type of request being made. This will probably
-    /// be either ViewSeedData or EditSeedData</param>
-    public delegate void ChangeSeedSelected(int index, Request request);
-
-    /// <summary>
-    /// Points to a function for handling requests related to opening or closing
-    /// the application
-    /// </summary>
-    /// <param name="request">the type of request being made. This will probably
-    /// be either StartApplication or CloseApplication</param>
-    public delegate void HandleOpenClose(Request request);
+    public delegate bool SendRowList(List<Row> data);
 
     /// <summary>
     /// Points to a function that returns true or false. Very generic
@@ -91,11 +57,30 @@ namespace ImageJImporter
     /// Points to a function that either has a non-dynamic function or just doesn't
     /// need external parameters and also doesn't return anything.
     /// </summary>
-    public delegate void DoAThing();
+    public delegate void CallMethod();
+
+    /// <summary>
+    /// points to a function that requires a list of integers as a parameter
+    /// </summary>
+    public delegate void CallMethodWithInts(List<int> integers);
+
+    /// <summary>
+    /// points to a function that requires a dictionary containing a bunch of
+    /// rows as strings and their corresponding indices
+    /// </summary>
+    /// <param name="rowIndexPairs">The dictionary of rows and their corresponding index
+    /// which will be sent</param>
+    public delegate void CallMethodWithRowStringDictionary(Dictionary<string, int> rowIndexPairs);
 
     /// <summary>
     /// Allows you to request a string
     /// </summary>
     /// <returns>hopefully returns the string you requested</returns>
     public delegate string RequestString();
+
+    /// <summary>
+    /// Allows you to send a string somewhere
+    /// </summary>
+    /// <param name="text">the string you want to send</param>
+    public delegate void SendString(string text);
 }//end namespace

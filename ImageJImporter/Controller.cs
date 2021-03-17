@@ -29,14 +29,9 @@ namespace ImageJImporter
         public ShowFormMessage showMessage;
 
         /// <summary>
-        /// function pointer for UpdateSeedList in view. set up in program.cs
+        /// function pointer for SendRowList in view. set up in program.cs
         /// </summary>
-        public UpdateSeedList updateSeedList;
-
-        /// <summary>
-        /// function pointer for ChangeSeedSelected in view. set up in program.cs
-        /// </summary>
-        public ChangeSeedSelected changeSeedSelected;
+        public SendRowList updateSeedList;
 
         /// <summary>
         /// function pointer for DoWordsWrap in view. set up in program.cs
@@ -49,9 +44,24 @@ namespace ImageJImporter
         public SetBool setWordWrap;
 
         /// <summary>
-        /// function pointer for the CloseSeedList in view. set up in program.cs
+        /// function pointer for the CloseRowList in view. set up in program.cs
         /// </summary>
-        public DoAThing closeSeedList;
+        public CallMethod closeSeedList;
+
+        /// <summary>
+        /// function pointer to request a new filename from the view
+        /// </summary>
+        public RequestString getNewFilename;
+
+        /// <summary>
+        /// the list of rows that is currently being displayed or used
+        /// </summary>
+        private List<Row> currentRowList = new List<Row>();
+
+        /// <summary>
+        /// stores whether or not there is currently a file loaded in the program
+        /// </summary>
+        private bool IsFileCurrentlyLoaded = false;
 
         /// <summary>
         /// this is the standard constructor for this class. It requires a FileIO
@@ -71,200 +81,304 @@ namespace ImageJImporter
         }//end GiveCurrentFileName()
 
         /// <summary>
-        /// This method is called to handle the event of the user needing to do
-        /// something with the file
-        /// Warning: The type of incoming data from the args array is generally
-        /// not checked, so make sure to send the right data types in the right order
+        /// handle event of user wanting to open a file
         /// </summary>
-        /// <param name="request">The type of request which is being made. The following
-        /// types of requests are accepted by this method: OpenFile, SaveFile, SaveFileAs, 
-        /// CloseFile, AskFileName</param>
-        /// <param name="args">the necessary data to complete the request. Make sure data
-        /// within the array is of the correct type and in the correct order. To Open a file, supply
-        /// the filename as a string that you wish to open. To Save a file, provide a list of rows.
-        /// To save a file as something, provide the list of rows to save as well as the filename as
-        /// a string. Requests other than those specified do not require extra data.</param>
-        public void HandleFileIORequest(Request request, object[] args)
+        public void OpenDataFile()
         {
-            switch (request)
+            //get filename from the view
+            string filename = getNewFilename();
+            if (filename != "")
             {
-                case Request.OpenFile:
-                    //grabs the seed data from the file we got from the view
-                    List<Row> openFileData = fileIO.LoadFile((string)args[0]);
+                //get the row list from the file
+                List<Row> curList = fileIO.LoadFile(filename);
 
-                    //we want to reset stuff in the view first
-                    closeSeedList();
+                //reset the view before we update it
+                closeSeedList();
 
-                    //send the seed data back to the view so it can show it
-                    updateSeedList(openFileData);
-
-                    //break out of the switch statement
-                    break;
-                case Request.SaveFile:
-                    //grab the row data from the args array
-                    List<Row> saveFileData = (List<Row>)args[0];
-
-                    //tell the model to save the currently loaded file
-                    fileIO.SaveFile(fileIO.file, saveFileData);
-
-                    //break out of the switch statement
-                    break;
-                case Request.SaveFileAs:
-                    //grab the data from the args array
-                    List<Row> curList = (List<Row>)args[0];
-                    string saveAsFilename = (string)args[1];
-
-                    //tell fileIO to save the file with specified name
-                    fileIO.SaveFile(saveAsFilename, curList);
-
-                    //break out of the switch statement
-                    break;
-                case Request.CloseFile:
-                    //tell the view to close the file
-                    closeSeedList();
-
-                    //break out of the switch statement
-                    break;
-                case Request.AskFilename:
-                    //ask fileIO what the last file it opened was, and then save it
-                    string requestedFilename = fileIO.file;
-
-                    //tell the view to show a message box with the filename we got
-                    showMessage($"The file you are currently viewing is \"{requestedFilename}\"",
-                        "Filename Request", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    //break out of the switch statement
-                    break;
-                default:
-
-                    //break out of the switch statement
-                    break;
-            }//end switch case
-        }//end HandleFileIORequest(request)
-
-        /// <summary>
-        /// This method is called to handle the event of the user needing access to
-        /// the seed data which has already been loaded.
-        /// Warning: The type of incoming data from the args array is generally
-        /// not checked, so make sure to send the right data types in the right order
-        /// </summary>
-        /// <param name="request">The type of request which is being made. The following
-        /// types of requests are accepted by this method: ViewSeedData, EditSeedData, 
-        /// SaveSeedData</param>
-        /// <param name="args">the necessary data to complete the request. Make sure data
-        /// within the array is of the correct type and in the correct order. To view seed
-        /// data, supply the index of the seed you wish to view as an int. The same goes for
-        /// editing a seed. To save a seed, provide the list of rows containing the seed you
-        /// wish to save, the index of the seed you wish to save as an int, and a string
-        /// containing a row of values to save to the seed, in the same format as the imageJ
-        /// output files.</param>
-        public void HandleSeedDataRequest(Request request, object[] args)
-        {
-            switch (request)
-            {
-                case Request.ViewSeedData:
-                    //take the information out of args
-                    int seedIndexV = (int)args[0];
-
-                    //tell the view to change the selected seed
-                    changeSeedSelected(seedIndexV, request);
-
-                    //break out of the switch statement
-                    break;
-                case Request.EditSeedData:
-                    //take the information out of args
-                    int seedIndexE = (int)args[0];
-
-                    //tell the view to change the selected seed
-                    changeSeedSelected(seedIndexE, request);
-
-                    //break out of the switch statement
-                    break;
-                case Request.SaveSeedData:
-                    //take the data outside the args array
-                    List<Row> allSeeds = (List<Row>)args[0];
-                    int seedIndexS = (int)args[1];
-                    string seedLine = (string)args[2];
-
-                    //generate an updated row object from the string
-                    Row newSeed = new Row(seedLine);
-
-                    //put the new seed back into the list
-                    allSeeds[seedIndexS] = newSeed;
-
-                    //tell the view to update it's list with the one we send it
-                    updateSeedList(allSeeds);
-
-                    //break out of the switch statement
-                    break;
-                default:
-
-                    //break out of the switch statement
-                    break;
-            }//end switch case
-        }//end HandleSeedDataRequest(request)
-
-        /// <summary>
-        /// This method is called to handle the event of the view being opened or closed.
-        /// It mostly deals with loading and saving the settings configuratino file saved by
-        /// fileIO.
-        /// </summary>
-        /// <param name="request">The type of request being made. For this method, StartApplication
-        /// and CloseApplication are valid request types.</param>
-        public void HandleOpenCloseRequest(Request request)
-        {
-            switch (request)
-            {
-                case Request.StartApplication:
-                    //grab whatever we can from the config file
-                    List<string> data = fileIO.LoadConfigFile();
-
-                    if(data != null)
+                //update list of seeds in the view
+                if (updateSeedList(curList))
+                {
+                    //reset and update currentRowList
+                    currentRowList.Clear();
+                    foreach(Row row in curList)
                     {
-                        //the code below is wrapped in a try catch so any configuration errors won't stop
-                        //the program from running normally
-                        //try
-                        //{
-                            //load all the row information from the file we got from the config
-                            List<Row> rows = fileIO.LoadFile(data[0]);
+                        currentRowList.Add(row);
+                    }//end adding each row to currentRowList
 
-                            //pass that info back to the view
-                            updateSeedList(rows);
+                    //updates boolean
+                    IsFileCurrentlyLoaded = true;
 
-                            //update fileIO's most recently used file property
-                            fileIO.file = data[0];
+                    //update log
+                    AppendToHeaderLog($"\nLoaded \"{filename}\" with {currentRowList.Count} rows.");
+                }//end if operation was successful
+                else
+                {
+                    showMessage("An error has occured while updating the row list.",
+                        "File Open Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }//end else the operation failed
+            }//end if the filename isn't empty
+            //if the filename was empty, don't do anything
+        }//end OpenDataFile()
 
-                            //try to determine whether we should wrap text
-                            bool wrapText = Convert.ToBoolean(data[1]);
+        /// <summary>
+        /// Saves the file that is currently loaded
+        /// </summary>
+        public void SaveCurrentFile()
+        {
+            if (IsFileCurrentlyLoaded)
+            {
+                //tell fileIO to save our current file with current data
+                fileIO.SaveFile(fileIO.file, currentRowList);
 
-                            //tell the view whether it should wrap text
-                            setWordWrap(wrapText);
-                        //}//end try
-                        //catch
-                        //{
-                        //    //show a message to the user informing them of an error
-                        //    showMessage("Something in the configuration file has caused an error. Default file won't be loaded.",
-                        //        "Default File Load Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
-                        //}//end catch
-                    }//end if data isn't null
+                //update log
+                AppendToHeaderLog($"Successfully saved {currentRowList.Count}" +
+                    $" rows to \"{fileIO.file}\"");
+            }//end if a file is currently loaded
+            else
+            {
+                showMessage("You don't have a file loaded.", "Invalid Operation",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }//end else there is not file loaded
+        }//end SaveCurrentFile()
 
-                    //break out of the switch statement
-                    break;
-                case Request.CloseApplication:
-                    //tell fileIO to save whatever needs saved
-                    fileIO.SaveConfigFile(wordsWrap());
+        /// <summary>
+        /// saves the current row information in the specified file
+        /// </summary>
+        public void SaveCurrentListAsNewFile()
+        {
+            if (IsFileCurrentlyLoaded)
+            {
+                //get the filename from the 
+                string newFileName = getNewFilename();
+                if(newFileName != "")
+                {
+                    //save the row information as the specified filename
+                    fileIO.SaveFile(newFileName, currentRowList);
 
-                    //break out of the switch statement
-                    break;
-                default:
-                    //shows an error message to the user without actually throwing an error
-                    showMessage($"It seems something went wrong when trying to open or close the form. {request} is not " +
-                        "a valid request type.", "Invalid Open/Close Request Revieved",
-                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+                    //update log
+                    AppendToHeaderLog($"Successfully saved {currentRowList.Count}" +
+                        $" rows to \"{newFileName}\"");
+                }//end if we have a file
+                //if the filename was empty, we don't want to do anything
+            }//end if there's currently a file loaded
+            else
+            {
+                showMessage("You don't have a file loaded.", "Invalid Operation",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }//end else there's no file loaded
+        }//end SaveCurrentListAsNewFile()
 
-                    //break out of the switch statement
-                    break;
-            }//end switch case
-        }//end HandleOpenCloseRequest(request)
+        /// <summary>
+        /// Closes the current file and updates any necessary displays or flags
+        /// </summary>
+        public void CloseCurrentFile()
+        {
+            //updates reference variables in this class
+            currentRowList.Clear();
+            IsFileCurrentlyLoaded = false;
+
+            StringBuilder tempFileNameRef = new StringBuilder(fileIO.file);
+
+            //removes last file reference from fileIO
+            fileIO.file = "";
+
+            //updates seed list in view
+            closeSeedList();
+
+            //update log
+            AppendToHeaderLog($"Successfully closed \"{tempFileNameRef}\"");
+        }//end CloseCurrentFile()
+
+        /// <summary>
+        /// Verifies that every index in the supplied enumberable collection
+        /// of indices is valid for currentRowList
+        /// </summary>
+        /// <param name="indices">the enumerable collection of indices</param>
+        /// <exception cref="ArgumentOutOfRangeException">Exception thrown when
+        /// an index supplied is outside the bounds of currentRowList</exception>
+        private void CheckIndices(IEnumerable<int> indices)
+        {
+            foreach (int index in indices)
+            {
+                if (index < 0 || index >= currentRowList.Count)
+                {
+                    throw new ArgumentOutOfRangeException($"The supplied index" +
+                        $" {index} was outside the acceptable range from 0 " +
+                        $"to {currentRowList.Count - 1}.");
+                }//end if the index is outside range of list
+            }//end checking each index is valid
+        }//end CheckIndices(indices)
+
+        /// <summary>
+        /// Builds a list of all the rows at the specified indices with
+        /// currentRowList. Doesn't do any sort of verification that indices are
+        /// valid.
+        /// </summary>
+        /// <param name="indices">indices at which to grab rows</param>
+        /// <returns>list of rows at specified indices</returns>
+        private List<Row> GetRowsAtIndices(List<int> indices)
+        {
+            //initialize list of rows
+            List<Row> rowRegister = new List<Row>();
+
+            foreach (int index in indices)
+            {
+                rowRegister.Add(currentRowList[index]);
+            }//end adding each requested row to rowRegister
+
+            return rowRegister;
+        }//end GetRowsAtIndices(indices)
+
+        public SendRowList viewRows;
+        /// <summary>
+        /// assembles list of rows at specified indices and tells view to
+        /// display them to the user
+        /// </summary>
+        /// <param name="indices">the indices of currentRowList which you'd like
+        /// to view</param>
+        public void ViewRowData(List<int> indices)
+        {
+            //verify all indices are valid
+            CheckIndices(indices);
+
+            //get rows at specified indices
+            List<Row> rowRegister = GetRowsAtIndices(indices);
+
+            //tell view to display specified rows
+            viewRows(rowRegister);
+        }//end ViewRowData(indices)
+
+        public SendRowList editRows;
+        /// <summary>
+        /// assembles list of rows at specified indices and tells view to allow
+        /// the user to edit them
+        /// </summary>
+        /// <param name="indices">the indices of currentRowList which you'd like
+        /// to edit</param>
+        public void EditRowData(List<int> indices)
+        {
+            //verify all indices are valid
+            CheckIndices(indices);
+
+            //get rows at specified indices
+            List<Row> rowRegister = GetRowsAtIndices(indices);
+
+            //tell view to allow user to edit specified rows
+            editRows(rowRegister);
+        }//end EditRowData(indices)
+
+        /// <summary>
+        /// Saves the row data of the specified rows at the specified indices
+        /// </summary>
+        /// <param name="rowIndexPairs">a dictionary which contains KeyValuePairs
+        /// for each row. The Key is the string which represents the row, and 
+        /// the value is the index of that row within the larger list</param>
+        public void SaveRowData(Dictionary<string, int> rowIndexPairs)
+        {
+            //verify all indices are valid
+            CheckIndices(rowIndexPairs.Values);
+
+            //start trying to get all the row data
+            try
+            {
+                //initialize dictionary to hold processed row data
+                Dictionary<Row, int> processedRowIndexPairs = new Dictionary<Row, int>();
+                
+                //make Row object from each row string and add it to our dictionary
+                foreach (string rowAsString in rowIndexPairs.Keys)
+                {
+                    //get row from string data
+                    Row newRow = new Row(rowAsString);
+
+                    //add that row to our new dictionary
+                    processedRowIndexPairs.Add(newRow, rowIndexPairs[rowAsString]);
+                }//end processing data for each row
+
+                //update our internal list of row information
+                foreach(Row newRow in processedRowIndexPairs.Keys)
+                {
+                    currentRowList[processedRowIndexPairs[newRow]] = newRow;
+                }//end updating internal list for each row
+
+                //update the row list in the view
+                updateSeedList(currentRowList);
+
+                //update log so user knows save operation was successful
+                AppendToHeaderLog($"Successfully saved {processedRowIndexPairs.Count}" +
+                    $" rows to internal reference list. To update file, select" +
+                    $" option to save data to a file.");
+            }//end trying to process all row strings
+            catch
+            {
+                //display error message to user
+                showMessage("One of the edited rows cannot be read. Please" +
+                    " fix formatting before trying to save it.", "Row Format" +
+                    " Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                //update log so user has record of failing to save seed data
+                AppendToHeaderLog($"{DateTime.Now:s} Row Data" +
+                    $" Save Operation Failed.");
+            }//end catching row string processing errors
+        }//end SaveRowData(rowIndexPairs)
+
+        /// <summary>
+        /// loads some information from the config file and sends
+        /// relevant information to the view
+        /// </summary>
+        public void OpenView()
+        {
+            List<string> data = fileIO.LoadConfigFile();
+
+            if(data != null)
+            {
+                try
+                {
+                    //load all the row information from config file
+                    List<Row> rows = fileIO.LoadFile(data[0]);
+
+                    //pass row info back to the view
+                    updateSeedList(rows);
+
+                    //update internal row listing
+                    currentRowList = rows;
+
+                    //update boolean flag
+                    IsFileCurrentlyLoaded = true;
+
+                    //update fileIO's most recently used file property
+                    fileIO.file = data[0];
+
+                    //try to determine whether we should wrap text
+                    bool wrapText = Convert.ToBoolean(data[1]);
+
+                    //tell the view whether we should wrap text
+                    setWordWrap(wrapText);
+
+                    //update log with recent file name and row count
+                    AppendToHeaderLog($"\nLoaded \"{fileIO.file}\"" +
+                        $" from config file with" +
+                        $" {currentRowList.Count} rows.");
+                }//end trying to get input from the config
+                catch
+                {
+                    //don't do anything
+                }//end catching any errors from reading the config
+            }//end if the data isn't null
+        }//end OpenView()
+
+        /// <summary>
+        /// saves current configuration information to the config file
+        /// </summary>
+        public void CloseView()
+        {
+            //saves configuration info to config file
+            fileIO.SaveConfigFile(wordsWrap());
+        }//end CloseView()
+
+        public SendString appendTextLog;
+        public void AppendToHeaderLog(string text)
+        {
+            appendTextLog(text);
+        }//end AppendToHeaderLog(text)
     }//end class
 }//end namespace

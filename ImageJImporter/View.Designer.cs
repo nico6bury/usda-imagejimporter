@@ -47,10 +47,10 @@ namespace ImageJImporter
             this.uxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.uxSaveSeed = new System.Windows.Forms.Button();
             this.uxHeaderLog = new System.Windows.Forms.TextBox();
+            this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
             this.uxSeedDisplayGroup = new System.Windows.Forms.GroupBox();
             this.uxGridDisplay = new System.Windows.Forms.GroupBox();
             this.uxStartReference = new System.Windows.Forms.Button();
-            this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
             this.ViewFormMenuStrip.SuspendLayout();
             this.uxSeedDisplayGroup.SuspendLayout();
             this.uxGridDisplay.SuspendLayout();
@@ -65,7 +65,7 @@ namespace ImageJImporter
             this.ViewFormMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.ViewFormMenuStrip.Name = "ViewFormMenuStrip";
             this.ViewFormMenuStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.ViewFormMenuStrip.Size = new System.Drawing.Size(1011, 28);
+            this.ViewFormMenuStrip.Size = new System.Drawing.Size(1025, 28);
             this.ViewFormMenuStrip.TabIndex = 0;
             this.ViewFormMenuStrip.Text = "menuStrip1";
             // 
@@ -150,7 +150,7 @@ namespace ImageJImporter
             this.uxSeedList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxSeedList.Name = "uxSeedList";
             this.uxSeedList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.uxSeedList.Size = new System.Drawing.Size(791, 224);
+            this.uxSeedList.Size = new System.Drawing.Size(846, 364);
             this.uxSeedList.TabIndex = 1;
             this.uxToolTip.SetToolTip(this.uxSeedList, "This is a list of all the seeds loaded into the program. You have to select a see" +
         "d here before you can edit or view its information.");
@@ -173,7 +173,7 @@ namespace ImageJImporter
             // 
             this.uxViewSeed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uxViewSeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxViewSeed.Location = new System.Drawing.Point(621, 220);
+            this.uxViewSeed.Location = new System.Drawing.Point(676, 220);
             this.uxViewSeed.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxViewSeed.Name = "uxViewSeed";
             this.uxViewSeed.Size = new System.Drawing.Size(182, 43);
@@ -182,7 +182,7 @@ namespace ImageJImporter
             this.uxToolTip.SetToolTip(this.uxViewSeed, "Allows you to view the data for the seed you have selected without the worry of a" +
         "ccidentally editing it.");
             this.uxViewSeed.UseVisualStyleBackColor = true;
-            this.uxViewSeed.Click += new System.EventHandler(this.ViewSeedData);
+            this.uxViewSeed.Click += new System.EventHandler(this.ViewRowData);
             // 
             // uxTextViewer
             // 
@@ -194,9 +194,10 @@ namespace ImageJImporter
             this.uxTextViewer.Multiline = true;
             this.uxTextViewer.Name = "uxTextViewer";
             this.uxTextViewer.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.uxTextViewer.Size = new System.Drawing.Size(796, 182);
+            this.uxTextViewer.Size = new System.Drawing.Size(851, 182);
             this.uxTextViewer.TabIndex = 5;
             this.uxTextViewer.TabStop = false;
+            this.uxTextViewer.Text = "1\t140.0\t4.3\t7.0\t45.0\t15.7\t9.8\t69.7\t0.8\t1.6\t0.6\t1.0";
             this.uxToolTip.SetToolTip(this.uxTextViewer, "This allows you to view the data for the seed you are editing. You can also save " +
         "the data for this seed by clicking a button.");
             // 
@@ -209,7 +210,7 @@ namespace ImageJImporter
             // 
             this.uxSaveSeed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uxSaveSeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxSaveSeed.Location = new System.Drawing.Point(323, 220);
+            this.uxSaveSeed.Location = new System.Drawing.Point(360, 220);
             this.uxSaveSeed.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxSaveSeed.Name = "uxSaveSeed";
             this.uxSaveSeed.Size = new System.Drawing.Size(182, 43);
@@ -229,10 +230,21 @@ namespace ImageJImporter
             this.uxHeaderLog.Name = "uxHeaderLog";
             this.uxHeaderLog.ReadOnly = true;
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.uxHeaderLog.Size = new System.Drawing.Size(812, 153);
+            this.uxHeaderLog.Size = new System.Drawing.Size(858, 153);
             this.uxHeaderLog.TabIndex = 7;
             this.uxHeaderLog.Text = "Hello and welcome to v2 of ImageJ Data Importation Program";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
+            // 
+            // uxCurrentDateTime
+            // 
+            this.uxCurrentDateTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uxCurrentDateTime.Location = new System.Drawing.Point(12, 31);
+            this.uxCurrentDateTime.Name = "uxCurrentDateTime";
+            this.uxCurrentDateTime.ReadOnly = true;
+            this.uxCurrentDateTime.Size = new System.Drawing.Size(858, 29);
+            this.uxCurrentDateTime.TabIndex = 9;
+            this.uxCurrentDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.uxToolTip.SetToolTip(this.uxCurrentDateTime, "Shows the current date and time");
             // 
             // uxSeedDisplayGroup
             // 
@@ -248,7 +260,7 @@ namespace ImageJImporter
             this.uxSeedDisplayGroup.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
             this.uxSeedDisplayGroup.Name = "uxSeedDisplayGroup";
             this.uxSeedDisplayGroup.Padding = new System.Windows.Forms.Padding(4, 4, 6, 0);
-            this.uxSeedDisplayGroup.Size = new System.Drawing.Size(819, 534);
+            this.uxSeedDisplayGroup.Size = new System.Drawing.Size(867, 643);
             this.uxSeedDisplayGroup.TabIndex = 6;
             this.uxSeedDisplayGroup.TabStop = false;
             this.uxSeedDisplayGroup.Text = "Seed Display";
@@ -259,7 +271,7 @@ namespace ImageJImporter
             this.uxGridDisplay.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.uxGridDisplay.Controls.Add(this.uxStartReference);
             this.uxGridDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxGridDisplay.Location = new System.Drawing.Point(901, 32);
+            this.uxGridDisplay.Location = new System.Drawing.Point(915, 31);
             this.uxGridDisplay.Name = "uxGridDisplay";
             this.uxGridDisplay.Size = new System.Drawing.Size(110, 120);
             this.uxGridDisplay.TabIndex = 8;
@@ -272,27 +284,16 @@ namespace ImageJImporter
             this.uxStartReference.Name = "uxStartReference";
             this.uxStartReference.Size = new System.Drawing.Size(75, 41);
             this.uxStartReference.TabIndex = 0;
-            this.uxStartReference.Text = "button1";
+            this.uxStartReference.Text = "Reference Button";
             this.uxStartReference.UseVisualStyleBackColor = true;
             this.uxStartReference.Visible = false;
-            // 
-            // uxCurrentDateTime
-            // 
-            this.uxCurrentDateTime.Enabled = false;
-            this.uxCurrentDateTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxCurrentDateTime.Location = new System.Drawing.Point(12, 31);
-            this.uxCurrentDateTime.Name = "uxCurrentDateTime";
-            this.uxCurrentDateTime.Size = new System.Drawing.Size(812, 29);
-            this.uxCurrentDateTime.TabIndex = 9;
-            this.uxCurrentDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.uxToolTip.SetToolTip(this.uxCurrentDateTime, "Shows the current date and time");
             // 
             // View
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(855, 481);
+            this.ClientSize = new System.Drawing.Size(938, 498);
             this.Controls.Add(this.uxCurrentDateTime);
             this.Controls.Add(this.uxGridDisplay);
             this.Controls.Add(this.uxHeaderLog);

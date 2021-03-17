@@ -23,22 +23,6 @@ namespace ImageJImporter
     public partial class View : Form
     {
         /// <summary>
-        /// function pointer for HandleFileIO in controller. set up in program.cs
-        /// </summary>
-        public HandleFileIO handleFileIO;
-
-        /// <summary>
-        /// function pointer for HandleSeedData in controller. set up in program.cs
-        /// </summary>
-        public HandleSeedData handleSeedData;
-
-        /// <summary>
-        /// function pointer for HandleOpenCloseRequest in controller. set up in
-        /// program.cs
-        /// </summary>
-        public HandleOpenClose handleOpenClose;
-
-        /// <summary>
         /// function pointer for GiveCurrentFilename in controller. set up in
         /// program.cs
         /// </summary>
@@ -88,18 +72,17 @@ namespace ImageJImporter
             };
             timer.Elapsed += UpdateCurrentDateTime;
 
-            dellagateName = ChangeDateTimeText;
+            sendDateTime = ChangeDateTimeText;
+            sendLogAppendation = AppendTextLogHelperMethod;
         }//end constructor
 
+        private SendString sendDateTime;
         private void UpdateCurrentDateTime(object sender, System.Timers.ElapsedEventArgs e)
         {
             object[] args = new object[1];
             args[0] = DateTime.Now.ToString();
-            this.BeginInvoke(dellagateName, args);
+            this.BeginInvoke(sendDateTime, args);
         }//end timer elapsed event args
-
-        private delegate void Dellagate(string text);
-        private Dellagate dellagateName;
 
         private void ChangeDateTimeText(string text)
         {
@@ -161,11 +144,11 @@ namespace ImageJImporter
 
                 //draw other stuff
                 e.DrawFocusRectangle();
-            }
+            }//end trying to change the row color
             catch
             {
 
-            }
+            }//end catching errors
         }//end DynamicallySetRowColor handler
 
         /// <summary>
@@ -185,7 +168,8 @@ namespace ImageJImporter
         /// updates the seed list in the view with new cell data
         /// </summary>
         /// <param name="data"></param>
-        public void UpdateSeedList(List<Row> data)
+        /// <returns>returns whether the operation was successful</returns>
+        public bool UpdateRowList(List<Row> data)
         {
             /// Note about the data type of uxSeedList: 
             /// uxSeedList is a ListBox, which means that
@@ -214,7 +198,10 @@ namespace ImageJImporter
 
             //build the button grid
             BuildButtonGrid(currentRowList);
-        }//end UpdateSeedList(data)
+
+            //tell whoever called us that the operation was successful
+            return true;
+        }//end SendRowList(data)
 
         private void BuildButtonGrid(List<Row> rows)
         {
@@ -287,7 +274,7 @@ namespace ImageJImporter
         /// <summary>
         /// closes the file and mostly resets things
         /// </summary>
-        public void CloseSeedList()
+        public void CloseRowList()
         {
             //clear the seeds displayed in the list
             uxSeedList.DataSource = null;
@@ -300,44 +287,7 @@ namespace ImageJImporter
 
             //disable the elements for editing seeds so they can't be interacted with by the user
             uxSeedDisplayGroup.Enabled = false;
-        }//end CloseSeedList()
-
-        /// <summary>
-        /// updates which seed should be displayed in the editing box
-        /// </summary>
-        /// <param name="index">the index of the seed in the list of seeds which
-        /// you want to view or edit</param>
-        /// <param name="request">The type of request that was made. Valid request types are
-        /// ViewSeedData and EditSeedData</param>
-        public void ChangeSeedSelected(int index, Request request)
-        {
-            //check to make sure the request is valid
-            if (request == Request.ViewSeedData || request == Request.EditSeedData)
-            {
-                //grab correct seed from list. If item is not seed, then it will be set to null
-                Row requestedSeed = uxSeedList.Items[index] as Row;
-
-                //check to make sure requestedSeed isn't null (this could otherwise cause problems later)
-                if (requestedSeed == null)
-                {
-                    throw new ArgumentNullException("Data for requested seed at index is null");
-                }//end if requestedSeed is null
-
-                //set the text to be that of the seed's data
-                uxTextViewer.Text = requestedSeed.FormatData(false);
-
-                //set the textbox to ReadOnly if request is view, editable otherwise
-                uxTextViewer.ReadOnly = (request == Request.ViewSeedData);
-
-                //update current seed index
-                currentRowIndex = index;
-            }//end if request is either to view or edit seed data
-            else
-            {
-                MessageBox.Show($"{request} is not a valid request for seed index selection.",
-                        "Invalid Request", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }//end else an invalid request was sent
-        }//end ChangeSeedSelected(index)
+        }//end CloseRowList()
 
         /// <summary>
         /// just returns whether or not text is allowed to wrap to the next line
@@ -360,6 +310,7 @@ namespace ImageJImporter
             uxTextViewer.WordWrap = wordWrap;
         }//end SetWordWrap(wordWrap)
 
+        public CallMethod openFile;
         /// <summary>
         /// this method runs when the uxMenuOpenFile button is clicked. It uses
         /// a delegate to tell the Controller to open a file
@@ -369,53 +320,50 @@ namespace ImageJImporter
         /// stored here</param>
         private void OpenFile(object sender, EventArgs e)
         {
-            //get the file name from the user
-            string filename = "";
-
-            /// so a while ago, I was having some problems in which openFileDialog.Show()
-            /// would result in the program freezing with no error message or anything. It
-            /// was fixed by creating openFileDialog in the using statement, which means it
-            /// is disposed of before this method ends. Thanks to Max for helping me with this
-            //create and use OpenFileDialog, a class provided by Microsoft for selecting a file
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.ShowHelp = true;
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    filename = openFileDialog.FileName;
-                }//end if dialog was not cancelled by user
-            }//end use of openFileDialog
-
-            if(filename != "")
-            {
-                //initialize single length array of objects
-                object[] args = new object[1];
-
-                //put the name of the file into the args
-                args[0] = (object)filename;
-
-                //tell the controller we need to open the file named in args
-                handleFileIO(Request.OpenFile, args);
-            }//end if filename is not blank
-
-            AppendTextToLog($"\nLoaded \"{requestFileName()}\" with {currentRowList.Count} rows.");
+            //asks controller to open a new file
+            openFile();
         }//end event handler for opening a file
 
-        private void AppendTextToLog(string text)
+        /// <summary>
+        /// appends text to the current log. Each method call creates
+        /// a new line, but at present the \n character doesn't affect
+        /// things.
+        /// </summary>
+        /// <param name="text">the new line of text to add to
+        /// the log</param>
+        public void AppendTextToLog(string text)
+        {
+            //set up args to send through BeginInvoke
+            object[] args = new object[1];
+            args[0] = text;
+
+            //assynchronously begin invokation on new thread
+            this.BeginInvoke(sendLogAppendation, args);
+        }//end AppendTextToLog(text)
+
+        private SendString sendLogAppendation;
+        /// <summary>
+        /// Helper method for AppendTextToLog. Actually handles the
+        /// appendation of new lines to the row editor, though each
+        /// invokation only adds one new line, as the textbox we're
+        /// appending to doesn't accept the \n character.
+        /// </summary>
+        private void AppendTextLogHelperMethod(string text)
         {
             string[] newLines = new string[uxHeaderLog.Lines.Length + 1];
-            for(int i = 0; i < uxHeaderLog.Lines.Length; i++)
+            for (int i = 0; i < uxHeaderLog.Lines.Length; i++)
             {
                 newLines[i] = uxHeaderLog.Lines[i];
             }//end adding old lines to new
-            
+
             //add new line
             newLines[newLines.Length - 1] = text;
 
             //update the textbox
             uxHeaderLog.Lines = newLines;
-        }//end AppendTextToLog(text)
+        }//end AppendTextLogHelperMethod(text)
 
+        public CallMethod saveFile;
         /// <summary>
         /// this method runs when the uxMenuSaveFile button is clicked. It uses a
         /// delegate to tell the Controller to save the file we loaded earlier
@@ -425,23 +373,11 @@ namespace ImageJImporter
         /// stored here</param>
         private void SaveFile(object sender, EventArgs e)
         {
-            if (uxSeedDisplayGroup.Enabled)
-            {
-                //set up an array of objects to send to the controller
-                object[] data = new object[1];
-
-                //add the current list of seeds to the data
-                data[0] = currentRowList;
-
-                //tell the controller we want to save our current file with our current cell list
-                handleFileIO(Request.SaveFile, data);
-            }//end if we have a file open
-            else
-            {
-                NoFileLoadedMessage();
-            }//end else we don't have anything open yet
+            //tell controller to save our current file
+            saveFile();
         }//end event handler for saving a file
 
+        public CallMethod saveFileAs;
         /// <summary>
         /// this method runs when the uxMenuSaveFileAs button is clicked. It uses
         /// a delegate to tell the Controller to save the data loaded as a new file
@@ -451,48 +387,10 @@ namespace ImageJImporter
         /// stored here</param>
         private void SaveFileAs(object sender, EventArgs e)
         {
-            if (uxSeedDisplayGroup.Enabled)
-            {
-                //set up a string variable to hold the filename
-                string filename = "";
-
-                //open saveFileDialog to ask user where to save file
-                using(SaveFileDialog saveFile = new SaveFileDialog())
-                {
-                    //tells saveFile to warn the user if they select to overwrite a file
-                    saveFile.OverwritePrompt = true;
-
-                    //only update filename if user clicks ok
-                    if(saveFile.ShowDialog() == DialogResult.OK)
-                    {
-                        //save the name of the file for later
-                        filename = saveFile.FileName;
-                    }//end if the user clicked ok
-                }//end use of save file dialog
-
-                //we only want to save if the user selected a file, otherwise nothing happens
-                if(filename != "")
-                {
-                    //set up an array of objects to send to the controller
-                    object[] data = new object[2];
-
-                    //add the current list of seeds to the data
-                    data[0] = currentRowList;
-
-                    //add the filename we'll save to the data
-                    data[1] = filename;
-
-                    //tell the controller we want to save our current file with our current cell list
-                    handleFileIO(Request.SaveFileAs, data);
-                }//end if we can continue
-            }//end if we have a file open
-            else
-            {
-                //display error message for no file loaded
-                NoFileLoadedMessage();
-            }//end else we don't have anything open yet
+            saveFileAs();
         }//end event handler for creating a new file
 
+        public CallMethod closeFile;
         /// <summary>
         /// this method runs when the uxMenuCloseFile button is clicked. It uses a
         /// delegate to tell the Controller to close the file currently loaded
@@ -502,10 +400,44 @@ namespace ImageJImporter
         /// stored here</param>
         private void CloseFile(object sender, EventArgs e)
         {
-            //tell the controller to tell us to close the file
-            handleFileIO(Request.CloseFile, null);
+            closeFile();
         }//end event handler for closing a file
 
+        /// <summary>
+        /// updates the the uxTextViewer textbox. Copies the list
+        /// provided so you don't have to worry about accidentally
+        /// passing references
+        /// </summary>
+        /// <param name="rows">the rows to update the textbox
+        /// with</param>
+        /// <returns>whether or not the operation was
+        /// successful</returns>
+        private bool SetSelectedRows(List<Row> rows)
+        {
+            try
+            {
+                //initialize and build new array of row data
+                string[] rowArray = new string[rows.Count];
+                for(int i = 0; i < rows.Count; i++)
+                {
+                    //adds a deep copy of current row to rowArray
+                    rowArray[i] = rows[i].ToString();
+                }//end copying each row over
+
+                //update uxTextViewer with new row info
+                uxTextViewer.Lines = rowArray;
+
+                //tell whoever called us that we were successful
+                return true;
+            }//end trying to set the selected rows
+            catch
+            {
+                //I guess something went wrong, so return false
+                return false;
+            }//end catching errors
+        }//end SetSelectedRows(rows)
+
+        public CallMethodWithInts viewRows;
         /// <summary>
         /// this method runs when the uxViewSeed button is clicked. It uses a delegate
         /// to tell the Controller to send us seed data to display
@@ -513,18 +445,46 @@ namespace ImageJImporter
         /// <param name="sender">the object that sent this event</param>
         /// <param name="e">if there are any arguments for the event, they're
         /// stored here</param>
-        private void ViewSeedData(object sender, EventArgs e)
+        private void ViewRowData(object sender, EventArgs e)
         {
-            //create the array of arguments to send to the controller
-            object[] args = new object[1];
+            //make list of selected indices and populate it with data
+            List<int> indices = new List<int>();
+            foreach(int index in uxSeedList.SelectedIndices)
+            {
+                indices.Add(index);
+            }//end adding all selected indices to indices
 
-            //add information to the args
-            args[0] = uxSeedList.SelectedIndex;
-
-            //tell the controller to tell us what to do
-            handleSeedData(Request.ViewSeedData, args);
+            //tell controller to view selected indices
+            viewRows(indices);
         }//end event handler for viewing seed data
 
+        /// <summary>
+        /// allows the specified rows to be viewed by the user
+        /// in the text viewer/editor
+        /// </summary>
+        /// <param name="rows">the rows to make viewable</param>
+        /// <returns>returns whether the operation was successful</returns>
+        public bool SetRowViewability(List<Row> rows)
+        {
+            try
+            {
+                //update selected rows and return false if we fail
+                if (!SetSelectedRows(rows)) return false;
+
+                //make it so the user can't edit the text
+                uxTextViewer.ReadOnly = true;
+
+                //we got here, so i guess we succeeded
+                return true;
+            }//end try block
+            catch
+            {
+                //an error happened, so I guess we failed
+                return false;
+            }//end catch block
+        }//end SetRowViewable(rows)
+
+        public CallMethodWithInts editRows;
         /// <summary>
         /// this method runs when the uxEditSeed button is clicked. It uses a delegate
         /// to tell the Controller to send us seed data to edit
@@ -534,16 +494,44 @@ namespace ImageJImporter
         /// stored here</param>
         private void EditSeedData(object sender, EventArgs e)
         {
-            //create the array of arguments to send to the controller
-            object[] args = new object[1];
+            //make list of selected indices and populate it with data
+            List<int> indices = new List<int>();
+            foreach (int index in uxSeedList.SelectedIndices)
+            {
+                indices.Add(index);
+            }//end adding all selected indices to indices
 
-            //add information to the args
-            args[0] = uxSeedList.SelectedIndex;
-
-            //tell the controller to tell us what to do
-            handleSeedData(Request.EditSeedData, args);
+            //tell controller to view selected indices
+            editRows(indices);
         }//end event handler for editing seed data
 
+        /// <summary>
+        /// allows the specified rows to be edited by the user
+        /// in the text viewer/editor
+        /// </summary>
+        /// <param name="rows">the rows to make editable</param>
+        /// <returns>returns whether the operation was successful</returns>
+        public bool SetRowEditability(List<Row> rows)
+        {
+            try
+            {
+                //update selected rows and return false if we fail
+                if (!SetSelectedRows(rows)) return false;
+
+                //make it so the user can edit the text
+                uxTextViewer.ReadOnly = false;
+
+                //we got here, so i guess we succeeded
+                return true;
+            }//end try block
+            catch
+            {
+                //an error happened, so I guess we failed
+                return false;
+            }//end catch block
+        }//end SetRowEditability(row)
+
+        public CallMethodWithRowStringDictionary saveRows;
         /// <summary>
         /// this method runs when the uxSaveSeed button is clicked. It uses a delegate
         /// to tell the Controller to save the seed data we're about to send it
@@ -553,33 +541,35 @@ namespace ImageJImporter
         /// stored here</param>
         private void SaveSeedData(object sender, EventArgs e)
         {
-            //set up the object array we'll pass to the controller
-            object[] data = new object[3];
+            /*
+             * Note: Current method of getting index from a row is a bit jank.
+             * It would be good to update it with something a little cleaner in
+             * the future.
+             */
 
-            //add the full list to the object array
-            data[0] = currentRowList;
+            //initialize dictionary to send to controller
+            Dictionary<string, int> rowIndexPairs = new Dictionary<string, int>();
 
-            //add the index of the seed to the array
-            data[1] = currentRowIndex;
+            //start processing each row in the row viewer/editor
+            foreach(string row in uxTextViewer.Lines)
+            {
+                string[] rowComponents = row.Split('\t');
 
-            //format the text for the new seed to add to the array
-            StringBuilder lineBuilder = new StringBuilder();
-            Row selectedSeed = (Row)uxSeedList.Items[currentRowIndex];
+                //theoretically, the first item in the row should be its row number
+                int index = Convert.ToInt32(rowComponents[0]);
 
-            //add back the seed number plus the tab after it
-            lineBuilder.Append(selectedSeed.RowNum);
-            lineBuilder.Append("\t");
+                //convert row number to row index
+                index--;
 
-            //add the rest of the edited text to the line
-            lineBuilder.Append(uxTextViewer.Text);
+                //add new dictionary item with this row and what its index probably is
+                rowIndexPairs.Add(row, index);
+            }//end looping over each line in uxTextViewer
 
-            //actually put that line into the array
-            data[2] = lineBuilder.ToString();
-
-            //tell the controller that we want it to tell us to update one of the seeds
-            handleSeedData(Request.SaveSeedData, data);
+            //tell controller to save specified seed data
+            saveRows(rowIndexPairs);
         }//end event handler for saving seed data
 
+        public CallMethod formOpening;
         /// <summary>
         /// event for when the form opens. Does startup things
         /// </summary>
@@ -588,12 +578,11 @@ namespace ImageJImporter
         /// stored here</param>
         private void OpenForm(object sender, EventArgs e)
         {
-            //tell the controller that we just started up, so it needs to send us info on what to do
-            handleOpenClose(Request.StartApplication);
-
-            AppendTextToLog($"\nLoaded \"{requestFileName()}\" with {currentRowList.Count} rows.");
+            //tell the controller we are in the process of opening
+            formOpening();
         }//end event handler for opening the form
 
+        public CallMethod formClosing;
         /// <summary>
         /// event for right before the form closes. Saves settings for next time
         /// </summary>
@@ -602,8 +591,8 @@ namespace ImageJImporter
         /// stored here</param>
         private void CloseForm(object sender, FormClosingEventArgs e)
         {
-            //tell the controller than we're about to close so it can do stuff before that happens
-            handleOpenClose(Request.CloseApplication);
+            //tell the controller we want to close
+            formClosing();
         }//end event handler for closing the form
 
         /// <summary>
@@ -636,16 +625,9 @@ namespace ImageJImporter
         /// stored here</param>
         private void AskForFilename(object sender, EventArgs e)
         {
-            if (uxSeedDisplayGroup.Enabled)
-            {
-                //ask the controller to tell us to display the filename
-                handleFileIO(Request.AskFilename, null);
-            }//end if a file is loaded
-            else
-            {
-                //display the message for not having a file loaded
-                NoFileLoadedMessage();
-            }//end else there isn't a file loaded
+            MessageBox.Show("That button\'s functionality is currently" +
+                " not implemented. Please don't click it.");
+            uxCurrentFilenameRequest.Enabled = false;
         }//end AskForFilename event handler
     }//end class
 }//end namespace
