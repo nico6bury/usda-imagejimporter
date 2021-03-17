@@ -87,7 +87,7 @@ namespace ImageJImporter
         private void ChangeDateTimeText(string text)
         {
             uxCurrentDateTime.Text = text;
-        }
+        }//end ChangeDateTimeText(text)
 
         private void UxSeedList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -310,6 +310,38 @@ namespace ImageJImporter
             uxTextViewer.WordWrap = wordWrap;
         }//end SetWordWrap(wordWrap)
 
+        /// <summary>
+        /// Gets a new filename from the user based on what request type they specify.
+        /// Currently accepted request types are OpenFile and SaveFileAs. Returns null
+        /// if user selected to not select a file
+        /// </summary>
+        /// <param name="request">The type of request for a new filename that
+        /// you are making</param>
+        public string GetNewFilename(Request request)
+        {
+            string filename = null;
+            switch (request)
+            {
+                case Request.OpenFile:
+                    using(OpenFileDialog openDialog = new OpenFileDialog())
+                    {
+                        if (openDialog.ShowDialog() == DialogResult.OK) filename = openDialog.FileName;
+                    }//end use of openDialog
+                    break;
+                case Request.SaveFileAs:
+                    using(SaveFileDialog saveDialog = new SaveFileDialog())
+                    {
+                        if (saveDialog.ShowDialog() == DialogResult.OK) filename = saveDialog.FileName;
+                    }//end use of saveDialog
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException($"The specified" +
+                        $" request {request} is not a valid parameter for GetFilename.");
+            }//end switch case
+
+            return filename;
+        }//end GetNewFilename(request)
+
         public CallMethod openFile;
         /// <summary>
         /// this method runs when the uxMenuOpenFile button is clicked. It uses
@@ -353,11 +385,12 @@ namespace ImageJImporter
             string[] newLines = new string[uxHeaderLog.Lines.Length + 1];
             for (int i = 0; i < uxHeaderLog.Lines.Length; i++)
             {
+                //adds new line of text along with a time-stamp
                 newLines[i] = uxHeaderLog.Lines[i];
             }//end adding old lines to new
 
             //add new line
-            newLines[newLines.Length - 1] = text;
+            newLines[newLines.Length - 1] = $"{DateTime.Now:T} " + text;
 
             //update the textbox
             uxHeaderLog.Lines = newLines;

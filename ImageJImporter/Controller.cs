@@ -51,7 +51,7 @@ namespace ImageJImporter
         /// <summary>
         /// function pointer to request a new filename from the view
         /// </summary>
-        public RequestString getNewFilename;
+        public RequestSpecificString getNewFilename;
 
         /// <summary>
         /// the list of rows that is currently being displayed or used
@@ -86,8 +86,8 @@ namespace ImageJImporter
         public void OpenDataFile()
         {
             //get filename from the view
-            string filename = getNewFilename();
-            if (filename != "")
+            string filename = getNewFilename(Request.OpenFile);
+            if (filename != null)
             {
                 //get the row list from the file
                 List<Row> curList = fileIO.LoadFile(filename);
@@ -109,7 +109,7 @@ namespace ImageJImporter
                     IsFileCurrentlyLoaded = true;
 
                     //update log
-                    AppendToHeaderLog($"\nLoaded \"{filename}\" with {currentRowList.Count} rows.");
+                    AppendToHeaderLog($"Loaded \"{filename}\" with {currentRowList.Count} rows.");
                 }//end if operation was successful
                 else
                 {
@@ -149,8 +149,8 @@ namespace ImageJImporter
             if (IsFileCurrentlyLoaded)
             {
                 //get the filename from the 
-                string newFileName = getNewFilename();
-                if(newFileName != "")
+                string newFileName = getNewFilename(Request.SaveFileAs);
+                if(newFileName != null)
                 {
                     //save the row information as the specified filename
                     fileIO.SaveFile(newFileName, currentRowList);
@@ -316,7 +316,7 @@ namespace ImageJImporter
                     " Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 //update log so user has record of failing to save seed data
-                AppendToHeaderLog($"{DateTime.Now:s} Row Data" +
+                AppendToHeaderLog($"Row Data" +
                     $" Save Operation Failed.");
             }//end catching row string processing errors
         }//end SaveRowData(rowIndexPairs)
@@ -355,7 +355,7 @@ namespace ImageJImporter
                     setWordWrap(wrapText);
 
                     //update log with recent file name and row count
-                    AppendToHeaderLog($"\nLoaded \"{fileIO.file}\"" +
+                    AppendToHeaderLog($"Loaded \"{fileIO.file}\"" +
                         $" from config file with" +
                         $" {currentRowList.Count} rows.");
                 }//end trying to get input from the config

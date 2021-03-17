@@ -84,7 +84,7 @@ namespace ImageJImporter
             // uxMenuOpenFile
             // 
             this.uxMenuOpenFile.Name = "uxMenuOpenFile";
-            this.uxMenuOpenFile.Size = new System.Drawing.Size(129, 24);
+            this.uxMenuOpenFile.Size = new System.Drawing.Size(180, 24);
             this.uxMenuOpenFile.Text = "Open";
             this.uxMenuOpenFile.ToolTipText = "Allows you to load a file into the program. It\'s meant to use .txt files, so I\'m " +
     "not sure what would happen if you imported other file types.";
@@ -93,7 +93,7 @@ namespace ImageJImporter
             // uxMenuSaveFile
             // 
             this.uxMenuSaveFile.Name = "uxMenuSaveFile";
-            this.uxMenuSaveFile.Size = new System.Drawing.Size(129, 24);
+            this.uxMenuSaveFile.Size = new System.Drawing.Size(180, 24);
             this.uxMenuSaveFile.Text = "Save";
             this.uxMenuSaveFile.ToolTipText = "Allows you to save the current data back into the original file you opened.";
             this.uxMenuSaveFile.Click += new System.EventHandler(this.SaveFile);
@@ -101,7 +101,7 @@ namespace ImageJImporter
             // uxMenuSaveFileAs
             // 
             this.uxMenuSaveFileAs.Name = "uxMenuSaveFileAs";
-            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(129, 24);
+            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(180, 24);
             this.uxMenuSaveFileAs.Text = "Save As";
             this.uxMenuSaveFileAs.ToolTipText = "Allows you to save the seed data you\'ve edited as a new .txt file with the same s" +
     "tructure as the original file.";
@@ -110,7 +110,7 @@ namespace ImageJImporter
             // uxMenuCloseFile
             // 
             this.uxMenuCloseFile.Name = "uxMenuCloseFile";
-            this.uxMenuCloseFile.Size = new System.Drawing.Size(129, 24);
+            this.uxMenuCloseFile.Size = new System.Drawing.Size(180, 24);
             this.uxMenuCloseFile.Text = "Close";
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
@@ -151,7 +151,7 @@ namespace ImageJImporter
             this.uxSeedList.Name = "uxSeedList";
             this.uxSeedList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.uxSeedList.Size = new System.Drawing.Size(846, 364);
-            this.uxSeedList.TabIndex = 1;
+            this.uxSeedList.TabIndex = 5;
             this.uxToolTip.SetToolTip(this.uxSeedList, "This is a list of all the seeds loaded into the program. You have to select a see" +
         "d here before you can edit or view its information.");
             // 
@@ -195,9 +195,8 @@ namespace ImageJImporter
             this.uxTextViewer.Name = "uxTextViewer";
             this.uxTextViewer.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.uxTextViewer.Size = new System.Drawing.Size(851, 182);
-            this.uxTextViewer.TabIndex = 5;
+            this.uxTextViewer.TabIndex = 1;
             this.uxTextViewer.TabStop = false;
-            this.uxTextViewer.Text = "1\t140.0\t4.3\t7.0\t45.0\t15.7\t9.8\t69.7\t0.8\t1.6\t0.6\t1.0";
             this.uxToolTip.SetToolTip(this.uxTextViewer, "This allows you to view the data for the seed you are editing. You can also save " +
         "the data for this seed by clicking a button.");
             // 
@@ -231,7 +230,7 @@ namespace ImageJImporter
             this.uxHeaderLog.ReadOnly = true;
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.uxHeaderLog.Size = new System.Drawing.Size(858, 153);
-            this.uxHeaderLog.TabIndex = 7;
+            this.uxHeaderLog.TabIndex = 0;
             this.uxHeaderLog.Text = "Hello and welcome to v2 of ImageJ Data Importation Program";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
             // 

@@ -79,6 +79,13 @@ namespace ImageJImporter
     public delegate string RequestString();
 
     /// <summary>
+    /// Allows you to request a specific string based on request type
+    /// </summary>
+    /// <param name="request">the type of string you're requesting</param>
+    /// <returns>hopefully the string you requested</returns>
+    public delegate string RequestSpecificString(Request request);
+
+    /// <summary>
     /// Allows you to send a string somewhere
     /// </summary>
     /// <param name="text">the string you want to send</param>

@@ -64,6 +64,7 @@ namespace ImageJImporter
             controller.viewRows = view.SetRowViewability;
             controller.editRows = view.SetRowEditability;
             controller.appendTextLog = view.AppendTextToLog;
+            controller.getNewFilename = view.GetNewFilename;
 
             //this causes the application to actually run
             Application.Run(view);
