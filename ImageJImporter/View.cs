@@ -28,18 +28,6 @@ namespace ImageJImporter
         /// </summary>
         public RequestString requestFileName;
 
-        /// <summary>
-        /// holds which seed index we're currently looking at. Set to -1 if not looking
-        /// at any seeds (for instance if the file is closed)
-        /// </summary>
-        private int currentRowIndex;
-
-        /// <summary>
-        /// holds the current seed list we're displaying. set to null if nothing
-        /// displayed
-        /// </summary>
-        private List<Row> currentRowList;
-
         private System.Drawing.Size defaultListBoxSize;
 
         private Brush selectedTextColor = Brushes.LightSkyBlue;
@@ -57,14 +45,12 @@ namespace ImageJImporter
             InitializeComponent();
 
             //set local variables to initial values
-            currentRowIndex = -1;
-            currentRowList = null;
-            defaultListBoxSize = uxSeedList.Size;
-            //uxSeedList.AutoSize = true;
-            //uxSeedDisplayGroup.AutoSize = true;
-            //uxSeedList.DrawMode = DrawMode.OwnerDrawFixed;
-            //uxSeedList.DrawItem += new DrawItemEventHandler(DynamicallySetRowColor);
-            //uxSeedList.SelectedIndexChanged += UxSeedList_SelectedIndexChanged;
+            defaultListBoxSize = uxRowList.Size;
+            //uxRowList.AutoSize = true;
+            //uxRowDisplayGroup.AutoSize = true;
+            //uxRowList.DrawMode = DrawMode.OwnerDrawFixed;
+            //uxRowList.DrawItem += new DrawItemEventHandler(DynamicallySetRowColor);
+            //uxRowList.SelectedIndexChanged += UxSeedList_SelectedIndexChanged;
             timer = new System.Timers.Timer(1000)
             {
                 AutoReset = true,
@@ -88,12 +74,6 @@ namespace ImageJImporter
         {
             uxCurrentDateTime.Text = text;
         }//end ChangeDateTimeText(text)
-
-        private void UxSeedList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            uxSeedList.DataSource = null;
-            uxSeedList.DataSource = currentRowList;
-        }//end 
 
         private void DynamicallySetRowColor(object sender, DrawItemEventArgs e)
         {
@@ -171,38 +151,86 @@ namespace ImageJImporter
         /// <returns>returns whether the operation was successful</returns>
         public bool UpdateRowList(List<Row> data)
         {
-            /// Note about the data type of uxSeedList: 
-            /// uxSeedList is a ListBox, which means that
+            /// Note about the data type of uxRowList: 
+            /// uxRowList is a ListBox, which means that
             /// the items it displays are not updated when
             /// items in its data source are updated. Instead,
             /// whenever one or all the items are updated, you
             /// have to set the data source to null and then whatever
             /// you want it to display
 
-            uxSeedList.Size = defaultListBoxSize;
-            uxSeedList.DataSource = null;
-            currentRowList = data;
-            uxSeedList.DataSource = currentRowList;
+            uxRowList.Size = defaultListBoxSize;
+            uxRowList.DataSource = null;
+            uxRowList.DataSource = data;
 
-            //if(uxSeedList.Items.Count > 30)
+            //if(uxRowList.Items.Count > 30)
             //{
-            //    uxSeedList.Size = new Size(defaultListBoxSize.Width, 20 * uxSeedList.Items.Count);
+            //    uxRowList.Size = new Size(defaultListBoxSize.Width, 20 * uxRowList.Items.Count);
             //}//end if we should resize the listbox
             //else
             //{
-            //    uxSeedList.Size = defaultListBoxSize;
+            //    uxRowList.Size = defaultListBoxSize;
             //}//end else we want to reset the size
 
             //makes the controls which allow editing/viewing interactable by the user
-            uxSeedDisplayGroup.Enabled = true;
+            uxRowDisplayGroup.Enabled = true;
 
             //build the button grid
-            BuildButtonGrid(currentRowList);
+            BuildButtonGrid(data);
 
             //tell whoever called us that the operation was successful
             return true;
         }//end SendRowList(data)
 
+        /// <summary>
+        /// This event handler is called whenever the selected indices of
+        /// uxRowList change. It simply updates which rows are displayed in
+        /// the uxTextViewer
+        /// </summary>
+        /// <param name="sender">the object that sent this event</param>
+        /// <param name="e">if there are any arguments for the event, they're
+        /// stored here</param>
+        private void SelectedRowInListChanged(object sender, EventArgs e)
+        {
+            //make sure sender is a listbox and has at least one index selected
+            ListBox list = sender as ListBox;
+            if (list == null || list.SelectedIndex < 0) return;
+
+            //make sure at least one button is pressed, and the whole group box is enabled
+            if((!uxViewRow.Enabled || !uxEditRow.Enabled) && uxRowDisplayGroup.Enabled)
+            {
+                //get the list of currently selected indices
+                List<int> indices = GetSelectedIndexList(list);
+
+                if (uxViewRow.Enabled == false)
+                {
+                    //tell controller we want to view rows
+                    viewRows(indices);
+                }//end if we're viewing rows
+                else if (uxEditRow.Enabled == false)
+                {
+                    //tell controller we want to edit rows
+                    editRows(indices);
+                }//end else if we're editing rows
+            }//end if we should do anything
+        }//end SelectedRowInListChanged event handler
+
+        /// <summary>
+        /// Event for uxLockListSelection being clicked
+        /// </summary>
+        /// <param name="sender">the object that sent this event</param>
+        /// <param name="e">if there are any arguments for the event, they're
+        /// stored here</param>
+        private void uxLockListSelectionClick(object sender, EventArgs e)
+        {
+            //toggles uxRowList enabled property
+            uxRowList.Enabled = !uxRowList.Enabled;
+        }//end uxLockListSelectionClick event handler
+
+        /// <summary>
+        /// builds the grid of buttons that represents the current grid. Very WIP
+        /// </summary>
+        /// <param name="rows">the list of rows to build as a grid</param>
         private void BuildButtonGrid(List<Row> rows)
         {
             //set up our 2d list
@@ -261,6 +289,12 @@ namespace ImageJImporter
             }//end looping over first dimension
         }//end BuildButtonGrid(rows)
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender">the object that sent this event</param>
+        /// <param name="e">if there are any arguments for the event, they're
+        /// stored here</param>
         private void GridButtonClickEvent(object sender, EventArgs e)
         {
             //get our button from sender and don't do anything if not right type
@@ -277,16 +311,16 @@ namespace ImageJImporter
         public void CloseRowList()
         {
             //clear the seeds displayed in the list
-            uxSeedList.DataSource = null;
+            uxRowList.DataSource = null;
 
             //clear the text in the editing/viewing box
             uxTextViewer.Text = "";
 
             //reset listbox
-            uxSeedList.Size = defaultListBoxSize;
+            uxRowList.Size = defaultListBoxSize;
 
             //disable the elements for editing seeds so they can't be interacted with by the user
-            uxSeedDisplayGroup.Enabled = false;
+            uxRowDisplayGroup.Enabled = false;
         }//end CloseRowList()
 
         /// <summary>
@@ -316,7 +350,7 @@ namespace ImageJImporter
         /// if user selected to not select a file
         /// </summary>
         /// <param name="request">The type of request for a new filename that
-        /// you are making</param>
+        /// you are making. Either OpenFile or SaveFileAs</param>
         public string GetNewFilename(Request request)
         {
             string filename = null;
@@ -470,9 +504,25 @@ namespace ImageJImporter
             }//end catching errors
         }//end SetSelectedRows(rows)
 
+        /// <summary>
+        /// When given a listbox, returns an integer list containing all the indices
+        /// of the listbox which are selected.
+        /// </summary>
+        /// <param name="listBox">the listbox to pull SelectedIndices from</param>
+        /// <returns>a list of integers representing the indices</returns>
+        private List<int> GetSelectedIndexList(ListBox listBox)
+        {
+            List<int> indices = new List<int>();
+            foreach(int index in listBox.SelectedIndices)
+            {
+                indices.Add(index);
+            }//end adding all selected indices to indices
+            return indices;
+        }//end GetSelectedIndexList
+
         public CallMethodWithInts viewRows;
         /// <summary>
-        /// this method runs when the uxViewSeed button is clicked. It uses a delegate
+        /// this method runs when the uxViewRow button is clicked. It uses a delegate
         /// to tell the Controller to send us seed data to display
         /// </summary>
         /// <param name="sender">the object that sent this event</param>
@@ -480,12 +530,12 @@ namespace ImageJImporter
         /// stored here</param>
         private void ViewRowData(object sender, EventArgs e)
         {
+            //update button enabled-ness so the user knows which mode the program is in
+            if (uxEditRow.Enabled == false) uxEditRow.Enabled = true;
+            uxViewRow.Enabled = false;
+
             //make list of selected indices and populate it with data
-            List<int> indices = new List<int>();
-            foreach(int index in uxSeedList.SelectedIndices)
-            {
-                indices.Add(index);
-            }//end adding all selected indices to indices
+            List<int> indices = GetSelectedIndexList(uxRowList);
 
             //tell controller to view selected indices
             viewRows(indices);
@@ -519,20 +569,20 @@ namespace ImageJImporter
 
         public CallMethodWithInts editRows;
         /// <summary>
-        /// this method runs when the uxEditSeed button is clicked. It uses a delegate
-        /// to tell the Controller to send us seed data to edit
+        /// this method runs when the uxEditRow button is clicked. It uses a delegate
+        /// to tell the Controller to send us row data to edit
         /// </summary>
         /// <param name="sender">the object that sent this event</param>
         /// <param name="e">if there are any arguments for the event, they're
         /// stored here</param>
         private void EditSeedData(object sender, EventArgs e)
         {
+            //update button enabled-ness so the user knows which mode the program is in
+            if (uxViewRow.Enabled == false) uxViewRow.Enabled = true;
+            uxEditRow.Enabled = false;
+
             //make list of selected indices and populate it with data
-            List<int> indices = new List<int>();
-            foreach (int index in uxSeedList.SelectedIndices)
-            {
-                indices.Add(index);
-            }//end adding all selected indices to indices
+            List<int> indices = GetSelectedIndexList(uxRowList);
 
             //tell controller to view selected indices
             editRows(indices);

@@ -53,10 +53,34 @@ namespace ImageJImporter
         /// </summary>
         public RequestSpecificString getNewFilename;
 
+        
+        private List<Row> currentRowList = new List<Row>();
         /// <summary>
         /// the list of rows that is currently being displayed or used
         /// </summary>
-        private List<Row> currentRowList = new List<Row>();
+        public List<Row> CurrentRowList
+        {
+            get
+            {
+                //create new list to send instead of passing reference
+                List<Row> tempList = new List<Row>();
+                foreach(Row row in currentRowList)
+                {
+                    tempList.Add(new Row(row));
+                }//end adding each row to new list
+                return tempList;
+            }//end getter
+            set
+            {
+                //create deep copy so out internal list can't be changed by reference
+                List<Row> tempList = new List<Row>();
+                foreach(Row row in value)
+                {
+                    tempList.Add(new Row(row));
+                }//end adding each row to new list
+                currentRowList = tempList;
+            }//end setter
+        }//end CurrentRowList property
 
         /// <summary>
         /// stores whether or not there is currently a file loaded in the program
@@ -98,18 +122,18 @@ namespace ImageJImporter
                 //update list of seeds in the view
                 if (updateSeedList(curList))
                 {
-                    //reset and update currentRowList
-                    currentRowList.Clear();
+                    //reset and update CurrentRowList
+                    CurrentRowList.Clear();
                     foreach(Row row in curList)
                     {
-                        currentRowList.Add(row);
-                    }//end adding each row to currentRowList
+                        CurrentRowList.Add(row);
+                    }//end adding each row to CurrentRowList
 
                     //updates boolean
                     IsFileCurrentlyLoaded = true;
 
                     //update log
-                    AppendToHeaderLog($"Loaded \"{filename}\" with {currentRowList.Count} rows.");
+                    AppendToHeaderLog($"Loaded \"{filename}\" with {CurrentRowList.Count} rows.");
                 }//end if operation was successful
                 else
                 {
@@ -128,10 +152,10 @@ namespace ImageJImporter
             if (IsFileCurrentlyLoaded)
             {
                 //tell fileIO to save our current file with current data
-                fileIO.SaveFile(fileIO.file, currentRowList);
+                fileIO.SaveFile(fileIO.file, CurrentRowList);
 
                 //update log
-                AppendToHeaderLog($"Successfully saved {currentRowList.Count}" +
+                AppendToHeaderLog($"Successfully saved {CurrentRowList.Count}" +
                     $" rows to \"{fileIO.file}\"");
             }//end if a file is currently loaded
             else
@@ -153,10 +177,10 @@ namespace ImageJImporter
                 if(newFileName != null)
                 {
                     //save the row information as the specified filename
-                    fileIO.SaveFile(newFileName, currentRowList);
+                    fileIO.SaveFile(newFileName, CurrentRowList);
 
                     //update log
-                    AppendToHeaderLog($"Successfully saved {currentRowList.Count}" +
+                    AppendToHeaderLog($"Successfully saved {CurrentRowList.Count}" +
                         $" rows to \"{newFileName}\"");
                 }//end if we have a file
                 //if the filename was empty, we don't want to do anything
@@ -174,7 +198,7 @@ namespace ImageJImporter
         public void CloseCurrentFile()
         {
             //updates reference variables in this class
-            currentRowList.Clear();
+            CurrentRowList.Clear();
             IsFileCurrentlyLoaded = false;
 
             StringBuilder tempFileNameRef = new StringBuilder(fileIO.file);
@@ -191,27 +215,27 @@ namespace ImageJImporter
 
         /// <summary>
         /// Verifies that every index in the supplied enumberable collection
-        /// of indices is valid for currentRowList
+        /// of indices is valid for CurrentRowList
         /// </summary>
         /// <param name="indices">the enumerable collection of indices</param>
         /// <exception cref="ArgumentOutOfRangeException">Exception thrown when
-        /// an index supplied is outside the bounds of currentRowList</exception>
+        /// an index supplied is outside the bounds of CurrentRowList</exception>
         private void CheckIndices(IEnumerable<int> indices)
         {
             foreach (int index in indices)
             {
-                if (index < 0 || index >= currentRowList.Count)
+                if (index < 0 || index >= CurrentRowList.Count)
                 {
                     throw new ArgumentOutOfRangeException($"The supplied index" +
                         $" {index} was outside the acceptable range from 0 " +
-                        $"to {currentRowList.Count - 1}.");
+                        $"to {CurrentRowList.Count - 1}.");
                 }//end if the index is outside range of list
             }//end checking each index is valid
         }//end CheckIndices(indices)
 
         /// <summary>
         /// Builds a list of all the rows at the specified indices with
-        /// currentRowList. Doesn't do any sort of verification that indices are
+        /// CurrentRowList. Doesn't do any sort of verification that indices are
         /// valid.
         /// </summary>
         /// <param name="indices">indices at which to grab rows</param>
@@ -223,7 +247,7 @@ namespace ImageJImporter
 
             foreach (int index in indices)
             {
-                rowRegister.Add(currentRowList[index]);
+                rowRegister.Add(CurrentRowList[index]);
             }//end adding each requested row to rowRegister
 
             return rowRegister;
@@ -234,7 +258,7 @@ namespace ImageJImporter
         /// assembles list of rows at specified indices and tells view to
         /// display them to the user
         /// </summary>
-        /// <param name="indices">the indices of currentRowList which you'd like
+        /// <param name="indices">the indices of CurrentRowList which you'd like
         /// to view</param>
         public void ViewRowData(List<int> indices)
         {
@@ -253,7 +277,7 @@ namespace ImageJImporter
         /// assembles list of rows at specified indices and tells view to allow
         /// the user to edit them
         /// </summary>
-        /// <param name="indices">the indices of currentRowList which you'd like
+        /// <param name="indices">the indices of CurrentRowList which you'd like
         /// to edit</param>
         public void EditRowData(List<int> indices)
         {
@@ -297,11 +321,11 @@ namespace ImageJImporter
                 //update our internal list of row information
                 foreach(Row newRow in processedRowIndexPairs.Keys)
                 {
-                    currentRowList[processedRowIndexPairs[newRow]] = newRow;
+                    CurrentRowList[processedRowIndexPairs[newRow]] = newRow;
                 }//end updating internal list for each row
 
                 //update the row list in the view
-                updateSeedList(currentRowList);
+                updateSeedList(CurrentRowList);
 
                 //update log so user knows save operation was successful
                 AppendToHeaderLog($"Successfully saved {processedRowIndexPairs.Count}" +
@@ -336,11 +360,11 @@ namespace ImageJImporter
                     //load all the row information from config file
                     List<Row> rows = fileIO.LoadFile(data[0]);
 
+                    //update internal row listing
+                    CurrentRowList = rows;
+
                     //pass row info back to the view
                     updateSeedList(rows);
-
-                    //update internal row listing
-                    currentRowList = rows;
 
                     //update boolean flag
                     IsFileCurrentlyLoaded = true;
@@ -357,7 +381,7 @@ namespace ImageJImporter
                     //update log with recent file name and row count
                     AppendToHeaderLog($"Loaded \"{fileIO.file}\"" +
                         $" from config file with" +
-                        $" {currentRowList.Count} rows.");
+                        $" {CurrentRowList.Count} rows.");
                 }//end trying to get input from the config
                 catch
                 {
