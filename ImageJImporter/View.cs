@@ -159,9 +159,20 @@ namespace ImageJImporter
             /// have to set the data source to null and then whatever
             /// you want it to display
 
+            List<Row> tempRows = data;
+
             uxRowList.Size = defaultListBoxSize;
-            uxRowList.DataSource = null;
-            uxRowList.DataSource = data;
+            //var tempIndexList = uxRowList.SelectedIndices;
+            //uxRowList.DataSource = null;
+            uxRowList.DataSource = tempRows;
+
+            uxRowListView.Items.Clear();
+            foreach(Row row in tempRows)
+            {
+                ListViewItem item = new ListViewItem(row.GetRowPropertyArray());
+                uxRowListView.Items.Add(item);
+            }//end adding each row to listview
+            //uxRowList.SelectedIndices = tempIndexList;
 
             //if(uxRowList.Items.Count > 30)
             //{

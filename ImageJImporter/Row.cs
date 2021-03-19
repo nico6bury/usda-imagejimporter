@@ -224,7 +224,7 @@ namespace ImageJImporter
         /// <returns>string representation of this row</returns>
         public override string ToString()
         {
-            return FormatData();
+            return FormatData(true);
         }//end ToString()
 
         /// <summary>
@@ -235,6 +235,29 @@ namespace ImageJImporter
         {
             return FormatData(true);
         }//end FormatData()
+
+        /// <summary>
+        /// returns all the properties of this row, but
+        /// with each one as an index in an array instead of
+        /// in one string, separated by tabs
+        /// </summary>
+        public string[] GetRowPropertyArray()
+        {
+            string[] output = new string[12];
+            output[0] = RowNum.ToString("N1");
+            output[1] = Area.ToString("N1");
+            output[2] = X.ToString("N1");
+            output[3] = Y.ToString("N1");
+            output[4] = Perim.ToString("N1");
+            output[5] = Major.ToString("N1");
+            output[6] = Minor.ToString("N1");
+            output[7] = Angle.ToString("N1");
+            output[8] = Circ.ToString("N1");
+            output[9] = AR.ToString("N1");
+            output[10] = Round.ToString("N1");
+            output[11] = Solidity.ToString("N1");
+            return output;
+        }//end GetRowPropertyArray()
 
         /// <summary>
         /// returns a string formatted in the same way as teh imageJ output files.

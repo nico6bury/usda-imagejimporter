@@ -48,10 +48,23 @@ namespace ImageJImporter
             this.uxSaveSeed = new System.Windows.Forms.Button();
             this.uxHeaderLog = new System.Windows.Forms.TextBox();
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
+            this.uxLockListSelection = new System.Windows.Forms.Button();
             this.uxRowDisplayGroup = new System.Windows.Forms.GroupBox();
             this.uxGridDisplay = new System.Windows.Forms.GroupBox();
             this.uxStartReference = new System.Windows.Forms.Button();
-            this.uxLockListSelection = new System.Windows.Forms.Button();
+            this.uxRowListView = new System.Windows.Forms.ListView();
+            this.rowName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowArea = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowX = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowY = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowPerim = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowMajor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowMinor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowAngle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowCirc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.RowAR = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowRound = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.rowSolidity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ViewFormMenuStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
             this.uxGridDisplay.SuspendLayout();
@@ -147,11 +160,11 @@ namespace ImageJImporter
             this.uxRowList.FormattingEnabled = true;
             this.uxRowList.HorizontalScrollbar = true;
             this.uxRowList.ItemHeight = 20;
-            this.uxRowList.Location = new System.Drawing.Point(12, 271);
+            this.uxRowList.Location = new System.Drawing.Point(885, 448);
             this.uxRowList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxRowList.Name = "uxRowList";
             this.uxRowList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.uxRowList.Size = new System.Drawing.Size(846, 344);
+            this.uxRowList.Size = new System.Drawing.Size(86, 64);
             this.uxRowList.TabIndex = 5;
             this.uxToolTip.SetToolTip(this.uxRowList, "This is a list of all the seeds loaded into the program. You have to select a see" +
         "d here before you can edit or view its information.");
@@ -247,14 +260,29 @@ namespace ImageJImporter
             this.uxCurrentDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.uxToolTip.SetToolTip(this.uxCurrentDateTime, "Shows the current date and time");
             // 
+            // uxLockListSelection
+            // 
+            this.uxLockListSelection.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uxLockListSelection.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uxLockListSelection.Location = new System.Drawing.Point(456, 220);
+            this.uxLockListSelection.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.uxLockListSelection.Name = "uxLockListSelection";
+            this.uxLockListSelection.Size = new System.Drawing.Size(182, 43);
+            this.uxLockListSelection.TabIndex = 6;
+            this.uxLockListSelection.Text = "Lock List Selection";
+            this.uxToolTip.SetToolTip(this.uxLockListSelection, "Allows you to lock the list of rows so that you won\'t accidentally change the sel" +
+        "ection.");
+            this.uxLockListSelection.UseVisualStyleBackColor = true;
+            this.uxLockListSelection.Click += new System.EventHandler(this.uxLockListSelectionClick);
+            // 
             // uxRowDisplayGroup
             // 
             this.uxRowDisplayGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.uxRowDisplayGroup.Controls.Add(this.uxRowListView);
             this.uxRowDisplayGroup.Controls.Add(this.uxLockListSelection);
             this.uxRowDisplayGroup.Controls.Add(this.uxTextViewer);
             this.uxRowDisplayGroup.Controls.Add(this.uxSaveSeed);
             this.uxRowDisplayGroup.Controls.Add(this.uxViewRow);
-            this.uxRowDisplayGroup.Controls.Add(this.uxRowList);
             this.uxRowDisplayGroup.Controls.Add(this.uxEditRow);
             this.uxRowDisplayGroup.Enabled = false;
             this.uxRowDisplayGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -290,20 +318,85 @@ namespace ImageJImporter
             this.uxStartReference.UseVisualStyleBackColor = true;
             this.uxStartReference.Visible = false;
             // 
-            // uxLockListSelection
+            // uxRowListView
             // 
-            this.uxLockListSelection.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uxLockListSelection.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxLockListSelection.Location = new System.Drawing.Point(456, 220);
-            this.uxLockListSelection.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uxLockListSelection.Name = "uxLockListSelection";
-            this.uxLockListSelection.Size = new System.Drawing.Size(182, 43);
-            this.uxLockListSelection.TabIndex = 6;
-            this.uxLockListSelection.Text = "Lock List Selection";
-            this.uxToolTip.SetToolTip(this.uxLockListSelection, "Allows you to lock the list of rows so that you won\'t accidentally change the sel" +
-        "ection.");
-            this.uxLockListSelection.UseVisualStyleBackColor = true;
-            this.uxLockListSelection.Click += new System.EventHandler(this.uxLockListSelectionClick);
+            this.uxRowListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.rowName,
+            this.rowArea,
+            this.rowX,
+            this.rowY,
+            this.rowPerim,
+            this.rowMajor,
+            this.rowMinor,
+            this.rowAngle,
+            this.rowCirc,
+            this.RowAR,
+            this.rowRound,
+            this.rowSolidity});
+            this.uxRowListView.FullRowSelect = true;
+            this.uxRowListView.HideSelection = false;
+            this.uxRowListView.Location = new System.Drawing.Point(7, 270);
+            this.uxRowListView.Name = "uxRowListView";
+            this.uxRowListView.ShowGroups = false;
+            this.uxRowListView.Size = new System.Drawing.Size(851, 345);
+            this.uxRowListView.TabIndex = 10;
+            this.uxRowListView.UseCompatibleStateImageBehavior = false;
+            this.uxRowListView.View = System.Windows.Forms.View.Details;
+            // 
+            // rowName
+            // 
+            this.rowName.Text = "Row Number";
+            this.rowName.Width = 133;
+            // 
+            // rowArea
+            // 
+            this.rowArea.Text = "Area";
+            // 
+            // rowX
+            // 
+            this.rowX.Text = "X";
+            this.rowX.Width = 41;
+            // 
+            // rowY
+            // 
+            this.rowY.Text = "Y";
+            this.rowY.Width = 46;
+            // 
+            // rowPerim
+            // 
+            this.rowPerim.Text = "Perim";
+            this.rowPerim.Width = 77;
+            // 
+            // rowMajor
+            // 
+            this.rowMajor.Text = "Major";
+            // 
+            // rowMinor
+            // 
+            this.rowMinor.Text = "Minor";
+            // 
+            // rowAngle
+            // 
+            this.rowAngle.Text = "Angle";
+            this.rowAngle.Width = 72;
+            // 
+            // rowCirc
+            // 
+            this.rowCirc.Text = "Circ";
+            // 
+            // RowAR
+            // 
+            this.RowAR.Text = "AR";
+            // 
+            // rowRound
+            // 
+            this.rowRound.Text = "Round";
+            this.rowRound.Width = 75;
+            // 
+            // rowSolidity
+            // 
+            this.rowSolidity.Text = "Solidity";
+            this.rowSolidity.Width = 77;
             // 
             // View
             // 
@@ -316,6 +409,7 @@ namespace ImageJImporter
             this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxRowDisplayGroup);
             this.Controls.Add(this.ViewFormMenuStrip);
+            this.Controls.Add(this.uxRowList);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.ViewFormMenuStrip;
@@ -357,6 +451,19 @@ namespace ImageJImporter
         private System.Windows.Forms.Button uxStartReference;
         private System.Windows.Forms.TextBox uxCurrentDateTime;
         private System.Windows.Forms.Button uxLockListSelection;
+        private System.Windows.Forms.ListView uxRowListView;
+        private System.Windows.Forms.ColumnHeader rowName;
+        private System.Windows.Forms.ColumnHeader rowArea;
+        private System.Windows.Forms.ColumnHeader rowX;
+        private System.Windows.Forms.ColumnHeader rowY;
+        private System.Windows.Forms.ColumnHeader rowPerim;
+        private System.Windows.Forms.ColumnHeader rowMajor;
+        private System.Windows.Forms.ColumnHeader rowMinor;
+        private System.Windows.Forms.ColumnHeader rowAngle;
+        private System.Windows.Forms.ColumnHeader rowCirc;
+        private System.Windows.Forms.ColumnHeader RowAR;
+        private System.Windows.Forms.ColumnHeader rowRound;
+        private System.Windows.Forms.ColumnHeader rowSolidity;
     }
 }
 

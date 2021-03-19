@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,6 +71,10 @@ namespace ImageJImporter
                 }//end adding each row to new list
                 return tempList;
             }//end getter
+            /// <summary>
+            /// For some reason setting specific indices doesn't work with this. accessing
+            /// the private field directly does work though
+            /// </summary>
             set
             {
                 //create deep copy so out internal list can't be changed by reference
@@ -133,7 +138,7 @@ namespace ImageJImporter
                     IsFileCurrentlyLoaded = true;
 
                     //update log
-                    AppendToHeaderLog($"Loaded \"{filename}\" with {CurrentRowList.Count} rows.");
+                    AppendToHeaderLog($"Loaded {BuildFileMessage(filename, CurrentRowList)}");
                 }//end if operation was successful
                 else
                 {
@@ -321,7 +326,8 @@ namespace ImageJImporter
                 //update our internal list of row information
                 foreach(Row newRow in processedRowIndexPairs.Keys)
                 {
-                    CurrentRowList[processedRowIndexPairs[newRow]] = newRow;
+                    int index = processedRowIndexPairs[newRow];
+                    currentRowList[index] = newRow;
                 }//end updating internal list for each row
 
                 //update the row list in the view
@@ -379,9 +385,8 @@ namespace ImageJImporter
                     setWordWrap(wrapText);
 
                     //update log with recent file name and row count
-                    AppendToHeaderLog($"Loaded \"{fileIO.file}\"" +
-                        $" from config file with" +
-                        $" {CurrentRowList.Count} rows.");
+                    AppendToHeaderLog("Found configuration file. Loaded" +
+                        $" {BuildFileMessage(fileIO.file, CurrentRowList)}");
                 }//end trying to get input from the config
                 catch
                 {
@@ -389,6 +394,46 @@ namespace ImageJImporter
                 }//end catching any errors from reading the config
             }//end if the data isn't null
         }//end OpenView()
+
+        /// <summary>
+        /// builds a message for doing something with a file.
+        /// </summary>
+        /// <param name="filename">the full path of the filename you
+        /// wish to create a message from.</param>
+        /// <param name="rows">the list of rows you got from the file</param>
+        /// <returns>Returns a message with the name of the file, its
+        /// current directory, and the number of rows and row flags</returns>
+        private string BuildFileMessage(string filename, List<Row> rows)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            //add file path information to message
+            sb.Append($"\"{Path.GetFileName(filename)}\" at " +
+                $"\"{Path.GetDirectoryName(filename)}\".");
+            
+            //start getting row information
+            if(rows != null)
+            {
+                //initialize counter variables
+                int gridRows = 0;
+                int cellStarts = 0;
+                int cellEnds = 0;
+                foreach(Row row in rows)
+                {
+                    if (row.IsNewRowFlag) gridRows++;
+                    if (row.IsSeedStartFlag) cellStarts++;
+                    if (row.IsSeedEndFlag) cellEnds++;
+                }//end looping over every row in rows
+
+                //add the row information to our message
+                sb.Append($" File contains {gridRows} flags for " +
+                    $"a new row, {cellStarts} cell start flags," +
+                    $" and {cellEnds} cell end flags.");
+            }//end if the rows list is valid
+            
+            //return our result
+            return sb.ToString();
+        }//end BuildFileMessage(filename)
 
         /// <summary>
         /// saves current configuration information to the config file
