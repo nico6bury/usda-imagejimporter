@@ -50,8 +50,6 @@ namespace ImageJImporter
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
             this.uxLockListSelection = new System.Windows.Forms.Button();
             this.uxRowDisplayGroup = new System.Windows.Forms.GroupBox();
-            this.uxGridDisplay = new System.Windows.Forms.GroupBox();
-            this.uxStartReference = new System.Windows.Forms.Button();
             this.uxRowListView = new System.Windows.Forms.ListView();
             this.rowName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.rowArea = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -65,6 +63,8 @@ namespace ImageJImporter
             this.RowAR = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.rowRound = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.rowSolidity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.uxGridDisplay = new System.Windows.Forms.GroupBox();
+            this.uxStartReference = new System.Windows.Forms.Button();
             this.ViewFormMenuStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
             this.uxGridDisplay.SuspendLayout();
@@ -295,29 +295,6 @@ namespace ImageJImporter
             this.uxRowDisplayGroup.TabStop = false;
             this.uxRowDisplayGroup.Text = "Row Display";
             // 
-            // uxGridDisplay
-            // 
-            this.uxGridDisplay.AutoSize = true;
-            this.uxGridDisplay.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.uxGridDisplay.Controls.Add(this.uxStartReference);
-            this.uxGridDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxGridDisplay.Location = new System.Drawing.Point(915, 31);
-            this.uxGridDisplay.Name = "uxGridDisplay";
-            this.uxGridDisplay.Size = new System.Drawing.Size(110, 120);
-            this.uxGridDisplay.TabIndex = 8;
-            this.uxGridDisplay.TabStop = false;
-            this.uxGridDisplay.Text = "Grid Display";
-            // 
-            // uxStartReference
-            // 
-            this.uxStartReference.Location = new System.Drawing.Point(29, 54);
-            this.uxStartReference.Name = "uxStartReference";
-            this.uxStartReference.Size = new System.Drawing.Size(75, 41);
-            this.uxStartReference.TabIndex = 0;
-            this.uxStartReference.Text = "Reference Button";
-            this.uxStartReference.UseVisualStyleBackColor = true;
-            this.uxStartReference.Visible = false;
-            // 
             // uxRowListView
             // 
             this.uxRowListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -345,8 +322,8 @@ namespace ImageJImporter
             // 
             // rowName
             // 
-            this.rowName.Text = "Row Number";
-            this.rowName.Width = 133;
+            this.rowName.Text = "Row";
+            this.rowName.Width = 77;
             // 
             // rowArea
             // 
@@ -397,6 +374,29 @@ namespace ImageJImporter
             // 
             this.rowSolidity.Text = "Solidity";
             this.rowSolidity.Width = 77;
+            // 
+            // uxGridDisplay
+            // 
+            this.uxGridDisplay.AutoSize = true;
+            this.uxGridDisplay.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.uxGridDisplay.Controls.Add(this.uxStartReference);
+            this.uxGridDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uxGridDisplay.Location = new System.Drawing.Point(915, 31);
+            this.uxGridDisplay.Name = "uxGridDisplay";
+            this.uxGridDisplay.Size = new System.Drawing.Size(110, 120);
+            this.uxGridDisplay.TabIndex = 8;
+            this.uxGridDisplay.TabStop = false;
+            this.uxGridDisplay.Text = "Grid Display";
+            // 
+            // uxStartReference
+            // 
+            this.uxStartReference.Location = new System.Drawing.Point(29, 54);
+            this.uxStartReference.Name = "uxStartReference";
+            this.uxStartReference.Size = new System.Drawing.Size(75, 41);
+            this.uxStartReference.TabIndex = 0;
+            this.uxStartReference.Text = "Reference Button";
+            this.uxStartReference.UseVisualStyleBackColor = true;
+            this.uxStartReference.Visible = false;
             // 
             // View
             // 

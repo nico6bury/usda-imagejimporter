@@ -244,7 +244,7 @@ namespace ImageJImporter
         public string[] GetRowPropertyArray()
         {
             string[] output = new string[12];
-            output[0] = RowNum.ToString("N1");
+            output[0] = RowNum.ToString();
             output[1] = Area.ToString("N1");
             output[2] = X.ToString("N1");
             output[3] = Y.ToString("N1");

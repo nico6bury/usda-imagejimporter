@@ -260,7 +260,7 @@ namespace ImageJImporter
                 RowButton button = new RowButton(rows[i]);
                 button.Size = uxStartReference.Size;
                 button.Click += GridButtonClickEvent;
-                buttonGrid[firstDimensionIndex].Add(button);
+                //buttonGrid[firstDimensionIndex].Add(button);
 
                 if (rows[i].IsNewRowFlag)
                 {
@@ -279,6 +279,9 @@ namespace ImageJImporter
                     button.BackColor = Color.DarkSeaGreen;
                     button.ForeColor = Color.Aquamarine;
                 }//end if this row is a seed end flag
+
+                //putting this after the other stuff makes the row flags appear first
+                buttonGrid[firstDimensionIndex].Add(button);
             }//end looping to populate 2d list of buttons
 
             //just define the margin between buttons
