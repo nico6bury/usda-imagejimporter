@@ -45,7 +45,8 @@ namespace ImageJImporter
             InitializeComponent();
 
             //set local variables to initial values
-            defaultListBoxSize = uxRowList.Size;
+            defaultListBoxSize = uxRowListView.Size;
+            uxRowListView.SelectedIndexChanged += SelectedRowInListChanged;
             //uxRowList.AutoSize = true;
             //uxRowDisplayGroup.AutoSize = true;
             //uxRowList.DrawMode = DrawMode.OwnerDrawFixed;
@@ -161,10 +162,10 @@ namespace ImageJImporter
 
             List<Row> tempRows = data;
 
-            uxRowList.Size = defaultListBoxSize;
+            uxRowListView.Size = defaultListBoxSize;
             //var tempIndexList = uxRowList.SelectedIndices;
             //uxRowList.DataSource = null;
-            uxRowList.DataSource = tempRows;
+            //uxRowList.DataSource = tempRows;
 
             uxRowListView.Items.Clear();
             foreach(Row row in tempRows)
@@ -204,8 +205,8 @@ namespace ImageJImporter
         private void SelectedRowInListChanged(object sender, EventArgs e)
         {
             //make sure sender is a listbox and has at least one index selected
-            ListBox list = sender as ListBox;
-            if (list == null || list.SelectedIndex < 0) return;
+            ListView list = sender as ListView;
+            if (list == null || list.SelectedIndices.Count < 0) return;
 
             //make sure at least one button is pressed, and the whole group box is enabled
             if((!uxViewRow.Enabled || !uxEditRow.Enabled) && uxRowDisplayGroup.Enabled)
@@ -235,7 +236,7 @@ namespace ImageJImporter
         private void uxLockListSelectionClick(object sender, EventArgs e)
         {
             //toggles uxRowList enabled property
-            uxRowList.Enabled = !uxRowList.Enabled;
+            uxRowListView.Enabled = !uxRowListView.Enabled;
         }//end uxLockListSelectionClick event handler
 
         /// <summary>
@@ -325,13 +326,13 @@ namespace ImageJImporter
         public void CloseRowList()
         {
             //clear the seeds displayed in the list
-            uxRowList.DataSource = null;
+            uxRowListView.Items.Clear();
 
             //clear the text in the editing/viewing box
             uxTextViewer.Text = "";
 
             //reset listbox
-            uxRowList.Size = defaultListBoxSize;
+            uxRowListView.Size = defaultListBoxSize;
 
             //disable the elements for editing seeds so they can't be interacted with by the user
             uxRowDisplayGroup.Enabled = false;
@@ -524,10 +525,10 @@ namespace ImageJImporter
         /// </summary>
         /// <param name="listBox">the listbox to pull SelectedIndices from</param>
         /// <returns>a list of integers representing the indices</returns>
-        private List<int> GetSelectedIndexList(ListBox listBox)
+        private List<int> GetSelectedIndexList(ListView listView)
         {
             List<int> indices = new List<int>();
-            foreach(int index in listBox.SelectedIndices)
+            foreach(int index in listView.SelectedIndices)
             {
                 indices.Add(index);
             }//end adding all selected indices to indices
@@ -549,7 +550,7 @@ namespace ImageJImporter
             uxViewRow.Enabled = false;
 
             //make list of selected indices and populate it with data
-            List<int> indices = GetSelectedIndexList(uxRowList);
+            List<int> indices = GetSelectedIndexList(uxRowListView);
 
             //tell controller to view selected indices
             viewRows(indices);
@@ -596,7 +597,7 @@ namespace ImageJImporter
             uxEditRow.Enabled = false;
 
             //make list of selected indices and populate it with data
-            List<int> indices = GetSelectedIndexList(uxRowList);
+            List<int> indices = GetSelectedIndexList(uxRowListView);
 
             //tell controller to view selected indices
             editRows(indices);

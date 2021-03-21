@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 /*
  * Author: Nicholas Sixbury
- * File: 
- * Purpose: 
+ * File: Row.cs
+ * Purpose: To represent the information from a single row of output from
+ * ImageJProcessing.
  */
 
 namespace ImageJImporter
@@ -226,6 +227,29 @@ namespace ImageJImporter
         {
             return FormatData(true);
         }//end ToString()
+
+        /// <summary>
+        /// returns whether the specified row is equal to this one.
+        /// Equality in this case means all properties (except maybe
+        /// RowNum) are equal
+        /// </summary>
+        /// <param name="row">The row you're testing</param>
+        /// <returns>true if they're equal and false otherwise</returns>
+        public bool Equals(Row row)
+        {
+            if (this.Area != row.Area) return false;
+            if (this.X != row.X) return false;
+            if (this.Y != row.Y) return false;
+            if (this.Perim != row.Perim) return false;
+            if (this.Major != row.Major) return false;
+            if (this.Minor != row.Minor) return false;
+            if (this.Angle != row.Angle) return false;
+            if (this.Circ != row.Circ) return false;
+            if (this.AR != row.AR) return false;
+            if (this.Round != row.Round) return false;
+            if (this.Solidity != row.Solidity) return false;
+            return true;
+        }//end Equals(row)
 
         /// <summary>
         /// returns a string formatted in the same way as the imageJ output files

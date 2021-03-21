@@ -40,7 +40,6 @@ namespace ImageJImporter
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toggleWordWrappingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxCurrentFilenameRequest = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxRowList = new System.Windows.Forms.ListBox();
             this.uxEditRow = new System.Windows.Forms.Button();
             this.uxViewRow = new System.Windows.Forms.Button();
             this.uxTextViewer = new System.Windows.Forms.TextBox();
@@ -153,22 +152,6 @@ namespace ImageJImporter
             this.uxCurrentFilenameRequest.Size = new System.Drawing.Size(242, 24);
             this.uxCurrentFilenameRequest.Text = "Tell Me Current Filename";
             this.uxCurrentFilenameRequest.Click += new System.EventHandler(this.AskForFilename);
-            // 
-            // uxRowList
-            // 
-            this.uxRowList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxRowList.FormattingEnabled = true;
-            this.uxRowList.HorizontalScrollbar = true;
-            this.uxRowList.ItemHeight = 20;
-            this.uxRowList.Location = new System.Drawing.Point(885, 448);
-            this.uxRowList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uxRowList.Name = "uxRowList";
-            this.uxRowList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.uxRowList.Size = new System.Drawing.Size(86, 64);
-            this.uxRowList.TabIndex = 5;
-            this.uxToolTip.SetToolTip(this.uxRowList, "This is a list of all the seeds loaded into the program. You have to select a see" +
-        "d here before you can edit or view its information.");
-            this.uxRowList.SelectedIndexChanged += new System.EventHandler(this.SelectedRowInListChanged);
             // 
             // uxEditRow
             // 
@@ -409,7 +392,6 @@ namespace ImageJImporter
             this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxRowDisplayGroup);
             this.Controls.Add(this.ViewFormMenuStrip);
-            this.Controls.Add(this.uxRowList);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.ViewFormMenuStrip;
@@ -435,7 +417,6 @@ namespace ImageJImporter
         private System.Windows.Forms.ToolStripMenuItem uxMenuOpenFile;
         private System.Windows.Forms.ToolStripMenuItem uxMenuSaveFile;
         private System.Windows.Forms.ToolStripMenuItem uxMenuSaveFileAs;
-        private System.Windows.Forms.ListBox uxRowList;
         private System.Windows.Forms.ToolTip uxToolTip;
         private System.Windows.Forms.Button uxEditRow;
         private System.Windows.Forms.Button uxViewRow;
