@@ -88,6 +88,12 @@ namespace ImageJImporter
         }//end CurrentRowList property
 
         /// <summary>
+        /// the grid that represents all of this object's cells and the rows
+        /// that comprise them
+        /// </summary>
+        private Grid grid = new Grid();
+
+        /// <summary>
         /// stores whether or not there is currently a file loaded in the program
         /// </summary>
         private bool IsFileCurrentlyLoaded = false;
@@ -366,6 +372,9 @@ namespace ImageJImporter
                     //load all the row information from config file
                     List<Row> rows = fileIO.LoadFile(data[0]);
 
+                    //save our row list to our grid
+                    grid = new Grid(rows);
+
                     //update internal row listing
                     CurrentRowList = rows;
 
@@ -390,7 +399,7 @@ namespace ImageJImporter
                 }//end trying to get input from the config
                 catch
                 {
-                    //don't do anything
+                    
                 }//end catching any errors from reading the config
             }//end if the data isn't null
         }//end OpenView()

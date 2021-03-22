@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ImageJImporter
 {
-    class Grid : ICollection<Cell>, IEnumerable<Row>
+    class Grid : ICollection<Cell>, ICollection<Row>
     {
         private List<Cell> cells = new List<Cell>();
         public List<Cell> Cells
@@ -377,20 +378,31 @@ namespace ImageJImporter
         }//end Remove(row)
 
         /// <summary>
-        /// Enumerator for returning cells
+        /// Enumerator for returning rows
         /// </summary>
-        /// <returns>returns enumeration of cells</returns>
-        public IEnumerator<Cell> GetEnumerator()
+        /// <returns>returns enumeration of row</returns>
+        public IEnumerator<Row> GetEnumerator()
         {
-            foreach(Cell cell in cells)
+            foreach (Cell cell in cells)
+            {
+                List<Row> tempRowList = cell.Rows;
+                foreach (Row row in tempRowList)
+                {
+                    yield return row;
+                }//end looping over rows
+            }//end looping over cells
+        }//end Cell Enumerator
+
+        /// <summary>
+        /// not sure how this is even called
+        /// </summary>
+        /// <returns>returns Enumerator of Cells</returns>
+        IEnumerator<Cell> IEnumerable<Cell>.GetEnumerator()
+        {
+            foreach (Cell cell in cells)
             {
                 yield return new Cell(cell);
             }//end looping over each cell
-        }//end Cell Enumerator
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return ((System.Collections.IEnumerable)Cells).GetEnumerator();
         }//end whatever this is
 
         /// <summary>
@@ -408,6 +420,15 @@ namespace ImageJImporter
                 }//end looping over rows
             }//end looping over cells
         }//end Row Enumerator
+
+        /// <summary>
+        /// returns enumeration of rows
+        /// </summary>
+        /// <returns>returns rows in this object</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }//end IEnumerable.GetEnumerator()
     }//end class
 
     /// <summary>
