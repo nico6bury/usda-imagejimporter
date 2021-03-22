@@ -143,8 +143,18 @@ namespace ImageJImporter
         /// <param name="cell">The Cell you wish to copy</param>
         public Cell(Cell cell)
         {
+            //creates deep copy
             this.Rows = cell.Rows;
         }//end 1-arg copy constructor
+
+        /// <summary>
+        /// initializes this object with a single row
+        /// </summary>
+        /// <param name="row">the row which will be initialized into Rows</param>
+        public Cell(Row row)
+        {
+            rows.Add(new Row(row));
+        }//end 1-arg row constructor
 
         /// <summary>
         /// initializes this object with its rows initializes as the 
@@ -155,7 +165,7 @@ namespace ImageJImporter
         public Cell(List<Row> rows)
         {
             this.Rows = rows;
-        }//end 1-arg constructor
+        }//end 1-arg list constructor
 
         /// <summary>
         /// returns a string representation of this object, in this case

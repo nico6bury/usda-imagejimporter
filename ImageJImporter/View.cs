@@ -68,7 +68,14 @@ namespace ImageJImporter
         {
             object[] args = new object[1];
             args[0] = DateTime.Now.ToString();
-            this.BeginInvoke(sendDateTime, args);
+            try
+            {
+                this.BeginInvoke(sendDateTime, args);
+            }//end trying to Begin an Invokation
+            catch(InvalidOperationException)
+            {
+                //I guess do nothing? ¯\_(ツ)_/¯
+            }//end catching InvalidOperationException from BeginInvoke()
         }//end timer elapsed event args
 
         private void ChangeDateTimeText(string text)
