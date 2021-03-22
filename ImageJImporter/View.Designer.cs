@@ -297,7 +297,6 @@ namespace ImageJImporter
             this.uxRowListView.HideSelection = false;
             this.uxRowListView.Location = new System.Drawing.Point(7, 270);
             this.uxRowListView.Name = "uxRowListView";
-            this.uxRowListView.ShowGroups = false;
             this.uxRowListView.Size = new System.Drawing.Size(851, 345);
             this.uxRowListView.TabIndex = 10;
             this.uxRowListView.UseCompatibleStateImageBehavior = false;

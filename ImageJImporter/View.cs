@@ -153,6 +153,60 @@ namespace ImageJImporter
         }//end ShowMessage
 
         /// <summary>
+        /// updates the GUI with information from the supplied grid
+        /// </summary>
+        /// <param name="grid">The grid to display</param>
+        /// <returns>returns true if the operation was successful, false otherwise</returns>
+        public bool UpdateGrid(Grid grid)
+        {
+            List<Row> tempRows = grid.Rows;
+            
+            //clear ListView from previous changes
+            uxRowListView.Items.Clear();
+            uxRowListView.Groups.Clear();
+
+            //add all the items to the listview in groups
+            foreach (Cell cell in grid.Cells)
+            {
+                //initialize stringbuilder to build cell group header
+                StringBuilder sb = new StringBuilder();
+
+                //determine header based on cell state
+                if (cell.IsNewRowFlag) sb.Append("New Row Flag");
+                else if (!cell.IsFullCell) sb.Append("Incomplete Cell");
+                else if (cell.IsEmptyCell) sb.Append("Empty Cell");
+                else if (cell.RowSpan != 2) sb.Append("Abnormal Cell");
+                else sb.Append($"Normal Cell with {cell.Chaulkiness.ToString("N3")} Chaulkiness");
+
+                //create a new group with the header we made
+                ListViewGroup cellGroup = new ListViewGroup(sb.ToString());
+                //add the group we made to the ListView
+                uxRowListView.Groups.Add(cellGroup);
+
+                //add all the rows in this cell to the ListView, specifying their group
+                //as the one we just created
+                foreach (Row row in cell)
+                {
+                    //create the ListViewItem for this row with all the columns made properly
+                    ListViewItem rowItem = new ListViewItem(row.GetRowPropertyArray());
+                    //set the correct group
+                    rowItem.Group = cellGroup;
+                    //add the item to the ListView so it's visible
+                    uxRowListView.Items.Add(rowItem);
+                }//end adding each row to the group
+            }//end adding group for each cell
+
+            //makes the group for displaying rows interactable
+            uxRowDisplayGroup.Enabled = true;
+
+            //builds the button grid for this data
+            BuildButtonGrid(grid.Rows);
+
+            //tell whoever called us that we were successful
+            return true;
+        }//end UpdateGrid(grid)
+
+        /// <summary>
         /// updates the seed list in the view with new cell data
         /// </summary>
         /// <param name="data"></param>

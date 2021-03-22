@@ -29,10 +29,15 @@ namespace ImageJImporter
         /// </summary>
         public ShowFormMessage showMessage;
 
+        ///// <summary>
+        ///// function pointer for SendRowList in view. set up in program.cs
+        ///// </summary>
+        //public SendRowList updateSeedList;
+
         /// <summary>
-        /// function pointer for SendRowList in view. set up in program.cs
+        /// function pointer for UpdateGrid in view. set up in program.cs
         /// </summary>
-        public SendRowList updateSeedList;
+        public SendGrid updateGrid;
 
         /// <summary>
         /// function pointer for DoWordsWrap in view. set up in program.cs
@@ -55,43 +60,43 @@ namespace ImageJImporter
         public RequestSpecificString getNewFilename;
 
         
-        private List<Row> currentRowList = new List<Row>();
-        /// <summary>
-        /// the list of rows that is currently being displayed or used
-        /// </summary>
-        public List<Row> CurrentRowList
-        {
-            get
-            {
-                //create new list to send instead of passing reference
-                List<Row> tempList = new List<Row>();
-                foreach(Row row in currentRowList)
-                {
-                    tempList.Add(new Row(row));
-                }//end adding each row to new list
-                return tempList;
-            }//end getter
-            /// <summary>
-            /// For some reason setting specific indices doesn't work with this. accessing
-            /// the private field directly does work though
-            /// </summary>
-            set
-            {
-                //create deep copy so out internal list can't be changed by reference
-                List<Row> tempList = new List<Row>();
-                foreach(Row row in value)
-                {
-                    tempList.Add(new Row(row));
-                }//end adding each row to new list
-                currentRowList = tempList;
-            }//end setter
-        }//end CurrentRowList property
+        //private List<Row> currentRowList = new List<Row>();
+        ///// <summary>
+        ///// the list of rows that is currently being displayed or used
+        ///// </summary>
+        //public List<Row> CurrentRowList
+        //{
+        //    get
+        //    {
+        //        //create new list to send instead of passing reference
+        //        List<Row> tempList = new List<Row>();
+        //        foreach(Row row in currentRowList)
+        //        {
+        //            tempList.Add(new Row(row));
+        //        }//end adding each row to new list
+        //        return tempList;
+        //    }//end getter
+        //    /// <summary>
+        //    /// For some reason setting specific indices doesn't work with this. accessing
+        //    /// the private field directly does work though
+        //    /// </summary>
+        //    set
+        //    {
+        //        //create deep copy so out internal list can't be changed by reference
+        //        List<Row> tempList = new List<Row>();
+        //        foreach(Row row in value)
+        //        {
+        //            tempList.Add(new Row(row));
+        //        }//end adding each row to new list
+        //        currentRowList = tempList;
+        //    }//end setter
+        //}//end CurrentRowList property
 
         /// <summary>
         /// the grid that represents all of this object's cells and the rows
         /// that comprise them
         /// </summary>
-        private Grid grid = new Grid();
+        private Grid internalGrid = new Grid();
 
         /// <summary>
         /// stores whether or not there is currently a file loaded in the program
@@ -127,24 +132,23 @@ namespace ImageJImporter
                 //get the row list from the file
                 List<Row> curList = fileIO.LoadFile(filename);
 
+                //create our grid
+                Grid grid = new Grid(curList);
+
                 //reset the view before we update it
                 closeSeedList();
 
                 //update list of seeds in the view
-                if (updateSeedList(curList))
+                if (updateGrid(grid))
                 {
                     //reset and update CurrentRowList
-                    CurrentRowList.Clear();
-                    foreach(Row row in curList)
-                    {
-                        CurrentRowList.Add(row);
-                    }//end adding each row to CurrentRowList
+                    internalGrid = new Grid(curList);
 
                     //updates boolean
                     IsFileCurrentlyLoaded = true;
 
                     //update log
-                    AppendToHeaderLog($"Loaded {BuildFileMessage(filename, CurrentRowList)}");
+                    AppendToHeaderLog($"Loaded {BuildFileMessage(filename, internalGrid.Rows)}");
                 }//end if operation was successful
                 else
                 {
@@ -163,10 +167,10 @@ namespace ImageJImporter
             if (IsFileCurrentlyLoaded)
             {
                 //tell fileIO to save our current file with current data
-                fileIO.SaveFile(fileIO.file, CurrentRowList);
+                fileIO.SaveFile(fileIO.file, internalGrid.Rows);
 
                 //update log
-                AppendToHeaderLog($"Successfully saved {CurrentRowList.Count}" +
+                AppendToHeaderLog($"Successfully saved {internalGrid.Count}" +
                     $" rows to \"{fileIO.file}\"");
             }//end if a file is currently loaded
             else
@@ -188,10 +192,10 @@ namespace ImageJImporter
                 if(newFileName != null)
                 {
                     //save the row information as the specified filename
-                    fileIO.SaveFile(newFileName, CurrentRowList);
+                    fileIO.SaveFile(newFileName, internalGrid.Rows);
 
                     //update log
-                    AppendToHeaderLog($"Successfully saved {CurrentRowList.Count}" +
+                    AppendToHeaderLog($"Successfully saved {internalGrid.Count}" +
                         $" rows to \"{newFileName}\"");
                 }//end if we have a file
                 //if the filename was empty, we don't want to do anything
@@ -209,7 +213,7 @@ namespace ImageJImporter
         public void CloseCurrentFile()
         {
             //updates reference variables in this class
-            CurrentRowList.Clear();
+            internalGrid.Clear();
             IsFileCurrentlyLoaded = false;
 
             StringBuilder tempFileNameRef = new StringBuilder(fileIO.file);
@@ -235,11 +239,11 @@ namespace ImageJImporter
         {
             foreach (int index in indices)
             {
-                if (index < 0 || index >= CurrentRowList.Count)
+                if (index < 0 || index >= internalGrid.Count)
                 {
                     throw new ArgumentOutOfRangeException($"The supplied index" +
                         $" {index} was outside the acceptable range from 0 " +
-                        $"to {CurrentRowList.Count - 1}.");
+                        $"to {internalGrid.Count - 1}.");
                 }//end if the index is outside range of list
             }//end checking each index is valid
         }//end CheckIndices(indices)
@@ -258,7 +262,7 @@ namespace ImageJImporter
 
             foreach (int index in indices)
             {
-                rowRegister.Add(CurrentRowList[index]);
+                rowRegister.Add(internalGrid[index]);
             }//end adding each requested row to rowRegister
 
             return rowRegister;
@@ -330,19 +334,29 @@ namespace ImageJImporter
                 }//end processing data for each row
 
                 //update our internal list of row information
+                Grid tempGrid = new Grid(internalGrid);
                 foreach(Row newRow in processedRowIndexPairs.Keys)
                 {
                     int index = processedRowIndexPairs[newRow];
-                    currentRowList[index] = newRow;
+                    tempGrid[index] = newRow;
                 }//end updating internal list for each row
 
-                //update the row list in the view
-                updateSeedList(CurrentRowList);
-
-                //update log so user knows save operation was successful
-                AppendToHeaderLog($"Successfully saved {processedRowIndexPairs.Count}" +
-                    $" rows to internal reference list. To update file, select" +
-                    $" option to save data to a file.");
+                //try to update the grid in the view
+                if (updateGrid(tempGrid))
+                {
+                    internalGrid = new Grid(tempGrid);
+                    //update log so user knows save operation was successful
+                    AppendToHeaderLog($"Successfully saved {processedRowIndexPairs.Count}" +
+                        $" rows to internal reference list. To update file, select" +
+                        $" option to save data to a file.");
+                }//end if we succeeded
+                else
+                {
+                    //tell the user that something went wrong
+                    showMessage("The operation to update the displayed grid has failed."
+                        , "Operation Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AppendToHeaderLog("Failed to update grid display after successfully processing all rows.");
+                }//end else we failed somehow
             }//end trying to process all row strings
             catch
             {
@@ -372,14 +386,14 @@ namespace ImageJImporter
                     //load all the row information from config file
                     List<Row> rows = fileIO.LoadFile(data[0]);
 
-                    //save our row list to our grid
-                    grid = new Grid(rows);
+                    //save our row list to our internal grid
+                    internalGrid = new Grid(rows);
 
-                    //update internal row listing
-                    CurrentRowList = rows;
+                    //pass row info back to the view [OBSOLETE]
+                    //updateSeedList(rows);
 
-                    //pass row info back to the view
-                    updateSeedList(rows);
+                    //pass grid back to the view
+                    updateGrid(internalGrid);
 
                     //update boolean flag
                     IsFileCurrentlyLoaded = true;
@@ -395,7 +409,7 @@ namespace ImageJImporter
 
                     //update log with recent file name and row count
                     AppendToHeaderLog("Found configuration file. Loaded" +
-                        $" {BuildFileMessage(fileIO.file, CurrentRowList)}");
+                        $" {BuildFileMessage(fileIO.file, internalGrid.Rows)}");
                 }//end trying to get input from the config
                 catch
                 {

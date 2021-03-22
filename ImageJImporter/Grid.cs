@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ImageJImporter
 {
-    class Grid : ICollection<Cell>, ICollection<Row>
+    public class Grid : ICollection<Cell>, ICollection<Row>
     {
         private List<Cell> cells = new List<Cell>();
         public List<Cell> Cells
@@ -48,6 +48,25 @@ namespace ImageJImporter
                 }//end else the value is null
             }//end setter
         }//end Cells
+
+        /// <summary>
+        /// read-only property for returning list of rows in this object
+        /// </summary>
+        public List<Row> Rows
+        {
+            get
+            {
+                List<Row> tempRowList = new List<Row>();
+                foreach(Cell cell in cells)
+                {
+                    foreach(Row row in cell)
+                    {
+                        tempRowList.Add(row);
+                    }//end looping over rows
+                }//end looping over cells
+                return tempRowList;
+            }//end getter
+        }//end Rows
 
         /// <summary>
         /// returns the total number of rows contained in this object
@@ -275,7 +294,7 @@ namespace ImageJImporter
         }//end Add(row)
 
         /// <summary>
-        /// clears the list of cells
+        /// clears the list of cells.
         /// </summary>
         public void Clear()
         {

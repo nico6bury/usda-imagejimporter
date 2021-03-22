@@ -40,6 +40,14 @@ namespace ImageJImporter
     public delegate bool SendRowList(List<Row> data);
 
     /// <summary>
+    /// Points to a function that needs a grid and tells you whether it
+    /// was successful or not.
+    /// </summary>
+    /// <param name="grid">The grid you're sending</param>
+    /// <returns></returns>
+    public delegate bool SendGrid(Grid grid);
+
+    /// <summary>
     /// Points to a function that returns true or false. Very generic
     /// </summary>
     /// <returns>the boolean returned by the function pointed to by this

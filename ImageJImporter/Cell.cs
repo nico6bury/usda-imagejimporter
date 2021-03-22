@@ -20,7 +20,7 @@ namespace ImageJImporter
     /// used for seed scanning. Contains a few rows and considates that
     /// information.
     /// </summary>
-    class Cell : ICollection<Row>, IEnumerable<Row>
+    public class Cell : ICollection<Row>, IEnumerable<Row>
     {
         private List<Row> rows = new List<Row>();
         /// <summary>
@@ -106,6 +106,66 @@ namespace ImageJImporter
                 return true;
             }//end getter
         }//end IsFullCell
+
+        /// <summary>
+        /// whether or not this cell is just a SeedStartFlag and SeedEndFlag
+        /// </summary>
+        public bool IsEmptyCell
+        {
+            get
+            {
+                //if there aren't the right amount of rows
+                if (rows.Count != 2) return false;
+                //if the first row isn't a SeedStartFlag
+                if (!rows[0].IsSeedStartFlag) return false;
+                //if the last row isn't a SeedEndFlag
+                if (!rows[1].IsSeedEndFlag) return false;
+                //if we got here, it must be true
+                return true;
+            }//end getter
+        }//end IsEmptyCell
+
+        /// <summary>
+        /// The chaulkniess of this cell. If this is a new row flag or
+        /// incomplete, then it will be -1. If it's an abnormal number of rows,
+        /// it will be 0. Otherwise it will be Area2 / Area1
+        /// </summary>
+        public decimal Chaulkiness
+        {
+            get
+            {
+                if (IsNewRowFlag)
+                {
+                    return -1;
+                }//end if this is a flag for a new row in grid
+                if (!IsFullCell)
+                {
+                    return -1;
+                }//end else if this isn't a complete cell
+                else
+                {
+                    if(rows.Count == 4)
+                    {
+                        return rows[2].Area / rows[1].Area;
+                    }//end if we have the normal amount of rows
+                    else
+                    {
+                        return 0;
+                    }//end else we have an abnormal case of rows
+                }//end else this must be a complete cell
+            }//end getter
+        }//end Chaulkiness
+
+        /// <summary>
+        /// The number of rows in this cell, minus 2
+        /// </summary>
+        public int RowSpan
+        {
+            get
+            {
+                return rows.Count - 2;
+            }//end getter
+        }//end RowSpan
 
         /// <summary>
         /// gets or sets the specified index of the rows this cell
@@ -264,16 +324,16 @@ namespace ImageJImporter
 
         public IEnumerator<Row> GetEnumerator()
         {
-            return GetEnumerator();
+            List<Row> tempRowList = Rows;
+            foreach (Row row in tempRowList)
+            {
+                yield return row;
+            }//end yield returning each row
         }//end GetEnumerator()
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            List<Row> tempRowList = Rows;
-            foreach(Row row in tempRowList)
-            {
-                yield return row;
-            }//end yield returning each row
+            return GetEnumerator();
         }//end IEnumerable.GetEnumerator()
     }//end class
 }//end namespace
