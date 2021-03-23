@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 /*
  * Author: Nicholas Sixbury
- * File: RowButton.cs
+ * File: CellButton.cs
  * Purpose: To provide a type of button which can store a reference to
  * a Row object
  */
@@ -18,27 +18,25 @@ namespace ImageJImporter
     /// class extends Button and holds a row so that we can store the row
     /// inside the button
     /// </summary>
-    public class RowButton : Button
+    public class CellButton : Button
     {
-        private Row row;
+        private Cell cell;
         /// <summary>
-        /// the row that this button represents
+        /// the row that this button represents. Not reference-safe
         /// </summary>
-        public Row Row
+        public Cell Cell
         {
-            get { return new Row(row); }
-            set { row = new Row(value); }
+            get { return cell; }
+            set { cell = value; }
         }//end constructor
 
         /// <summary>
-        /// constructor for this class. Must initialize with a Row object.
-        /// Initializes text field to be row number
+        /// constructor for this class. Must initialize with a Cell object.
         /// </summary>
-        /// <param name="row">the row that this button represents</param>
-        public RowButton(Row row) : base()
+        /// <param name="cell">the cell that this button represents</param>
+        public CellButton(Cell cell) : base()
         {
-            Row = new Row(row);
-            this.Text = Row.RowNum.ToString();
-        }//end RowButton no-arg constructor
+            this.cell = new Cell(cell);
+        }//end CellButton no-arg constructor
     }//end class
 }//end namespace

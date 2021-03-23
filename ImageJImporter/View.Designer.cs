@@ -157,7 +157,7 @@ namespace ImageJImporter
             // 
             this.uxEditRow.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uxEditRow.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxEditRow.Location = new System.Drawing.Point(7, 220);
+            this.uxEditRow.Location = new System.Drawing.Point(231, 220);
             this.uxEditRow.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxEditRow.Name = "uxEditRow";
             this.uxEditRow.Size = new System.Drawing.Size(182, 43);
@@ -207,7 +207,7 @@ namespace ImageJImporter
             // 
             this.uxSaveSeed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uxSaveSeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxSaveSeed.Location = new System.Drawing.Point(231, 220);
+            this.uxSaveSeed.Location = new System.Drawing.Point(7, 220);
             this.uxSaveSeed.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxSaveSeed.Name = "uxSaveSeed";
             this.uxSaveSeed.Size = new System.Drawing.Size(182, 43);
@@ -247,7 +247,7 @@ namespace ImageJImporter
             // 
             this.uxLockListSelection.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uxLockListSelection.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxLockListSelection.Location = new System.Drawing.Point(456, 220);
+            this.uxLockListSelection.Location = new System.Drawing.Point(458, 220);
             this.uxLockListSelection.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxLockListSelection.Name = "uxLockListSelection";
             this.uxLockListSelection.Size = new System.Drawing.Size(182, 43);
@@ -294,6 +294,7 @@ namespace ImageJImporter
             this.rowRound,
             this.rowSolidity});
             this.uxRowListView.FullRowSelect = true;
+            this.uxRowListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.uxRowListView.HideSelection = false;
             this.uxRowListView.Location = new System.Drawing.Point(7, 270);
             this.uxRowListView.Name = "uxRowListView";

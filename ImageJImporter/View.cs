@@ -200,14 +200,14 @@ namespace ImageJImporter
             uxRowDisplayGroup.Enabled = true;
 
             //builds the button grid for this data
-            BuildButtonGrid(grid.Rows);
+            BuildButtonGrid(grid);
 
             //tell whoever called us that we were successful
             return true;
         }//end UpdateGrid(grid)
 
         /// <summary>
-        /// updates the seed list in the view with new cell data
+        /// [OBSOLETE] updates the seed list in the view with new cell data
         /// </summary>
         /// <param name="data"></param>
         /// <returns>returns whether the operation was successful</returns>
@@ -249,7 +249,7 @@ namespace ImageJImporter
             uxRowDisplayGroup.Enabled = true;
 
             //build the button grid
-            BuildButtonGrid(data);
+            //BuildButtonGrid(data);
 
             //tell whoever called us that the operation was successful
             return true;
@@ -303,67 +303,141 @@ namespace ImageJImporter
         /// <summary>
         /// builds the grid of buttons that represents the current grid. Very WIP
         /// </summary>
-        /// <param name="rows">the list of rows to build as a grid</param>
-        private void BuildButtonGrid(List<Row> rows)
+        /// <param name="grid">the grid that you want to build</param>
+        private void BuildButtonGrid(Grid grid)
         {
-            //set up our 2d list
-            List<List<RowButton>> buttonGrid = new List<List<RowButton>>();
-            //for(int i = 0; i < buttonGrid.Count; i++)
-            //{
-            //    buttonGrid[i] = new List<Button>();
-            //}//end initializing all lists in buttonGrid
+            //create our jagged 2d list of CellButtons
+            List<List<CellButton>> cellButtons = new List<List<CellButton>>();
+            
+            //we basically increment this before new row flags
+            int firstDimensionIndex = -1;
 
-            //actually try to start putting info in them
-            int firstDimensionIndex = 0;
-            buttonGrid.Add(new List<RowButton>());
-            //int secondDimensionIndex = 0;
-            for (int i = 0; i < rows.Count; i++)
+            //just fix a potential formatting issue for incorrectly formatted data
+            if (grid.Count > 0 && !grid.Cells[0].IsNewRowFlag) firstDimensionIndex++;
+
+            //actually start adding those buttons in the right spot
+            for(int i = 0; i < grid.Cells.Count; i++)
             {
-                RowButton button = new RowButton(rows[i]);
-                button.Size = uxStartReference.Size;
-                button.Click += GridButtonClickEvent;
-                //buttonGrid[firstDimensionIndex].Add(button);
+                //make our new button to do stuff with
+                CellButton tempButton;
 
-                if (rows[i].IsNewRowFlag)
+                //format the look of our CellButton
+                FormatCellButton(out tempButton, grid.Cells[i], uxToolTip);
+                tempButton.Size = uxStartReference.Size;
+
+                //do weird jagged 2-d list things
+                if (tempButton.Cell.IsNewRowFlag)
                 {
-                    button.BackColor = Color.Black;
-                    button.ForeColor = Color.White;
                     firstDimensionIndex++;
-                    buttonGrid.Add(new List<RowButton>());
-                }//end if this row if a new row flag
-                else if (rows[i].IsSeedStartFlag)
-                {
-                    button.BackColor = Color.Aquamarine;
-                    button.ForeColor = Color.DarkSeaGreen;
-                }//end if this row is a seed start flag
-                else if (rows[i].IsSeedEndFlag)
-                {
-                    button.BackColor = Color.DarkSeaGreen;
-                    button.ForeColor = Color.Aquamarine;
-                }//end if this row is a seed end flag
+                    cellButtons.Add(new List<CellButton>());
+                }//end if we have a flag for a new row
 
-                //putting this after the other stuff makes the row flags appear first
-                buttonGrid[firstDimensionIndex].Add(button);
-            }//end looping to populate 2d list of buttons
+                //add click event handler
+                tempButton.Click += GridButtonClickEvent;
+
+                //actually add this cell to cellButtons
+                cellButtons[firstDimensionIndex].Add(tempButton);
+            }//end adding all cells to cellButtons
 
             //just define the margin between buttons
             int buttonMargin = 5;
 
-            //now we need to display those buttons by adding them to the groupbox
-            for(int i = 0; i < buttonGrid.Count; i++)
+            //add our buttons to the groupbox so they're visible and put them in a snazzy grid
+            for(int i = 0; i < cellButtons.Count; i++)
             {
-                for(int j = 0; j < buttonGrid[i].Count; j++)
+                for(int j = 0; j < cellButtons[i].Count; j++)
                 {
-                    RowButton thisButton = buttonGrid[i][j];
+                    CellButton thisButton = cellButtons[i][j];
 
+                    //not 100% why exactly this works, but it does
                     int X = uxStartReference.Location.X + i * (uxStartReference.Size.Height + buttonMargin);
-                    int Y = uxStartReference.Location.Y + j*(uxStartReference.Size.Width + buttonMargin);
+                    int Y = uxStartReference.Location.Y + j * (uxStartReference.Size.Width + buttonMargin);
                     thisButton.Location = new Point(Y, X);
 
+                    //add our button to the groupbox so it gets displayed
                     uxGridDisplay.Controls.Add(thisButton);
-                }//end looping over second dimension
-            }//end looping over first dimension
+                }//end looping over cell buttons
+            }//end looping over lists of cell buttons
         }//end BuildButtonGrid(rows)
+
+        /// <summary>
+        /// Formats a specified CellButton based on the flags of its
+        /// provided Cell. cellButton is an out parameter. Tooltip
+        /// assigning is optional. To not have a tooltip, just set
+        /// tip to null.
+        /// </summary>
+        /// <param name="cellButton">The CellButton you wish to format</param>
+        /// <param name="buttonCell">the cell to assign to the button</param>
+        /// <param name="tip">the tooltip used to set the button's tooltip.
+        /// Set to null if you don't want a tooltip</param>
+        private void FormatCellButton(out CellButton cellButton, Cell buttonCell, ToolTip tip)
+        {
+            //initialize the out parameter
+            cellButton = new CellButton(buttonCell);
+
+            //format the text of the button
+            cellButton.Text = cellButton.Cell.RowSpan.ToString();
+            //if (cellButton.Cell.Chaulkiness > 0) cellButton.Text = cellButton.Cell.Chaulkiness.ToString("N3");
+            //else cellButton.Text = cellButton.Cell.Chaulkiness.ToString();
+
+            //format color and tooltip
+            if (cellButton.Cell.IsNewRowFlag)
+            {
+                //set button color coding
+                cellButton.BackColor = Color.Black;
+                cellButton.ForeColor = Color.White;
+
+                //set tooltip
+                tip?.SetToolTip(cellButton, "This cell" +
+                    " simply represents a new grid row and " +
+                    "doesn't contain any novel information.");
+            }//end if the button represents a flag for a new row
+            else if (cellButton.Cell.IsEmptyCell)
+            {
+                //set button color coding
+                cellButton.BackColor = Color.LightSeaGreen;
+                cellButton.ForeColor = Color.PaleGreen;
+
+                //set tooltip
+                tip?.SetToolTip(cellButton, "This cell is" +
+                    "correctly formatted, but it doesn't have any" +
+                    " information stored in it.");
+            }//end if the cell is properly formatted but empty
+            else if (cellButton.Cell.RowSpan == 2 && cellButton.Cell.IsFullCell)
+            {
+                //set button color coding
+                cellButton.BackColor = Color.Green;
+                cellButton.ForeColor = Color.Honeydew;
+
+                //set tooltip
+                tip?.SetToolTip(cellButton, "This cell is " +
+                    "correctly formatted and has normal data, making " +
+                    "it easy to calculate chaulkiness for.");
+            }//end if we have a normal cell
+            else if (cellButton.Cell.IsFullCell)
+            {
+                //set button color coding
+                cellButton.BackColor = Color.LimeGreen;
+                cellButton.ForeColor = Color.MintCream;
+
+                //set tooltip
+                tip?.SetToolTip(cellButton, "This cell is " +
+                    "correctly formatted, but because of its data, " +
+                    "it\'s difficult to use.");
+            }//end else we have a properly formatted by abnormal cell
+            else
+            {
+                //set button color coding
+                cellButton.BackColor = Color.DarkMagenta;
+                cellButton.ForeColor = Color.Thistle;
+
+                //set tooltip
+                tip?.SetToolTip(cellButton, "This cell is formatted " +
+                    "incorrectly. This could either be a problem with processing" +
+                    " this cell\'s row information, or it could mean your input data " +
+                    "was corrupted somehow.");
+            }//end else this cell is formatted wrong
+        }//end FormatCellButton(out cellButton, buttonCell)
 
         /// <summary>
         /// 
@@ -374,11 +448,11 @@ namespace ImageJImporter
         private void GridButtonClickEvent(object sender, EventArgs e)
         {
             //get our button from sender and don't do anything if not right type
-            RowButton button = sender as RowButton;
+            CellButton button = sender as CellButton;
             if (button == null) return;
 
             //display the button's row
-            MessageBox.Show($"{button.Row}", $"Row Data of Row {button.Row.RowNum}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"{button.Cell}", $"Row Data of Cell", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }//end GridButton Click Event
 
         /// <summary>
