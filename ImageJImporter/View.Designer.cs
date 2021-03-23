@@ -294,6 +294,7 @@ namespace ImageJImporter
             this.rowRound,
             this.rowSolidity});
             this.uxRowListView.FullRowSelect = true;
+            this.uxRowListView.GridLines = true;
             this.uxRowListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.uxRowListView.HideSelection = false;
             this.uxRowListView.Location = new System.Drawing.Point(7, 270);

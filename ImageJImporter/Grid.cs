@@ -101,37 +101,50 @@ namespace ImageJImporter
         {
             get
             {
-                int rowsPassed = 0;
-                for(int i = 0; i < cells.Count; i++)
+                if(index < 0 || index >= Count)
                 {
-                    for(int j = 0; j < cells[i].Count; j++)
+                    throw new IndexOutOfRangeException($"index {index} is out of range.");
+                }//end if we have an error
+                else
+                {
+                    int rowsPassed = 0;
+                    for (int i = 0; i < cells.Count; i++)
                     {
-                        if(rowsPassed == index)
+                        for (int j = 0; j < cells[i].Count; j++)
                         {
-                            return new Row(cells[i][j]);
-                        }//end if we found the right row
-                        rowsPassed++;
-                    }//end looping over rows
-                }//end looping over cells
-                //we shouldn't get here
-                throw new ArgumentException("That index does not exist.");
+                            if (rowsPassed == index)
+                            {
+                                return new Row(cells[i][j]);
+                            }//end if we found the right row
+                            rowsPassed++;
+                        }//end looping over rows
+                    }//end looping over cells
+                }//end else we are in bounds
+
+                //we shouldn't ever get here, but to make the compiler happy:
+                throw new ArgumentException("The specified index does not exist.");
             }//end getter
             set
             {
-                int rowsPassed = 0;
-                for(int i = 0; i < cells.Count; i++)
+                if (index < 0 || index >= Count)
                 {
-                    for(int j = 0; j < cells[i].Count; j++)
+                    throw new IndexOutOfRangeException($"index {index} is out of range.");
+                }//end if we have an error
+                else
+                {
+                    int rowsPassed = 0;
+                    for (int i = 0; i < cells.Count; i++)
                     {
-                        if(rowsPassed == index)
+                        for (int j = 0; j < cells[i].Count; j++)
                         {
-                            cells[i][j] = new Row(value);
-                        }//end if we found the right row
-                        rowsPassed++;
-                    }//end looping over rows
-                }//end looping over cells
-                //we shouldn't get here
-                throw new ArgumentException("That index does not exist.");
+                            if (rowsPassed == index)
+                            {
+                                cells[i][j] = new Row(value);
+                            }//end if we found the right row
+                            rowsPassed++;
+                        }//end looping over rows
+                    }//end looping over cells
+                }//end else we are within the bounds
             }//end setter
         }//end 1-dimensional indexer
 
