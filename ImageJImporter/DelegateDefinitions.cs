@@ -48,6 +48,12 @@ namespace ImageJImporter
     public delegate bool SendGrid(Grid grid);
 
     /// <summary>
+    /// Points to a function that needs a string array
+    /// </summary>
+    /// <param name="array">the string array you're sending</param>
+    public delegate void SendStringArray(string[] array);
+
+    /// <summary>
     /// Points to a function that returns true or false. Very generic
     /// </summary>
     /// <returns>the boolean returned by the function pointed to by this

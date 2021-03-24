@@ -78,7 +78,7 @@ namespace ImageJImporter
             this.ViewFormMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.ViewFormMenuStrip.Name = "ViewFormMenuStrip";
             this.ViewFormMenuStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.ViewFormMenuStrip.Size = new System.Drawing.Size(1025, 28);
+            this.ViewFormMenuStrip.Size = new System.Drawing.Size(1020, 28);
             this.ViewFormMenuStrip.TabIndex = 0;
             this.ViewFormMenuStrip.Text = "menuStrip1";
             // 
@@ -186,7 +186,7 @@ namespace ImageJImporter
             // 
             this.uxTextViewer.AcceptsReturn = true;
             this.uxTextViewer.AcceptsTab = true;
-            this.uxTextViewer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uxTextViewer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxTextViewer.Location = new System.Drawing.Point(7, 30);
             this.uxTextViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxTextViewer.Multiline = true;
@@ -229,7 +229,7 @@ namespace ImageJImporter
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.uxHeaderLog.Size = new System.Drawing.Size(858, 153);
             this.uxHeaderLog.TabIndex = 0;
-            this.uxHeaderLog.Text = "Hello and welcome to v2.2 of ImageJ Data Importation Program";
+            this.uxHeaderLog.Text = "Hello and welcome to 24 Mar 21 v2.4 of ImageJ Data Importation Program";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
             // 
             // uxCurrentDateTime
@@ -307,11 +307,12 @@ namespace ImageJImporter
             // rowName
             // 
             this.rowName.Text = "Row";
-            this.rowName.Width = 77;
+            this.rowName.Width = 88;
             // 
             // rowArea
             // 
             this.rowArea.Text = "Area";
+            this.rowArea.Width = 137;
             // 
             // rowX
             // 
@@ -321,43 +322,47 @@ namespace ImageJImporter
             // rowY
             // 
             this.rowY.Text = "Y";
-            this.rowY.Width = 46;
+            this.rowY.Width = 110;
             // 
             // rowPerim
             // 
             this.rowPerim.Text = "Perim";
-            this.rowPerim.Width = 77;
+            this.rowPerim.Width = 71;
             // 
             // rowMajor
             // 
             this.rowMajor.Text = "Major";
+            this.rowMajor.Width = 78;
             // 
             // rowMinor
             // 
             this.rowMinor.Text = "Minor";
+            this.rowMinor.Width = 128;
             // 
             // rowAngle
             // 
             this.rowAngle.Text = "Angle";
-            this.rowAngle.Width = 72;
+            this.rowAngle.Width = 0;
             // 
             // rowCirc
             // 
             this.rowCirc.Text = "Circ";
+            this.rowCirc.Width = 0;
             // 
             // RowAR
             // 
             this.RowAR.Text = "AR";
+            this.RowAR.Width = 0;
             // 
             // rowRound
             // 
             this.rowRound.Text = "Round";
-            this.rowRound.Width = 75;
+            this.rowRound.Width = 0;
             // 
             // rowSolidity
             // 
             this.rowSolidity.Text = "Solidity";
-            this.rowSolidity.Width = 77;
+            this.rowSolidity.Width = 0;
             // 
             // uxGridDisplay
             // 
@@ -367,14 +372,14 @@ namespace ImageJImporter
             this.uxGridDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxGridDisplay.Location = new System.Drawing.Point(915, 31);
             this.uxGridDisplay.Name = "uxGridDisplay";
-            this.uxGridDisplay.Size = new System.Drawing.Size(110, 120);
+            this.uxGridDisplay.Size = new System.Drawing.Size(105, 118);
             this.uxGridDisplay.TabIndex = 8;
             this.uxGridDisplay.TabStop = false;
             this.uxGridDisplay.Text = "Grid Display";
             // 
             // uxStartReference
             // 
-            this.uxStartReference.Location = new System.Drawing.Point(29, 54);
+            this.uxStartReference.Location = new System.Drawing.Point(24, 52);
             this.uxStartReference.Name = "uxStartReference";
             this.uxStartReference.Size = new System.Drawing.Size(75, 41);
             this.uxStartReference.TabIndex = 0;
@@ -393,12 +398,13 @@ namespace ImageJImporter
             this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxRowDisplayGroup);
             this.Controls.Add(this.ViewFormMenuStrip);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.ViewFormMenuStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "View";
-            this.Text = "NS ImageJ Data v2.2";
+            this.Text = "NS ImageJ Data 24 Mar 21 v2.4";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
             this.Load += new System.EventHandler(this.OpenForm);
             this.ViewFormMenuStrip.ResumeLayout(false);

@@ -46,6 +46,11 @@ namespace ImageJImporter
             "Angle\tCirc.\tAR\tRound\tSolidity";
 
         /// <summary>
+        /// the name of the folder we put log files in
+        /// </summary>
+        private string logFileFolderName = "LogFiles";
+
+        /// <summary>
         /// this is the standard constructor for this class.
         /// It just initializes the variables in the normal way, nothing too special
         /// </summary>
@@ -193,5 +198,41 @@ namespace ImageJImporter
             //return the list of rows to whatever called this method
             return data;
         }//end LoadFile()
+
+        /// <summary>
+        /// Saves the provided lines to the monthly log file
+        /// </summary>
+        /// <param name="lines">the lines from the log to save</param>
+        public void SaveLinesToLog(string[] lines)
+        {
+            //try and figure out the directory out config is in
+            string configDirectory = Path.GetDirectoryName(configFileAbsolutePath);
+
+            //figure out what our log file for this month is called
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"{DateTime.Now.ToString("MMMM")}-Monthly-ImageJDataProcessing-LogFile");
+
+            //try and do a new folder with the log file in it
+            string newDirectory = $"{configDirectory}{Path.DirectorySeparatorChar}{logFileFolderName}{Path.DirectorySeparatorChar}";
+
+            //ensure that our folder exists
+            Directory.CreateDirectory(newDirectory);
+
+            //save our new file location for the log to a variable
+            string newFileLocation = newDirectory + sb.ToString() + ".txt";
+
+            //make the file if it doesn't exist
+            if (!File.Exists(newFileLocation)) File.Create(newFileLocation).Close();
+
+            //start writing the lines to the file
+            using (StreamWriter scribe = File.AppendText(newFileLocation))
+            {
+                foreach(string line in lines)
+                {
+                    //write this line to the file
+                    scribe.WriteLine(line);
+                }//end looping over all the lines we want to write
+            }//end use of scribe
+        }//end SaveLinesToLog(lines)
     }//end class
 }//end namespace

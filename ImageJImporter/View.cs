@@ -36,6 +36,11 @@ namespace ImageJImporter
 
         private System.Timers.Timer timer;
 
+        private List<CellButtonDisplay> displays;
+
+        private string imageJFileHeader = "Row\tArea\tX\tY\tPerim.\tMajor\tMinor\t" +
+            "Angle\tCirc.\tAR\tRound\tSolidity";
+
         /// <summary>
         /// constructor for this class. Just initializes things
         /// </summary>
@@ -61,6 +66,7 @@ namespace ImageJImporter
 
             sendDateTime = ChangeDateTimeText;
             sendLogAppendation = AppendTextLogHelperMethod;
+            displays = new List<CellButtonDisplay>();
         }//end constructor
 
         private SendString sendDateTime;
@@ -75,69 +81,13 @@ namespace ImageJImporter
             catch(InvalidOperationException)
             {
                 //I guess do nothing? ¯\_(ツ)_/¯
-            }//end catching InvalidOperationException from BeginInvoke()
+            }//end catching InvalidOperationExceptions from BeginInvoke()
         }//end timer elapsed event args
 
         private void ChangeDateTimeText(string text)
         {
             uxCurrentDateTime.Text = text;
         }//end ChangeDateTimeText(text)
-
-        private void DynamicallySetRowColor(object sender, DrawItemEventArgs e)
-        {
-            try
-            {
-                //draw the background?
-                e.DrawBackground();
-                //get the graphics from the event args
-                Graphics g = e.Graphics;
-                //default text color
-                Brush textBrush = Brushes.Black;
-                //default background color
-                SolidBrush backBrush = new SolidBrush(Color.Silver);
-
-                //get the current row from the listbox
-                Row row = (Row)(((ListBox)sender).Items[e.Index]);
-
-                ListBox listBox = (ListBox)sender;
-
-                //dynamically set color
-                if (listBox.SelectedIndices.Contains(e.Index))
-                {
-                    textBrush = selectedTextColor;
-                    backBrush = selectedBackgroundColor;
-                }//end if this row is selected
-                else if (row.IsNewRowFlag)
-                {
-                    textBrush = Brushes.Silver;
-                    backBrush.Color = Color.Black;
-                }//end else if IsNewRowFlag
-                else if (row.IsSeedStartFlag)
-                {
-                    textBrush = Brushes.Aquamarine;
-                    backBrush.Color = Color.DarkSeaGreen;
-                }//end else if IsSeedStartFlag
-                else if (row.IsSeedEndFlag)
-                {
-                    textBrush = Brushes.DarkSeaGreen;
-                    backBrush.Color = Color.Aquamarine;
-                }//end else if IsSeedEndFlag
-
-                //draw the background as whatever backBrush is set to
-                g.FillRectangle(backBrush, e.Bounds);
-
-                //actually draw the text stuff
-                e.Graphics.DrawString(row.ToString(),
-                    e.Font, textBrush, e.Bounds);
-
-                //draw other stuff
-                e.DrawFocusRectangle();
-            }//end trying to change the row color
-            catch
-            {
-
-            }//end catching errors
-        }//end DynamicallySetRowColor handler
 
         /// <summary>
         /// Allows outside classes to cause this class to show a message box
@@ -151,6 +101,37 @@ namespace ImageJImporter
             //displays a message box to the user with the variables set from the parameters
             MessageBox.Show(text, caption, buttons, icon);
         }//end ShowMessage
+
+        public void RequestCellDisplayFormClose(CellButtonDisplay sender)
+        {
+            sender.Close();
+        }//end RequestCellDisplayFormClose
+
+        public void CloseAllCellButtonDisplays()
+        {
+            foreach(CellButtonDisplay display in displays)
+            {
+                display.Close();
+            }//end looping over all the Cell button displays
+        }//end ClseAllCellButtonDisplays
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender">the object that sent this event</param>
+        /// <param name="e">if there are any arguments for the event, they're
+        /// stored here</param>
+        private void GridButtonClickEvent(object sender, EventArgs e)
+        {
+            //get our button from sender and don't do anything if not right type
+            CellButton button = sender as CellButton;
+            if (button == null) return;
+
+            //display the button's cell
+            CellButtonDisplay display = new CellButtonDisplay(CloseAllCellButtonDisplays, button.Cell);
+            displays.Add(display);
+            display.Show();
+        }//end GridButton Click Event
 
         /// <summary>
         /// updates the GUI with information from the supplied grid
@@ -205,55 +186,6 @@ namespace ImageJImporter
             //tell whoever called us that we were successful
             return true;
         }//end UpdateGrid(grid)
-
-        /// <summary>
-        /// [OBSOLETE] updates the seed list in the view with new cell data
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns>returns whether the operation was successful</returns>
-        public bool UpdateRowList(List<Row> data)
-        {
-            /// Note about the data type of uxRowList: 
-            /// uxRowList is a ListBox, which means that
-            /// the items it displays are not updated when
-            /// items in its data source are updated. Instead,
-            /// whenever one or all the items are updated, you
-            /// have to set the data source to null and then whatever
-            /// you want it to display
-
-            List<Row> tempRows = data;
-
-            uxRowListView.Size = defaultListBoxSize;
-            //var tempIndexList = uxRowList.SelectedIndices;
-            //uxRowList.DataSource = null;
-            //uxRowList.DataSource = tempRows;
-
-            uxRowListView.Items.Clear();
-            foreach(Row row in tempRows)
-            {
-                ListViewItem item = new ListViewItem(row.GetRowPropertyArray());
-                uxRowListView.Items.Add(item);
-            }//end adding each row to listview
-            //uxRowList.SelectedIndices = tempIndexList;
-
-            //if(uxRowList.Items.Count > 30)
-            //{
-            //    uxRowList.Size = new Size(defaultListBoxSize.Width, 20 * uxRowList.Items.Count);
-            //}//end if we should resize the listbox
-            //else
-            //{
-            //    uxRowList.Size = defaultListBoxSize;
-            //}//end else we want to reset the size
-
-            //makes the controls which allow editing/viewing interactable by the user
-            uxRowDisplayGroup.Enabled = true;
-
-            //build the button grid
-            //BuildButtonGrid(data);
-
-            //tell whoever called us that the operation was successful
-            return true;
-        }//end SendRowList(data)
 
         /// <summary>
         /// This event handler is called whenever the selected indices of
@@ -351,7 +283,7 @@ namespace ImageJImporter
 
                     //not 100% why exactly this works, but it does
                     int X = uxStartReference.Location.X + i * (uxStartReference.Size.Height + buttonMargin);
-                    int Y = uxStartReference.Location.Y + j * (uxStartReference.Size.Width + buttonMargin);
+                    int Y = uxStartReference.Location.Y + j * (uxStartReference.Size.Width + buttonMargin) - (uxStartReference.Size.Width / 2);
                     thisButton.Location = new Point(Y, X);
 
                     //add our button to the groupbox so it gets displayed
@@ -438,22 +370,6 @@ namespace ImageJImporter
                     "was corrupted somehow.");
             }//end else this cell is formatted wrong
         }//end FormatCellButton(out cellButton, buttonCell)
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender">the object that sent this event</param>
-        /// <param name="e">if there are any arguments for the event, they're
-        /// stored here</param>
-        private void GridButtonClickEvent(object sender, EventArgs e)
-        {
-            //get our button from sender and don't do anything if not right type
-            CellButton button = sender as CellButton;
-            if (button == null) return;
-
-            //display the button's row
-            MessageBox.Show($"{button.Cell}", $"Row Data of Cell", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }//end GridButton Click Event
 
         /// <summary>
         /// closes the file and mostly resets things
@@ -634,11 +550,12 @@ namespace ImageJImporter
             try
             {
                 //initialize and build new array of row data
-                string[] rowArray = new string[rows.Count];
-                for(int i = 0; i < rows.Count; i++)
+                string[] rowArray = new string[rows.Count+1];
+                rowArray[0] = imageJFileHeader;
+                for(int i = 1; i < rows.Count+1; i++)
                 {
                     //adds a deep copy of current row to rowArray
-                    rowArray[i] = rows[i].ToString();
+                    rowArray[i] = rows[i-1].ToString();
                 }//end copying each row over
 
                 //update uxTextViewer with new row info
@@ -816,6 +733,7 @@ namespace ImageJImporter
         }//end event handler for opening the form
 
         public CallMethod formClosing;
+        public SendStringArray formClosingSaveLog;
         /// <summary>
         /// event for right before the form closes. Saves settings for next time
         /// </summary>
@@ -826,6 +744,8 @@ namespace ImageJImporter
         {
             //tell the controller we want to close
             formClosing();
+            //tell the controller we have log files to save
+            formClosingSaveLog(uxHeaderLog.Lines);
         }//end event handler for closing the form
 
         /// <summary>

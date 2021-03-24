@@ -46,11 +46,11 @@ namespace ImageJImporter
             view.saveRows = controller.SaveRowData;
             view.formOpening = controller.OpenView;
             view.formClosing = controller.CloseView;
+            view.formClosingSaveLog = controller.SaveLogToFile;
             view.requestFileName = requestFileName;
 
             //this connects the method(s) in the view to the delegates
             ShowFormMessage showMessage = view.ShowMessage;
-            SendRowList updateSeedList = view.UpdateRowList;
             ReturnBool wordsWrap = view.DoWordsWrap;
             SetBool wordWrap = view.SetWordWrap;
             CallMethod closeFile = view.CloseRowList;

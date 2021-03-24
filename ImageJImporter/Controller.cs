@@ -29,11 +29,6 @@ namespace ImageJImporter
         /// </summary>
         public ShowFormMessage showMessage;
 
-        ///// <summary>
-        ///// function pointer for SendRowList in view. set up in program.cs
-        ///// </summary>
-        //public SendRowList updateSeedList;
-
         /// <summary>
         /// function pointer for UpdateGrid in view. set up in program.cs
         /// </summary>
@@ -58,39 +53,6 @@ namespace ImageJImporter
         /// function pointer to request a new filename from the view
         /// </summary>
         public RequestSpecificString getNewFilename;
-
-        
-        //private List<Row> currentRowList = new List<Row>();
-        ///// <summary>
-        ///// the list of rows that is currently being displayed or used
-        ///// </summary>
-        //public List<Row> CurrentRowList
-        //{
-        //    get
-        //    {
-        //        //create new list to send instead of passing reference
-        //        List<Row> tempList = new List<Row>();
-        //        foreach(Row row in currentRowList)
-        //        {
-        //            tempList.Add(new Row(row));
-        //        }//end adding each row to new list
-        //        return tempList;
-        //    }//end getter
-        //    /// <summary>
-        //    /// For some reason setting specific indices doesn't work with this. accessing
-        //    /// the private field directly does work though
-        //    /// </summary>
-        //    set
-        //    {
-        //        //create deep copy so out internal list can't be changed by reference
-        //        List<Row> tempList = new List<Row>();
-        //        foreach(Row row in value)
-        //        {
-        //            tempList.Add(new Row(row));
-        //        }//end adding each row to new list
-        //        currentRowList = tempList;
-        //    }//end setter
-        //}//end CurrentRowList property
 
         /// <summary>
         /// the grid that represents all of this object's cells and the rows
@@ -466,6 +428,16 @@ namespace ImageJImporter
             //saves configuration info to config file
             fileIO.SaveConfigFile(wordsWrap());
         }//end CloseView()
+
+        /// <summary>
+        /// saves the specified lines to the monthly log file
+        /// </summary>
+        /// <param name="lines">the lines to save to the log</param>
+        public void SaveLogToFile(string[] lines)
+        {
+            //tell the fileIO to save the lines to the monthly log file
+            fileIO.SaveLinesToLog(lines);
+        }//end SaveLogToFile(lines)
 
         public SendString appendTextLog;
         public void AppendToHeaderLog(string text)
