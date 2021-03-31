@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrightIdeasSoftware;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -30,10 +31,6 @@ namespace ImageJImporter
 
         private System.Drawing.Size defaultListBoxSize;
 
-        private Brush selectedTextColor = Brushes.LightSkyBlue;
-
-        private SolidBrush selectedBackgroundColor = new SolidBrush(Color.DodgerBlue);
-
         private System.Timers.Timer timer;
 
         private List<CellButtonDisplay> displays;
@@ -41,6 +38,8 @@ namespace ImageJImporter
         private string imageJFileHeader = "Row\tArea\tX\tY\tPerim.\tMajor\tMinor\t" +
             "Angle\tCirc.\tAR\tRound\tSolidity";
 
+        private TypedObjectListView<Row> tlist;
+        
         /// <summary>
         /// constructor for this class. Just initializes things
         /// </summary>
@@ -49,14 +48,12 @@ namespace ImageJImporter
             //this basically makes all the controls visible (buttons, textbox, etc)
             InitializeComponent();
 
+            //initialize typedObjectListView
+            tlist = new TypedObjectListView<Row>(this.uxRowListView);
+
             //set local variables to initial values
             defaultListBoxSize = uxRowListView.Size;
             uxRowListView.SelectedIndexChanged += SelectedRowInListChanged;
-            //uxRowList.AutoSize = true;
-            //uxRowDisplayGroup.AutoSize = true;
-            //uxRowList.DrawMode = DrawMode.OwnerDrawFixed;
-            //uxRowList.DrawItem += new DrawItemEventHandler(DynamicallySetRowColor);
-            //uxRowList.SelectedIndexChanged += UxSeedList_SelectedIndexChanged;
             timer = new System.Timers.Timer(1000)
             {
                 AutoReset = true,
@@ -67,7 +64,40 @@ namespace ImageJImporter
             sendDateTime = ChangeDateTimeText;
             sendLogAppendation = AppendTextLogHelperMethod;
             displays = new List<CellButtonDisplay>();
+            uxRowListView.OLVGroups = new List<OLVGroup>();
+            uxRowListView.HasCollapsibleGroups = true;
+            uxRowListView.ShowGroups = true;
+
+            tlist.GetColumn(0).GroupKeyGetter = delegate (Row rowObject)
+            {
+                Row row = rowObject;
+                return row.CurrentCellOwner;
+            };
+            this.rowName.GroupKeyToTitleConverter = delegate (object groupKey)
+            {
+                Cell cell = (Cell)groupKey;
+                //determine header based on cell state
+                if (cell.IsNewRowFlag) return ("New Row Flag");
+                else if (!cell.IsFullCell) return ("Incomplete Cell");
+                else if (cell.IsEmptyCell) return ("Empty Cell");
+                else if (cell.RowSpan == -2) return ("Abnormal Cell");
+                else return ($"Normal Cell with {cell.Chalk.ToString("N3")} Chaulkiness");
+            };
+            this.rowName.GroupFormatter = (OLVGroup group,
+                GroupingParameters parms) =>
+            {
+                Cell groupCell = (Cell)group.Key;
+                int index = groupCell.OwningGridObject.Cells.IndexOf(groupCell);
+                group.Id = groupCell[0].RowNum;
+                parms.GroupComparer = Comparer<OLVGroup>.Create((x, y) => (x.Id.CompareTo(y.Id)));
+            };
+            uxRowListView.BeforeCreatingGroups += uxRowListViewGroupSorting;
         }//end constructor
+
+        private void uxRowListViewGroupSorting(object sender, CreateGroupsEventArgs e)
+        {
+            e.Parameters.GroupComparer = Comparer<OLVGroup>.Create((x, y) => (x.GroupId.CompareTo(y.GroupId)));
+        }
 
         private SendString sendDateTime;
         private void UpdateCurrentDateTime(object sender, System.Timers.ElapsedEventArgs e)
@@ -141,47 +171,17 @@ namespace ImageJImporter
         public bool UpdateGrid(Grid grid)
         {
             List<Row> tempRows = grid.Rows;
-            
-            //clear ListView from previous changes
-            uxRowListView.Items.Clear();
-            uxRowListView.Groups.Clear();
-
-            //add all the items to the listview in groups
-            foreach (Cell cell in grid.Cells)
-            {
-                //initialize stringbuilder to build cell group header
-                StringBuilder sb = new StringBuilder();
-
-                //determine header based on cell state
-                if (cell.IsNewRowFlag) sb.Append("New Row Flag");
-                else if (!cell.IsFullCell) sb.Append("Incomplete Cell");
-                else if (cell.IsEmptyCell) sb.Append("Empty Cell");
-                else if (cell.RowSpan != 2) sb.Append("Abnormal Cell");
-                else sb.Append($"Normal Cell with {cell.Chaulkiness.ToString("N3")} Chaulkiness");
-
-                //create a new group with the header we made
-                ListViewGroup cellGroup = new ListViewGroup(sb.ToString());
-                //add the group we made to the ListView
-                uxRowListView.Groups.Add(cellGroup);
-
-                //add all the rows in this cell to the ListView, specifying their group
-                //as the one we just created
-                foreach (Row row in cell)
-                {
-                    //create the ListViewItem for this row with all the columns made properly
-                    ListViewItem rowItem = new ListViewItem(row.GetRowPropertyArray());
-                    //set the correct group
-                    rowItem.Group = cellGroup;
-                    //add the item to the ListView so it's visible
-                    uxRowListView.Items.Add(rowItem);
-                }//end adding each row to the group
-            }//end adding group for each cell
 
             //makes the group for displaying rows interactable
             uxRowDisplayGroup.Enabled = true;
 
             //builds the button grid for this data
             BuildButtonGrid(grid);
+
+            //reset list
+            uxRowListView.ClearObjects();
+            //update list
+            uxRowListView.SetObjects(tempRows);
 
             //tell whoever called us that we were successful
             return true;
@@ -377,7 +377,7 @@ namespace ImageJImporter
         public void CloseRowList()
         {
             //clear the seeds displayed in the list
-            uxRowListView.Items.Clear();
+            uxRowListView.ClearObjects();
 
             //clear the text in the editing/viewing box
             uxTextViewer.Text = "";
@@ -700,7 +700,13 @@ namespace ImageJImporter
             //initialize dictionary to send to controller
             Dictionary<string, int> rowIndexPairs = new Dictionary<string, int>();
 
+            List<Row> tempRowList = tlist.Objects as List<Row>;
+
             //start processing each row in the row viewer/editor
+            for(int i = 0; i < tempRowList.Count; i++)
+            {
+                rowIndexPairs.Add(tempRowList[i].ToString(), i);
+            }//end looping over each row in uxRowListView
             foreach(string row in uxTextViewer.Lines)
             {
                 string[] rowComponents = row.Split('\t');
@@ -782,5 +788,34 @@ namespace ImageJImporter
                 " not implemented. Please don't click it.");
             uxCurrentFilenameRequest.Enabled = false;
         }//end AskForFilename event handler
+
+        private void uxRowListView_CellEditFinished(object sender, CellEditEventArgs e)
+        {
+            /*
+             * Note: Current method of getting index from a row is a bit jank.
+             * It would be good to update it with something a little cleaner in
+             * the future.
+             */
+
+            //initialize dictionary to send to controller
+            Dictionary<string, int> rowIndexPairs = new Dictionary<string, int>();
+
+            Row rowToEdit = (Row)e.RowObject;
+
+            string[] rowComponents = rowToEdit.FormatData().Split('\t');
+            int index = Convert.ToInt32(rowComponents[0]) - 1;
+            rowComponents[e.SubItemIndex] = e.NewValue.ToString();
+            StringBuilder sb = new StringBuilder();
+            foreach(string element in rowComponents)
+            {
+                sb.Append(element);
+                sb.Append("\t");
+            }
+            sb.Length--;
+            rowIndexPairs.Add(sb.ToString(), index);
+
+            //tell controller to save specified seed data
+            saveRows(rowIndexPairs);
+        }
     }//end class
 }//end namespace

@@ -37,7 +37,7 @@ namespace ImageJImporter
             else if (!Cell.IsFullCell) sb.Append("Incomplete Cell");
             else if (Cell.IsEmptyCell) sb.Append("Empty Cell");
             else if (Cell.RowSpan != 2) sb.Append("Abnormal Cell");
-            else sb.Append($"Normal Cell with {Cell.Chaulkiness.ToString("N3")} Chaulkiness");
+            else sb.Append($"Normal Cell with {Cell.Chalk.ToString("N3")} Chalk");
 
             //get the group ready
             ListViewGroup group = new ListViewGroup(sb.ToString());

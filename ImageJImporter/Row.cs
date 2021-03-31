@@ -32,6 +32,12 @@ namespace ImageJImporter
         public decimal Solidity;
 
         /// <summary>
+        /// the Cell that currently contains this Row object.
+        /// When unset, it is equal to Cell.BlankCell
+        /// </summary>
+        public Cell CurrentCellOwner { get; set; } = Cell.BlankCell;
+
+        /// <summary>
         /// whether or not this row is a flag for starting a new row in the
         /// grid which the seeds sit in when they're scanned
         /// </summary>
@@ -121,6 +127,11 @@ namespace ImageJImporter
             this.Solidity = editedValues[10];
         }//end 1-arg constructor
 
+        /// <summary>
+        /// copies all the information of this row.
+        /// sets CurrentCellOwner to Cell.BlankCell
+        /// </summary>
+        /// <param name="row"></param>
         public Row(Row row)
         {
             this.RowNum = row.RowNum;
@@ -135,6 +146,7 @@ namespace ImageJImporter
             this.AR = row.AR;
             this.Round = row.Round;
             this.Solidity = row.Solidity;
+            this.CurrentCellOwner = Cell.BlankCell;
         }//end 1-arg copy constructor
 
         /// <summary>

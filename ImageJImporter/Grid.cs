@@ -23,7 +23,7 @@ namespace ImageJImporter
             get
             {
                 List<Cell> tempCellList = new List<Cell>();
-                foreach(Cell cell in cells)
+                foreach (Cell cell in cells)
                 {
                     //creates deep copy
                     tempCellList.Add(new Cell(cell));
@@ -32,10 +32,10 @@ namespace ImageJImporter
             }//end getter
             set
             {
-                if(value != null)
+                if (value != null)
                 {
                     List<Cell> tempCellList = new List<Cell>();
-                    foreach(Cell cell in value)
+                    foreach (Cell cell in value)
                     {
                         tempCellList.Add(new Cell(cell));
                     }//end foreach
@@ -57,12 +57,14 @@ namespace ImageJImporter
             get
             {
                 List<Row> tempRowList = new List<Row>();
-                foreach(Cell cell in cells)
+                foreach (Cell cell in cells)
                 {
-                    foreach(Row row in cell)
+                    foreach (Row row in cell)
                     {
                         tempRowList.Add(row);
+                        row.CurrentCellOwner = cell;
                     }//end looping over rows
+                    cell.OwningGridObject = this;
                 }//end looping over cells
                 return tempRowList;
             }//end getter
@@ -76,10 +78,10 @@ namespace ImageJImporter
             get
             {
                 int counter = 0;
-                
-                for(int i = 0; i < cells.Count; i++)
+
+                for (int i = 0; i < cells.Count; i++)
                 {
-                    for(int j = 0; j < cells[i].Count; j++)
+                    for (int j = 0; j < cells[i].Count; j++)
                     {
                         counter++;
                     }//end looping over rows
@@ -92,6 +94,20 @@ namespace ImageJImporter
         public bool IsReadOnly => false;
 
         /// <summary>
+        /// A definition for a totally blank
+        /// grid. Used primarily for checking
+        /// if a Cell's owningGridObject is not set
+        /// </summary>
+        public static Grid BlankGrid
+        {
+            get
+            {
+                Grid blankGrid = new Grid();
+                return blankGrid;
+            }//end getter
+        }//end BlankGrid
+
+        /// <summary>
         /// access an index of this object as if it were a 1-d
         /// array or list.
         /// </summary>
@@ -101,7 +117,7 @@ namespace ImageJImporter
         {
             get
             {
-                if(index < 0 || index >= Count)
+                if (index < 0 || index >= Count)
                 {
                     throw new IndexOutOfRangeException($"index {index} is out of range.");
                 }//end if we have an error
@@ -183,7 +199,7 @@ namespace ImageJImporter
         /// <param name="grid">the grid you wish to copy</param>
         public Grid(Grid grid)
         {
-            foreach(Cell cell in grid.cells)
+            foreach (Cell cell in grid.cells)
             {
                 //add a deep copy to our internal cell list
                 this.cells.Add(new Cell(cell));
@@ -217,7 +233,7 @@ namespace ImageJImporter
             eb.AppendLine("\tThe following exceptions were encountered: ");
 
             //start looping through everything
-            for(int i = 0; i < rows.Count; i++)
+            for (int i = 0; i < rows.Count; i++)
             {
                 try
                 {
@@ -265,7 +281,7 @@ namespace ImageJImporter
         public void Add(Row row)
         {
             //check to make sure we actually have cells already
-            if(cells.Count == 0)
+            if (cells.Count == 0)
             {
                 cells.Add(new Cell(new Row(row)));
                 return;
@@ -273,7 +289,7 @@ namespace ImageJImporter
 
             //initialize some reference variables
             Cell lastCell = cells[cells.Count - 1];
-            
+
             //start figuring out where and what to add
             if (row.IsNewRowFlag)
             {
@@ -292,7 +308,7 @@ namespace ImageJImporter
                 //adds the row as a new cell with a signle row
                 cells.Add(new Cell(new Row(row)));
 
-                if(!lastCell.IsFullCell && !lastCell.IsNewRowFlag)
+                if (!lastCell.IsFullCell && !lastCell.IsNewRowFlag)
                 {
                     throw new PriorCellIncompleteException("The previous cell in this" +
                         " grid does not seem to have been ended properly. This likely " +
@@ -320,7 +336,7 @@ namespace ImageJImporter
         /// </summary>
         public bool Contains(Cell cell)
         {
-            foreach(Cell cellItem in cells)
+            foreach (Cell cellItem in cells)
             {
                 if (cellItem.Equals(cell)) return true;
             }//end looping over each cell
@@ -333,15 +349,32 @@ namespace ImageJImporter
         /// </summary>
         public bool Contains(Row row)
         {
-            foreach(Cell cellItem in cells)
+            foreach (Cell cellItem in cells)
             {
-                foreach(Row rowItem in cellItem)
+                foreach (Row rowItem in cellItem)
                 {
                     if (rowItem.Equals(row)) return true;
                 }//end looping over rows
             }//end looping over cells
             return false;
         }//end Contains(row)
+
+        /// <summary>
+        /// returns whether or not the supplied grid is equal to this one.
+        /// Two grids are equal is all cells are equal
+        /// </summary>
+        /// <param name="other">the grid you want to compare to this one</param>
+        /// <returns>true if they're equal; false, otherwise</returns>
+        public bool Equals(Grid other)
+        {
+            if (this.Count != other.Count) return false;
+            if (this.cells.Count != other.cells.Count) return false;
+            for(int i = 0; i < cells.Count; i++)
+            {
+                if (!this.cells[i].Equals(other.cells[i])) return false;
+            }//end checking each cell
+            return true;
+        }//end Equals(other)
 
         /// <summary>
         /// Copies the cells from Cells into the specified array, with the first copy
@@ -352,7 +385,7 @@ namespace ImageJImporter
         /// <param name="arrayIndex">the index in the cellArray you wish to start at</param>
         public void CopyTo(Cell[] cellArray, int arrayIndex)
         {
-            for(int i = 0; i < cells.Count && arrayIndex < cellArray.Length; i++)
+            for (int i = 0; i < cells.Count && arrayIndex < cellArray.Length; i++)
             {
                 cellArray[arrayIndex] = new Cell(cells[i]);
                 arrayIndex++;
@@ -368,9 +401,9 @@ namespace ImageJImporter
         /// <param name="arrayIndex">the index in the rowArray you wish to start at</param>
         public void CopyTo(Row[] rowArray, int arrayIndex)
         {
-            for(int i = 0; i < cells.Count; i++)
+            for (int i = 0; i < cells.Count; i++)
             {
-                for(int j = 0; j < cells[i].Count; j++)
+                for (int j = 0; j < cells[i].Count; j++)
                 {
                     rowArray[arrayIndex] = new Row(cells[i][j]);
                     arrayIndex++;
@@ -386,7 +419,9 @@ namespace ImageJImporter
         /// it was not removed</returns>
         public bool Remove(Cell cell)
         {
-            return cells.Remove(cell);
+            bool success = cells.Remove(cell);
+            cell.OwningGridObject = Grid.BlankGrid;
+            return success;
         }//end Remove(cell)
 
         /// <summary>
@@ -398,16 +433,37 @@ namespace ImageJImporter
         /// it was not removed</returns>
         public bool Remove(Row row)
         {
-            foreach(Cell cellItem in cells)
+            foreach (Cell cellItem in cells)
             {
                 if (cellItem.Contains(row))
                 {
-                    return cells.Remove(cellItem);
+                    bool success = cells.Remove(cellItem);
+                    cellItem.OwningGridObject = Grid.BlankGrid;
+                    return success;
                 }//end if this cell contains the specified row
             }//end looping through cells
             //we must not have found it...
             return false;
         }//end Remove(row)
+
+        /// <summary>
+        /// Returns the index of the cell which contains the specified row.
+        /// If the row is not found, will return -1.
+        /// </summary>
+        /// <param name="row">The row you want to find</param>
+        /// <returns>the index of the cell which contains the row
+        /// you want to find</returns>
+        public int IndexOfCell(Row row)
+        {
+            for(int i = 0; i < cells.Count; i++)
+            {
+                foreach(Row cellRow in cells[i])
+                {
+                    if (cellRow.Equals(row)) return i;
+                }//end looping over the rows in this cell
+            }//end looping over all the cells
+            return -1;
+        }//end IndexOfCell(row)
 
         /// <summary>
         /// Enumerator for returning rows

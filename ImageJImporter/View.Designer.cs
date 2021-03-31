@@ -49,23 +49,24 @@ namespace ImageJImporter
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
             this.uxLockListSelection = new System.Windows.Forms.Button();
             this.uxRowDisplayGroup = new System.Windows.Forms.GroupBox();
-            this.uxRowListView = new System.Windows.Forms.ListView();
-            this.rowName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowArea = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowX = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowY = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowPerim = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowMajor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowMinor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowAngle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowCirc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.RowAR = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowRound = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rowSolidity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.uxRowListView = new BrightIdeasSoftware.ObjectListView();
+            this.rowName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowArea = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowX = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowY = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowPerim = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowMajor = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowMinor = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowAngle = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowCirc = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowAR = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowRound = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.rowSolidity = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.uxGridDisplay = new System.Windows.Forms.GroupBox();
             this.uxStartReference = new System.Windows.Forms.Button();
             this.ViewFormMenuStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).BeginInit();
             this.uxGridDisplay.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -280,6 +281,20 @@ namespace ImageJImporter
             // 
             // uxRowListView
             // 
+            this.uxRowListView.AllColumns.Add(this.rowName);
+            this.uxRowListView.AllColumns.Add(this.rowArea);
+            this.uxRowListView.AllColumns.Add(this.rowX);
+            this.uxRowListView.AllColumns.Add(this.rowY);
+            this.uxRowListView.AllColumns.Add(this.rowPerim);
+            this.uxRowListView.AllColumns.Add(this.rowMajor);
+            this.uxRowListView.AllColumns.Add(this.rowMinor);
+            this.uxRowListView.AllColumns.Add(this.rowAngle);
+            this.uxRowListView.AllColumns.Add(this.rowCirc);
+            this.uxRowListView.AllColumns.Add(this.rowAR);
+            this.uxRowListView.AllColumns.Add(this.rowRound);
+            this.uxRowListView.AllColumns.Add(this.rowSolidity);
+            this.uxRowListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
+            this.uxRowListView.CellEditUseWholeCell = false;
             this.uxRowListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.rowName,
             this.rowArea,
@@ -287,82 +302,100 @@ namespace ImageJImporter
             this.rowY,
             this.rowPerim,
             this.rowMajor,
-            this.rowMinor,
-            this.rowAngle,
-            this.rowCirc,
-            this.RowAR,
-            this.rowRound,
-            this.rowSolidity});
+            this.rowMinor});
+            this.uxRowListView.Cursor = System.Windows.Forms.Cursors.Default;
             this.uxRowListView.FullRowSelect = true;
             this.uxRowListView.GridLines = true;
             this.uxRowListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.uxRowListView.HeaderUsesThemes = true;
             this.uxRowListView.HideSelection = false;
             this.uxRowListView.Location = new System.Drawing.Point(7, 270);
             this.uxRowListView.Name = "uxRowListView";
-            this.uxRowListView.Size = new System.Drawing.Size(851, 345);
+            this.uxRowListView.ShowCommandMenuOnRightClick = true;
+            this.uxRowListView.ShowSortIndicators = false;
+            this.uxRowListView.Size = new System.Drawing.Size(851, 361);
+            this.uxRowListView.SortGroupItemsByPrimaryColumn = false;
             this.uxRowListView.TabIndex = 10;
             this.uxRowListView.UseCompatibleStateImageBehavior = false;
             this.uxRowListView.View = System.Windows.Forms.View.Details;
+            this.uxRowListView.CellEditFinished += new BrightIdeasSoftware.CellEditEventHandler(this.uxRowListView_CellEditFinished);
             // 
             // rowName
             // 
+            this.rowName.AspectName = "RowNum";
             this.rowName.Text = "Row";
-            this.rowName.Width = 88;
+            this.rowName.Width = 82;
             // 
             // rowArea
             // 
+            this.rowArea.AspectName = "Area";
             this.rowArea.Text = "Area";
-            this.rowArea.Width = 137;
+            this.rowArea.Width = 112;
             // 
             // rowX
             // 
+            this.rowX.AspectName = "X";
             this.rowX.Text = "X";
-            this.rowX.Width = 41;
+            this.rowX.Width = 57;
             // 
             // rowY
             // 
+            this.rowY.AspectName = "Y";
             this.rowY.Text = "Y";
-            this.rowY.Width = 110;
+            this.rowY.Width = 91;
             // 
             // rowPerim
             // 
+            this.rowPerim.AspectName = "Perim";
             this.rowPerim.Text = "Perim";
-            this.rowPerim.Width = 71;
+            this.rowPerim.Width = 77;
             // 
             // rowMajor
             // 
+            this.rowMajor.AspectName = "Major";
             this.rowMajor.Text = "Major";
-            this.rowMajor.Width = 78;
+            this.rowMajor.Width = 71;
             // 
             // rowMinor
             // 
+            this.rowMinor.AspectName = "Minor";
             this.rowMinor.Text = "Minor";
-            this.rowMinor.Width = 128;
+            this.rowMinor.Width = 82;
             // 
             // rowAngle
             // 
+            this.rowAngle.AspectName = "Angle";
+            this.rowAngle.DisplayIndex = 7;
+            this.rowAngle.IsVisible = false;
             this.rowAngle.Text = "Angle";
-            this.rowAngle.Width = 0;
             // 
             // rowCirc
             // 
+            this.rowCirc.AspectName = "Circ";
+            this.rowCirc.DisplayIndex = 8;
+            this.rowCirc.IsVisible = false;
             this.rowCirc.Text = "Circ";
-            this.rowCirc.Width = 0;
             // 
-            // RowAR
+            // rowAR
             // 
-            this.RowAR.Text = "AR";
-            this.RowAR.Width = 0;
+            this.rowAR.AspectName = "AR";
+            this.rowAR.DisplayIndex = 9;
+            this.rowAR.IsVisible = false;
+            this.rowAR.Text = "AR";
             // 
             // rowRound
             // 
+            this.rowRound.AspectName = "Round";
+            this.rowRound.DisplayIndex = 10;
+            this.rowRound.IsVisible = false;
             this.rowRound.Text = "Round";
-            this.rowRound.Width = 0;
             // 
             // rowSolidity
             // 
+            this.rowSolidity.AspectName = "Solidity";
+            this.rowSolidity.DisplayIndex = 11;
+            this.rowSolidity.IsVisible = false;
             this.rowSolidity.Text = "Solidity";
-            this.rowSolidity.Width = 0;
             // 
             // uxGridDisplay
             // 
@@ -392,7 +425,7 @@ namespace ImageJImporter
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(938, 498);
+            this.ClientSize = new System.Drawing.Size(901, 519);
             this.Controls.Add(this.uxCurrentDateTime);
             this.Controls.Add(this.uxGridDisplay);
             this.Controls.Add(this.uxHeaderLog);
@@ -411,6 +444,7 @@ namespace ImageJImporter
             this.ViewFormMenuStrip.PerformLayout();
             this.uxRowDisplayGroup.ResumeLayout(false);
             this.uxRowDisplayGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).EndInit();
             this.uxGridDisplay.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -439,19 +473,19 @@ namespace ImageJImporter
         private System.Windows.Forms.Button uxStartReference;
         private System.Windows.Forms.TextBox uxCurrentDateTime;
         private System.Windows.Forms.Button uxLockListSelection;
-        private System.Windows.Forms.ListView uxRowListView;
-        private System.Windows.Forms.ColumnHeader rowName;
-        private System.Windows.Forms.ColumnHeader rowArea;
-        private System.Windows.Forms.ColumnHeader rowX;
-        private System.Windows.Forms.ColumnHeader rowY;
-        private System.Windows.Forms.ColumnHeader rowPerim;
-        private System.Windows.Forms.ColumnHeader rowMajor;
-        private System.Windows.Forms.ColumnHeader rowMinor;
-        private System.Windows.Forms.ColumnHeader rowAngle;
-        private System.Windows.Forms.ColumnHeader rowCirc;
-        private System.Windows.Forms.ColumnHeader RowAR;
-        private System.Windows.Forms.ColumnHeader rowRound;
-        private System.Windows.Forms.ColumnHeader rowSolidity;
+        private BrightIdeasSoftware.ObjectListView uxRowListView;
+        private BrightIdeasSoftware.OLVColumn rowName;
+        private BrightIdeasSoftware.OLVColumn rowArea;
+        private BrightIdeasSoftware.OLVColumn rowX;
+        private BrightIdeasSoftware.OLVColumn rowY;
+        private BrightIdeasSoftware.OLVColumn rowPerim;
+        private BrightIdeasSoftware.OLVColumn rowMajor;
+        private BrightIdeasSoftware.OLVColumn rowMinor;
+        private BrightIdeasSoftware.OLVColumn rowAngle;
+        private BrightIdeasSoftware.OLVColumn rowCirc;
+        private BrightIdeasSoftware.OLVColumn rowAR;
+        private BrightIdeasSoftware.OLVColumn rowRound;
+        private BrightIdeasSoftware.OLVColumn rowSolidity;
     }
 }
 

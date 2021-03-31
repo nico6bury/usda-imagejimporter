@@ -49,7 +49,9 @@ namespace ImageJImporter
                     List<Row> tempRowList = new List<Row>();
                     foreach (Row row in value)
                     {
-                        tempRowList.Add(new Row(row));
+                        Row newRow = new Row(row);
+                        newRow.CurrentCellOwner = this;
+                        tempRowList.Add(newRow);
                     }//end adding all rows in givenRowList to tempRowList
                     rows = tempRowList;
                 }//end if the value isn't null
@@ -126,11 +128,12 @@ namespace ImageJImporter
         }//end IsEmptyCell
 
         /// <summary>
-        /// The chaulkniess of this cell. If this is a new row flag or
-        /// incomplete, then it will be -1. If it's an abnormal number of rows,
-        /// it will be 0. Otherwise it will be Area2 / Area1
+        /// The chalkniess of this cell. If this is a new row flag, 
+        /// an empty cell, or incorrectly formatted, then this will
+        /// return -1. Otherwise, it will return percent chalkiness
+        /// of this cell as a decimal.
         /// </summary>
-        public decimal Chaulkiness
+        public decimal Chalk
         {
             get
             {
@@ -138,26 +141,36 @@ namespace ImageJImporter
                 {
                     return -1;
                 }//end if this is a flag for a new row in grid
-                if (!IsFullCell)
+                else if (!IsFullCell)
                 {
                     return -1;
                 }//end else if this isn't a complete cell
+                else if (IsEmptyCell)
+                {
+                    return -1;
+                }//end else if this cell is empty
                 else
                 {
                     if(rows.Count == 4)
                     {
                         return rows[2].Area / rows[1].Area;
                     }//end if we have the normal amount of rows
+                    else if (rows.Count == 5)
+                    {
+                        decimal totalChalkiness = rows[2].Area + rows[3].Area;
+                        return totalChalkiness / rows[1].Area;
+                    }//end else if we have two rows of chalkiness
                     else
                     {
                         return 0;
-                    }//end else we have an abnormal case of rows
+                    }//end else we have a seed with very little chalkiness
                 }//end else this must be a complete cell
             }//end getter
-        }//end Chaulkiness
+        }//end Chalk
 
         /// <summary>
-        /// The number of rows in this cell, minus 2
+        /// The number of rows in this cell, minus 2 to account for the 
+        /// cell start and cell end flags
         /// </summary>
         public int RowSpan
         {
@@ -166,6 +179,26 @@ namespace ImageJImporter
                 return rows.Count - 2;
             }//end getter
         }//end RowSpan
+
+        /// <summary>
+        /// the Grid object that contains this cell. If this
+        /// cell is not in a grid object, then this will be
+        /// equal to Grid.BlankGrid
+        /// </summary>
+        public Grid OwningGridObject { get; set; }
+
+        /// <summary>
+        /// A static definition for a cell with nothing in it at all.
+        /// Used primarily to check if a row has been assigned a Cell.
+        /// </summary>
+        public static Cell BlankCell
+        {
+            get
+            {
+                Cell blankCell = new Cell();
+                return blankCell;
+            }//end getter
+        }//end BlankCell
 
         /// <summary>
         /// gets or sets the specified index of the rows this cell
@@ -185,6 +218,7 @@ namespace ImageJImporter
                 if (index < 0 || index >= rows.Count)
                     throw new IndexOutOfRangeException($"{index} is out of range");
                 rows[index] = new Row(value);
+                rows[index].CurrentCellOwner = this;
             }//end setter
         }//end Row indexer
 
@@ -198,13 +232,14 @@ namespace ImageJImporter
 
         /// <summary>
         /// initializes this object as a copy of the specified
-        /// cell object
+        /// cell object. Sets OwningGridObject to BlankGrid
         /// </summary>
         /// <param name="cell">The Cell you wish to copy</param>
         public Cell(Cell cell)
         {
             //creates deep copy
             this.Rows = cell.Rows;
+            this.OwningGridObject = Grid.BlankGrid;
         }//end 1-arg copy constructor
 
         /// <summary>
@@ -214,6 +249,7 @@ namespace ImageJImporter
         public Cell(Row row)
         {
             rows.Add(new Row(row));
+            row.CurrentCellOwner = this;
         }//end 1-arg row constructor
 
         /// <summary>
@@ -225,6 +261,10 @@ namespace ImageJImporter
         public Cell(List<Row> rows)
         {
             this.Rows = rows;
+            foreach(Row row in Rows)
+            {
+                row.CurrentCellOwner = this;
+            }//end setting cellowner to each row
         }//end 1-arg list constructor
 
         /// <summary>
@@ -268,6 +308,7 @@ namespace ImageJImporter
         public void Add(Row item)
         {
             rows.Add(item);
+            item.CurrentCellOwner = this;
         }//end Add(item)
 
         /// <summary>
