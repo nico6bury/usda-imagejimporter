@@ -33,36 +33,26 @@ namespace ImageJImporter
             FileIO fileIO = new FileIO();
             Controller controller = new Controller(fileIO);
 
-            //this connects the methods in the controller to the delegates
-            RequestString requestFileName = controller.GiveCurrentFilename;
+            //this connects the methods in the controller to the delegates (none currently)
 
             //this connects the delegates to the view
             view.openFile = controller.OpenDataFile;
             view.saveFile = controller.SaveCurrentFile;
             view.saveFileAs = controller.SaveCurrentListAsNewFile;
             view.closeFile = controller.CloseCurrentFile;
-            view.viewRows = controller.ViewRowData;
-            view.editRows = controller.EditRowData;
-            view.saveRows = controller.SaveRowData;
+            view.editCell = controller.SaveRowData;
             view.formOpening = controller.OpenView;
             view.formClosing = controller.CloseView;
             view.formClosingSaveLog = controller.SaveLogToFile;
-            view.requestFileName = requestFileName;
 
             //this connects the method(s) in the view to the delegates
             ShowFormMessage showMessage = view.ShowMessage;
-            ReturnBool wordsWrap = view.DoWordsWrap;
-            SetBool wordWrap = view.SetWordWrap;
             CallMethod closeFile = view.CloseRowList;
 
             //this connects the delegates to the controller
             controller.showMessage = view.ShowMessage;
             controller.updateGrid = view.UpdateGrid;
-            controller.wordsWrap = view.DoWordsWrap;
-            controller.setWordWrap = view.SetWordWrap;
             controller.closeSeedList = view.CloseRowList;
-            controller.viewRows = view.SetRowViewability;
-            controller.editRows = view.SetRowEditability;
             controller.appendTextLog = view.AppendTextToLog;
             controller.getNewFilename = view.GetNewFilename;
 

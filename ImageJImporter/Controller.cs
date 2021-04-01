@@ -35,16 +35,6 @@ namespace ImageJImporter
         public SendGrid updateGrid;
 
         /// <summary>
-        /// function pointer for DoWordsWrap in view. set up in program.cs
-        /// </summary>
-        public ReturnBool wordsWrap;
-
-        /// <summary>
-        /// function pointer for the SetWordWrap in view. set up in program.cs
-        /// </summary>
-        public SetBool setWordWrap;
-
-        /// <summary>
         /// function pointer for the CloseRowList in view. set up in program.cs
         /// </summary>
         public CallMethod closeSeedList;
@@ -76,11 +66,6 @@ namespace ImageJImporter
         {
             this.fileIO = new FileIO(fileIO);
         }//end constructor
-
-        public string GiveCurrentFilename()
-        {
-            return fileIO.file;
-        }//end GiveCurrentFileName()
 
         /// <summary>
         /// handle event of user wanting to open a file
@@ -230,44 +215,6 @@ namespace ImageJImporter
             return rowRegister;
         }//end GetRowsAtIndices(indices)
 
-        public SendRowList viewRows;
-        /// <summary>
-        /// assembles list of rows at specified indices and tells view to
-        /// display them to the user
-        /// </summary>
-        /// <param name="indices">the indices of CurrentRowList which you'd like
-        /// to view</param>
-        public void ViewRowData(List<int> indices)
-        {
-            //verify all indices are valid
-            CheckIndices(indices);
-
-            //get rows at specified indices
-            List<Row> rowRegister = GetRowsAtIndices(indices);
-
-            //tell view to display specified rows
-            viewRows(rowRegister);
-        }//end ViewRowData(indices)
-
-        public SendRowList editRows;
-        /// <summary>
-        /// assembles list of rows at specified indices and tells view to allow
-        /// the user to edit them
-        /// </summary>
-        /// <param name="indices">the indices of CurrentRowList which you'd like
-        /// to edit</param>
-        public void EditRowData(List<int> indices)
-        {
-            //verify all indices are valid
-            CheckIndices(indices);
-
-            //get rows at specified indices
-            List<Row> rowRegister = GetRowsAtIndices(indices);
-
-            //tell view to allow user to edit specified rows
-            editRows(rowRegister);
-        }//end EditRowData(indices)
-
         /// <summary>
         /// Saves the row data of the specified rows at the specified indices
         /// </summary>
@@ -363,12 +310,6 @@ namespace ImageJImporter
                     //update fileIO's most recently used file property
                     fileIO.file = data[0];
 
-                    //try to determine whether we should wrap text
-                    bool wrapText = Convert.ToBoolean(data[1]);
-
-                    //tell the view whether we should wrap text
-                    setWordWrap(wrapText);
-
                     //update log with recent file name and row count
                     AppendToHeaderLog("Found configuration file. Loaded" +
                         $" {BuildFileMessage(fileIO.file, internalGrid.Rows)}");
@@ -426,7 +367,7 @@ namespace ImageJImporter
         public void CloseView()
         {
             //saves configuration info to config file
-            fileIO.SaveConfigFile(wordsWrap());
+            fileIO.SaveConfigFile();
         }//end CloseView()
 
         /// <summary>

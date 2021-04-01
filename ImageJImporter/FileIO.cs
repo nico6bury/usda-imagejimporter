@@ -74,16 +74,13 @@ namespace ImageJImporter
         /// this method saves the configuration file so loading the program
         /// is easier next time
         /// </summary>
-        /// <param name="wordWrap">whether or not text should wrap to the next line</param>
-        public void SaveConfigFile(bool wordWrap)
+        public void SaveConfigFile()
         {
             //creates config file. If it already exists, we overwrite it
             using (StreamWriter scribe = new StreamWriter(configFileAbsolutePath))
             {
                 //write default filename to config file
                 scribe.WriteLine(file);
-
-                scribe.WriteLine(wordWrap);
             }//end use of StreamWriter
         }//end SaveConfigFile()
 

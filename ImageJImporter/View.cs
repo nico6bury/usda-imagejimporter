@@ -29,16 +29,19 @@ namespace ImageJImporter
         /// </summary>
         public RequestString requestFileName;
 
-        private System.Drawing.Size defaultListBoxSize;
-
         private System.Timers.Timer timer;
 
+        /// <summary>
+        /// list of the cellbuttons that are currently being displayed. Helps us
+        /// close them all when we need to.
+        /// </summary>
         private List<CellButtonDisplay> displays;
 
-        private string imageJFileHeader = "Row\tArea\tX\tY\tPerim.\tMajor\tMinor\t" +
-            "Angle\tCirc.\tAR\tRound\tSolidity";
-
         private TypedObjectListView<Row> tlist;
+
+        private Point defaultRowDisplayGroupLocation;
+
+        private Point defaultGridDisplayLocation;
         
         /// <summary>
         /// constructor for this class. Just initializes things
@@ -52,8 +55,6 @@ namespace ImageJImporter
             tlist = new TypedObjectListView<Row>(this.uxRowListView);
 
             //set local variables to initial values
-            defaultListBoxSize = uxRowListView.Size;
-            uxRowListView.SelectedIndexChanged += SelectedRowInListChanged;
             timer = new System.Timers.Timer(1000)
             {
                 AutoReset = true,
@@ -61,13 +62,16 @@ namespace ImageJImporter
             };
             timer.Elapsed += UpdateCurrentDateTime;
 
+            //set up some delegates
             sendDateTime = ChangeDateTimeText;
             sendLogAppendation = AppendTextLogHelperMethod;
-            displays = new List<CellButtonDisplay>();
-            uxRowListView.OLVGroups = new List<OLVGroup>();
-            uxRowListView.HasCollapsibleGroups = true;
-            uxRowListView.ShowGroups = true;
 
+            //initialize some display stuff
+            displays = new List<CellButtonDisplay>();
+            defaultGridDisplayLocation = uxGridDisplay.Location;
+            defaultRowDisplayGroupLocation = uxRowDisplayGroup.Location;
+
+            //do a bunch of weird OLV delegate schenanigans
             tlist.GetColumn(0).GroupKeyGetter = delegate (Row rowObject)
             {
                 Row row = rowObject;
@@ -178,8 +182,6 @@ namespace ImageJImporter
             //builds the button grid for this data
             BuildButtonGrid(grid);
 
-            //reset list
-            uxRowListView.ClearObjects();
             //update list
             uxRowListView.SetObjects(tempRows);
 
@@ -188,188 +190,39 @@ namespace ImageJImporter
         }//end UpdateGrid(grid)
 
         /// <summary>
-        /// This event handler is called whenever the selected indices of
-        /// uxRowList change. It simply updates which rows are displayed in
-        /// the uxTextViewer
-        /// </summary>
-        /// <param name="sender">the object that sent this event</param>
-        /// <param name="e">if there are any arguments for the event, they're
-        /// stored here</param>
-        private void SelectedRowInListChanged(object sender, EventArgs e)
-        {
-            //make sure sender is a listbox and has at least one index selected
-            ListView list = sender as ListView;
-            if (list == null || list.SelectedIndices.Count < 0) return;
-
-            //make sure at least one button is pressed, and the whole group box is enabled
-            if((!uxViewRow.Enabled || !uxEditRow.Enabled) && uxRowDisplayGroup.Enabled)
-            {
-                //get the list of currently selected indices
-                List<int> indices = GetSelectedIndexList(list);
-
-                if (uxViewRow.Enabled == false)
-                {
-                    //tell controller we want to view rows
-                    viewRows(indices);
-                }//end if we're viewing rows
-                else if (uxEditRow.Enabled == false)
-                {
-                    //tell controller we want to edit rows
-                    editRows(indices);
-                }//end else if we're editing rows
-            }//end if we should do anything
-        }//end SelectedRowInListChanged event handler
-
-        /// <summary>
-        /// Event for uxLockListSelection being clicked
-        /// </summary>
-        /// <param name="sender">the object that sent this event</param>
-        /// <param name="e">if there are any arguments for the event, they're
-        /// stored here</param>
-        private void uxLockListSelectionClick(object sender, EventArgs e)
-        {
-            //toggles uxRowList enabled property
-            uxRowListView.Enabled = !uxRowListView.Enabled;
-        }//end uxLockListSelectionClick event handler
-
-        /// <summary>
         /// builds the grid of buttons that represents the current grid. Very WIP
         /// </summary>
         /// <param name="grid">the grid that you want to build</param>
         private void BuildButtonGrid(Grid grid)
         {
-            //create our jagged 2d list of CellButtons
-            List<List<CellButton>> cellButtons = new List<List<CellButton>>();
-            
-            //we basically increment this before new row flags
-            int firstDimensionIndex = -1;
-
-            //just fix a potential formatting issue for incorrectly formatted data
-            if (grid.Count > 0 && !grid.Cells[0].IsNewRowFlag) firstDimensionIndex++;
-
-            //actually start adding those buttons in the right spot
-            for(int i = 0; i < grid.Cells.Count; i++)
-            {
-                //make our new button to do stuff with
-                CellButton tempButton;
-
-                //format the look of our CellButton
-                FormatCellButton(out tempButton, grid.Cells[i], uxToolTip);
-                tempButton.Size = uxStartReference.Size;
-
-                //do weird jagged 2-d list things
-                if (tempButton.Cell.IsNewRowFlag)
-                {
-                    firstDimensionIndex++;
-                    cellButtons.Add(new List<CellButton>());
-                }//end if we have a flag for a new row
-
-                //add click event handler
-                tempButton.Click += GridButtonClickEvent;
-
-                //actually add this cell to cellButtons
-                cellButtons[firstDimensionIndex].Add(tempButton);
-            }//end adding all cells to cellButtons
+            //just grab a 2d list of cells from our grid :-)
+            List<List<Cell>> allCells = grid.FormatCellsAs2DList();
 
             //just define the margin between buttons
             int buttonMargin = 5;
 
             //add our buttons to the groupbox so they're visible and put them in a snazzy grid
-            for(int i = 0; i < cellButtons.Count; i++)
+            for (int i = 0; i < allCells.Count; i++)
             {
-                for(int j = 0; j < cellButtons[i].Count; j++)
+                for(int j = 0; j < allCells[i].Count; j++)
                 {
-                    CellButton thisButton = cellButtons[i][j];
+                    CellButton thisButton = new CellButton(allCells[i][j]);
+                    thisButton.FormatCellButton(uxToolTip);
+                    thisButton.Size = uxStartReference.Size;
+                    thisButton.Click += GridButtonClickEvent;
 
                     //not 100% why exactly this works, but it does
-                    int X = uxStartReference.Location.X + i * (uxStartReference.Size.Height + buttonMargin);
-                    int Y = uxStartReference.Location.Y + j * (uxStartReference.Size.Width + buttonMargin) - (uxStartReference.Size.Width / 2);
-                    thisButton.Location = new Point(Y, X);
+                    int X = uxStartReference.Location.X + j * (uxStartReference.Size.Width + buttonMargin);
+                    int Y = uxStartReference.Location.Y + i * (uxStartReference.Size.Height + buttonMargin);
+                    thisButton.Location = new Point(X, Y);
 
                     //add our button to the groupbox so it gets displayed
-                    uxGridDisplay.Controls.Add(thisButton);
+                    uxGridPanel.Controls.Add(thisButton);
                 }//end looping over cell buttons
             }//end looping over lists of cell buttons
         }//end BuildButtonGrid(rows)
 
-        /// <summary>
-        /// Formats a specified CellButton based on the flags of its
-        /// provided Cell. cellButton is an out parameter. Tooltip
-        /// assigning is optional. To not have a tooltip, just set
-        /// tip to null.
-        /// </summary>
-        /// <param name="cellButton">The CellButton you wish to format</param>
-        /// <param name="buttonCell">the cell to assign to the button</param>
-        /// <param name="tip">the tooltip used to set the button's tooltip.
-        /// Set to null if you don't want a tooltip</param>
-        private void FormatCellButton(out CellButton cellButton, Cell buttonCell, ToolTip tip)
-        {
-            //initialize the out parameter
-            cellButton = new CellButton(buttonCell);
 
-            //format the text of the button
-            cellButton.Text = cellButton.Cell.RowSpan.ToString();
-            //if (cellButton.Cell.Chaulkiness > 0) cellButton.Text = cellButton.Cell.Chaulkiness.ToString("N3");
-            //else cellButton.Text = cellButton.Cell.Chaulkiness.ToString();
-
-            //format color and tooltip
-            if (cellButton.Cell.IsNewRowFlag)
-            {
-                //set button color coding
-                cellButton.BackColor = Color.Black;
-                cellButton.ForeColor = Color.White;
-
-                //set tooltip
-                tip?.SetToolTip(cellButton, "This cell" +
-                    " simply represents a new grid row and " +
-                    "doesn't contain any novel information.");
-            }//end if the button represents a flag for a new row
-            else if (cellButton.Cell.IsEmptyCell)
-            {
-                //set button color coding
-                cellButton.BackColor = Color.LightSeaGreen;
-                cellButton.ForeColor = Color.PaleGreen;
-
-                //set tooltip
-                tip?.SetToolTip(cellButton, "This cell is" +
-                    "correctly formatted, but it doesn't have any" +
-                    " information stored in it.");
-            }//end if the cell is properly formatted but empty
-            else if (cellButton.Cell.RowSpan == 2 && cellButton.Cell.IsFullCell)
-            {
-                //set button color coding
-                cellButton.BackColor = Color.Green;
-                cellButton.ForeColor = Color.Honeydew;
-
-                //set tooltip
-                tip?.SetToolTip(cellButton, "This cell is " +
-                    "correctly formatted and has normal data, making " +
-                    "it easy to calculate chaulkiness for.");
-            }//end if we have a normal cell
-            else if (cellButton.Cell.IsFullCell)
-            {
-                //set button color coding
-                cellButton.BackColor = Color.LimeGreen;
-                cellButton.ForeColor = Color.MintCream;
-
-                //set tooltip
-                tip?.SetToolTip(cellButton, "This cell is " +
-                    "correctly formatted, but because of its data, " +
-                    "it\'s difficult to use.");
-            }//end else we have a properly formatted by abnormal cell
-            else
-            {
-                //set button color coding
-                cellButton.BackColor = Color.DarkMagenta;
-                cellButton.ForeColor = Color.Thistle;
-
-                //set tooltip
-                tip?.SetToolTip(cellButton, "This cell is formatted " +
-                    "incorrectly. This could either be a problem with processing" +
-                    " this cell\'s row information, or it could mean your input data " +
-                    "was corrupted somehow.");
-            }//end else this cell is formatted wrong
-        }//end FormatCellButton(out cellButton, buttonCell)
 
         /// <summary>
         /// closes the file and mostly resets things
@@ -379,36 +232,9 @@ namespace ImageJImporter
             //clear the seeds displayed in the list
             uxRowListView.ClearObjects();
 
-            //clear the text in the editing/viewing box
-            uxTextViewer.Text = "";
-
-            //reset listbox
-            uxRowListView.Size = defaultListBoxSize;
-
             //disable the elements for editing seeds so they can't be interacted with by the user
             uxRowDisplayGroup.Enabled = false;
         }//end CloseRowList()
-
-        /// <summary>
-        /// just returns whether or not text is allowed to wrap to the next line
-        /// in the textbox for viewing seed data
-        /// </summary>
-        /// <returns>word wrap property for seed data viewer</returns>
-        public bool DoWordsWrap()
-        {
-            //returns whether or not text is allowed to wrap across lines currently
-            return uxTextViewer.WordWrap;
-        }//end DoWordsWrap()
-
-        /// <summary>
-        /// sets the WordWrap property of the textbox for viewing seed data
-        /// </summary>
-        /// <param name="wordWrap"></param>
-        public void SetWordWrap(bool wordWrap)
-        {
-            //sets whether or not text is allowed to wrap across lines
-            uxTextViewer.WordWrap = wordWrap;
-        }//end SetWordWrap(wordWrap)
 
         /// <summary>
         /// Gets a new filename from the user based on what request type they specify.
@@ -537,41 +363,6 @@ namespace ImageJImporter
         }//end event handler for closing a file
 
         /// <summary>
-        /// updates the the uxTextViewer textbox. Copies the list
-        /// provided so you don't have to worry about accidentally
-        /// passing references
-        /// </summary>
-        /// <param name="rows">the rows to update the textbox
-        /// with</param>
-        /// <returns>whether or not the operation was
-        /// successful</returns>
-        private bool SetSelectedRows(List<Row> rows)
-        {
-            try
-            {
-                //initialize and build new array of row data
-                string[] rowArray = new string[rows.Count+1];
-                rowArray[0] = imageJFileHeader;
-                for(int i = 1; i < rows.Count+1; i++)
-                {
-                    //adds a deep copy of current row to rowArray
-                    rowArray[i] = rows[i-1].ToString();
-                }//end copying each row over
-
-                //update uxTextViewer with new row info
-                uxTextViewer.Lines = rowArray;
-
-                //tell whoever called us that we were successful
-                return true;
-            }//end trying to set the selected rows
-            catch
-            {
-                //I guess something went wrong, so return false
-                return false;
-            }//end catching errors
-        }//end SetSelectedRows(rows)
-
-        /// <summary>
         /// When given a listbox, returns an integer list containing all the indices
         /// of the listbox which are selected.
         /// </summary>
@@ -586,144 +377,6 @@ namespace ImageJImporter
             }//end adding all selected indices to indices
             return indices;
         }//end GetSelectedIndexList
-
-        public CallMethodWithInts viewRows;
-        /// <summary>
-        /// this method runs when the uxViewRow button is clicked. It uses a delegate
-        /// to tell the Controller to send us seed data to display
-        /// </summary>
-        /// <param name="sender">the object that sent this event</param>
-        /// <param name="e">if there are any arguments for the event, they're
-        /// stored here</param>
-        private void ViewRowData(object sender, EventArgs e)
-        {
-            //update button enabled-ness so the user knows which mode the program is in
-            if (uxEditRow.Enabled == false) uxEditRow.Enabled = true;
-            uxViewRow.Enabled = false;
-
-            //make list of selected indices and populate it with data
-            List<int> indices = GetSelectedIndexList(uxRowListView);
-
-            //tell controller to view selected indices
-            viewRows(indices);
-        }//end event handler for viewing seed data
-
-        /// <summary>
-        /// allows the specified rows to be viewed by the user
-        /// in the text viewer/editor
-        /// </summary>
-        /// <param name="rows">the rows to make viewable</param>
-        /// <returns>returns whether the operation was successful</returns>
-        public bool SetRowViewability(List<Row> rows)
-        {
-            try
-            {
-                //update selected rows and return false if we fail
-                if (!SetSelectedRows(rows)) return false;
-
-                //make it so the user can't edit the text
-                uxTextViewer.ReadOnly = true;
-
-                //we got here, so i guess we succeeded
-                return true;
-            }//end try block
-            catch
-            {
-                //an error happened, so I guess we failed
-                return false;
-            }//end catch block
-        }//end SetRowViewable(rows)
-
-        public CallMethodWithInts editRows;
-        /// <summary>
-        /// this method runs when the uxEditRow button is clicked. It uses a delegate
-        /// to tell the Controller to send us row data to edit
-        /// </summary>
-        /// <param name="sender">the object that sent this event</param>
-        /// <param name="e">if there are any arguments for the event, they're
-        /// stored here</param>
-        private void EditSeedData(object sender, EventArgs e)
-        {
-            //update button enabled-ness so the user knows which mode the program is in
-            if (uxViewRow.Enabled == false) uxViewRow.Enabled = true;
-            uxEditRow.Enabled = false;
-
-            //make list of selected indices and populate it with data
-            List<int> indices = GetSelectedIndexList(uxRowListView);
-
-            //tell controller to view selected indices
-            editRows(indices);
-        }//end event handler for editing seed data
-
-        /// <summary>
-        /// allows the specified rows to be edited by the user
-        /// in the text viewer/editor
-        /// </summary>
-        /// <param name="rows">the rows to make editable</param>
-        /// <returns>returns whether the operation was successful</returns>
-        public bool SetRowEditability(List<Row> rows)
-        {
-            try
-            {
-                //update selected rows and return false if we fail
-                if (!SetSelectedRows(rows)) return false;
-
-                //make it so the user can edit the text
-                uxTextViewer.ReadOnly = false;
-
-                //we got here, so i guess we succeeded
-                return true;
-            }//end try block
-            catch
-            {
-                //an error happened, so I guess we failed
-                return false;
-            }//end catch block
-        }//end SetRowEditability(row)
-
-        public CallMethodWithRowStringDictionary saveRows;
-        /// <summary>
-        /// this method runs when the uxSaveSeed button is clicked. It uses a delegate
-        /// to tell the Controller to save the seed data we're about to send it
-        /// </summary>
-        /// <param name="sender">the object that sent this event</param>
-        /// <param name="e">if there are any arguments for the event, they're
-        /// stored here</param>
-        private void SaveSeedData(object sender, EventArgs e)
-        {
-            /*
-             * Note: Current method of getting index from a row is a bit jank.
-             * It would be good to update it with something a little cleaner in
-             * the future.
-             */
-
-            //initialize dictionary to send to controller
-            Dictionary<string, int> rowIndexPairs = new Dictionary<string, int>();
-
-            List<Row> tempRowList = tlist.Objects as List<Row>;
-
-            //start processing each row in the row viewer/editor
-            for(int i = 0; i < tempRowList.Count; i++)
-            {
-                rowIndexPairs.Add(tempRowList[i].ToString(), i);
-            }//end looping over each row in uxRowListView
-            foreach(string row in uxTextViewer.Lines)
-            {
-                string[] rowComponents = row.Split('\t');
-
-                //theoretically, the first item in the row should be its row number
-                int index = Convert.ToInt32(rowComponents[0]);
-
-                //convert row number to row index
-                index--;
-
-                //add new dictionary item with this row and what its index probably is
-                rowIndexPairs.Add(row, index);
-            }//end looping over each line in uxTextViewer
-
-            //tell controller to save specified seed data
-            saveRows(rowIndexPairs);
-        }//end event handler for saving seed data
 
         public CallMethod formOpening;
         /// <summary>
@@ -764,31 +417,7 @@ namespace ImageJImporter
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }//end NoFileLoadedMessage()
 
-        /// <summary>
-        /// just toggles whether the text in the textbox wraps
-        /// </summary>
-        /// <param name="sender">the object that sent this event</param>
-        /// <param name="e">if there are any arguments for the event, they're
-        /// stored here</param>
-        private void ToggleWordWrap(object sender, EventArgs e)
-        {
-            //toggle word wrap property of uxTextViewer
-            uxTextViewer.WordWrap = !uxTextViewer.WordWrap;
-        }//end ToggleWordWrap event handler
-
-        /// <summary>
-        /// asks the controller to tell us to show the name of the current file
-        /// </summary>
-        /// <param name="sender">the object that sent this event</param>
-        /// <param name="e">if there are any arguments for the event, they're
-        /// stored here</param>
-        private void AskForFilename(object sender, EventArgs e)
-        {
-            MessageBox.Show("That button\'s functionality is currently" +
-                " not implemented. Please don't click it.");
-            uxCurrentFilenameRequest.Enabled = false;
-        }//end AskForFilename event handler
-
+        public CallMethodWithRowStringDictionary editCell;
         private void uxRowListView_CellEditFinished(object sender, CellEditEventArgs e)
         {
             /*
@@ -815,7 +444,59 @@ namespace ImageJImporter
             rowIndexPairs.Add(sb.ToString(), index);
 
             //tell controller to save specified seed data
-            saveRows(rowIndexPairs);
+            editCell(rowIndexPairs);
+        }//end CellEditFinished event handler
+
+        private void uxGridPanel_SizeChanged(object sender, EventArgs e)
+        {
+            //define extra margin between panels
+            int panelMargin = 10;
+            
+            //resize the groupbox this stuff is happening in
+            int width = uxGridPanel.Location.X + uxGridPanel.Width + panelMargin;
+            int height = uxGridPanel.Location.Y + uxGridPanel.Height + panelMargin;
+            uxGridDisplay.Size = new Size(width, height);
+
+            //move the panel down so that it's not blocking the buttons
+            int X = uxProcessingPanel.Location.X;
+            int Y = uxGridPanel.Location.Y + uxGridPanel.Height + panelMargin;
+            uxProcessingPanel.Location = new Point(X, Y);
+
+            //go ahead and move the edge of the grid display group box down to cover the panel
+            uxGridDisplay.Size = new Size(uxGridDisplay.Width, uxGridDisplay.Height + uxProcessingPanel.Height + panelMargin);
+        }//end uxGridPanel SizeChanged event handler
+
+        private void uxMenuItemToggleListDisplay_Click(object sender, EventArgs e)
+        {
+            if(uxRowDisplayGroup.Visible == true)
+            {
+                uxRowDisplayGroup.Visible = false;
+                uxGridDisplay.Location = uxRowDisplayGroup.Location;
+            }//end if we should hide the row display group
+            else
+            {
+                uxRowDisplayGroup.Visible = true;
+                uxGridDisplay.Location = defaultGridDisplayLocation;
+            }//end else we should show the row display group
+        }
+
+        private bool listViewGroupsCollapsed = false;
+        private void uxToggleGroupsCollapsed_Click(object sender, EventArgs e)
+        {
+            if (listViewGroupsCollapsed)
+            {
+                foreach(OLVGroup group in uxRowListView.OLVGroups)
+                {
+                    group.Collapsed = false;
+                }//end looping over all the groups
+            }//end if we should expand them
+            else
+            {
+                foreach (OLVGroup group in uxRowListView.OLVGroups)
+                {
+                    group.Collapsed = true;
+                }//end looping over all the groups
+            }//end else we should collapsed them
         }
     }//end class
 }//end namespace

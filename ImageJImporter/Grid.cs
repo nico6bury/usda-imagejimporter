@@ -412,6 +412,39 @@ namespace ImageJImporter
         }//end CopyTo(rowArray, arrayIndex)
 
         /// <summary>
+        /// Formats the cells in this grid as a jagged 2d list so you
+        /// can easily display everything, or do whatever else.
+        /// </summary>
+        /// <returns>Returns 2D jagged list of how cells should appear in
+        /// a grid type formation</returns>
+        public List<List<Cell>> FormatCellsAs2DList()
+        {
+            //create our jagged 2d list of Cells
+            List <List<Cell>> jagged2DCellGrid = new List<List<Cell>>();
+
+            //we basically increment this before new row flags
+            int firstDimensionIndex = -1;
+
+            //just fix a potential formatting issue for incorrectly formatted data
+            if (Count > 0 && !cells[0].IsNewRowFlag) firstDimensionIndex++;
+
+            //actually start adding those cells
+            for(int i = 0; i < cells.Count; i++)
+            {
+                //do jagged multidimensional list things
+                if (cells[i].IsNewRowFlag)
+                {
+                    firstDimensionIndex++;
+                    jagged2DCellGrid.Add(new List<Cell>());
+                }//end if we have a flag for a new row
+
+                jagged2DCellGrid[firstDimensionIndex].Add(new Cell(cells[i]));
+            }//end looping over all our cells
+
+            return jagged2DCellGrid;
+        }//end FormatCellsAs2DList()
+
+        /// <summary>
         /// removes the specified cell from this object, including all its rows
         /// </summary>
         /// <param name="cell">the cell to remove</param>

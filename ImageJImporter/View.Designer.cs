@@ -31,23 +31,17 @@ namespace ImageJImporter
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(View));
-            this.ViewFormMenuStrip = new System.Windows.Forms.MenuStrip();
+            this.uxMainMenuToolStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuOpenFile = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuSaveFile = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuSaveFileAs = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuCloseFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toggleWordWrappingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxCurrentFilenameRequest = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxEditRow = new System.Windows.Forms.Button();
-            this.uxViewRow = new System.Windows.Forms.Button();
-            this.uxTextViewer = new System.Windows.Forms.TextBox();
+            this.uxMenuItemToggleListDisplay = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.uxSaveSeed = new System.Windows.Forms.Button();
             this.uxHeaderLog = new System.Windows.Forms.TextBox();
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
-            this.uxLockListSelection = new System.Windows.Forms.Button();
             this.uxRowDisplayGroup = new System.Windows.Forms.GroupBox();
             this.uxRowListView = new BrightIdeasSoftware.ObjectListView();
             this.rowName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -63,25 +57,29 @@ namespace ImageJImporter
             this.rowRound = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.rowSolidity = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.uxGridDisplay = new System.Windows.Forms.GroupBox();
+            this.uxGridPanel = new System.Windows.Forms.Panel();
             this.uxStartReference = new System.Windows.Forms.Button();
-            this.ViewFormMenuStrip.SuspendLayout();
+            this.uxProcessingPanel = new System.Windows.Forms.Panel();
+            this.uxToggleGroupsCollapsed = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxMainMenuToolStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).BeginInit();
             this.uxGridDisplay.SuspendLayout();
+            this.uxGridPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // ViewFormMenuStrip
+            // uxMainMenuToolStrip
             // 
-            this.ViewFormMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.ViewFormMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.uxMainMenuToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.uxMainMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.toolsToolStripMenuItem});
-            this.ViewFormMenuStrip.Location = new System.Drawing.Point(0, 0);
-            this.ViewFormMenuStrip.Name = "ViewFormMenuStrip";
-            this.ViewFormMenuStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.ViewFormMenuStrip.Size = new System.Drawing.Size(1020, 28);
-            this.ViewFormMenuStrip.TabIndex = 0;
-            this.ViewFormMenuStrip.Text = "menuStrip1";
+            this.uxMainMenuToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.uxMainMenuToolStrip.Name = "uxMainMenuToolStrip";
+            this.uxMainMenuToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
+            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(1128, 28);
+            this.uxMainMenuToolStrip.TabIndex = 0;
+            this.uxMainMenuToolStrip.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
@@ -132,92 +130,24 @@ namespace ImageJImporter
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toggleWordWrappingToolStripMenuItem,
-            this.uxCurrentFilenameRequest});
+            this.uxMenuItemToggleListDisplay,
+            this.uxToggleGroupsCollapsed});
             this.toolsToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(56, 24);
             this.toolsToolStripMenuItem.Text = "Tools";
             // 
-            // toggleWordWrappingToolStripMenuItem
+            // uxMenuItemToggleListDisplay
             // 
-            this.toggleWordWrappingToolStripMenuItem.Name = "toggleWordWrappingToolStripMenuItem";
-            this.toggleWordWrappingToolStripMenuItem.Size = new System.Drawing.Size(242, 24);
-            this.toggleWordWrappingToolStripMenuItem.Text = "Toggle Word Wrapping";
-            this.toggleWordWrappingToolStripMenuItem.ToolTipText = "Toggles whether or not the text in the seed display will wrap across lines";
-            this.toggleWordWrappingToolStripMenuItem.Click += new System.EventHandler(this.ToggleWordWrap);
-            // 
-            // uxCurrentFilenameRequest
-            // 
-            this.uxCurrentFilenameRequest.Name = "uxCurrentFilenameRequest";
-            this.uxCurrentFilenameRequest.Size = new System.Drawing.Size(242, 24);
-            this.uxCurrentFilenameRequest.Text = "Tell Me Current Filename";
-            this.uxCurrentFilenameRequest.Click += new System.EventHandler(this.AskForFilename);
-            // 
-            // uxEditRow
-            // 
-            this.uxEditRow.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uxEditRow.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxEditRow.Location = new System.Drawing.Point(231, 220);
-            this.uxEditRow.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uxEditRow.Name = "uxEditRow";
-            this.uxEditRow.Size = new System.Drawing.Size(182, 43);
-            this.uxEditRow.TabIndex = 3;
-            this.uxEditRow.Text = "Edit Row Data";
-            this.uxToolTip.SetToolTip(this.uxEditRow, "Allows you to start editing the seed you have selected in the list to the left.");
-            this.uxEditRow.UseVisualStyleBackColor = true;
-            this.uxEditRow.Click += new System.EventHandler(this.EditSeedData);
-            // 
-            // uxViewRow
-            // 
-            this.uxViewRow.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uxViewRow.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxViewRow.Location = new System.Drawing.Point(676, 220);
-            this.uxViewRow.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uxViewRow.Name = "uxViewRow";
-            this.uxViewRow.Size = new System.Drawing.Size(182, 43);
-            this.uxViewRow.TabIndex = 2;
-            this.uxViewRow.Text = "View Row Data";
-            this.uxToolTip.SetToolTip(this.uxViewRow, "Allows you to view the data for the seed you have selected without the worry of a" +
-        "ccidentally editing it.");
-            this.uxViewRow.UseVisualStyleBackColor = true;
-            this.uxViewRow.Click += new System.EventHandler(this.ViewRowData);
-            // 
-            // uxTextViewer
-            // 
-            this.uxTextViewer.AcceptsReturn = true;
-            this.uxTextViewer.AcceptsTab = true;
-            this.uxTextViewer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxTextViewer.Location = new System.Drawing.Point(7, 30);
-            this.uxTextViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uxTextViewer.Multiline = true;
-            this.uxTextViewer.Name = "uxTextViewer";
-            this.uxTextViewer.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.uxTextViewer.Size = new System.Drawing.Size(851, 182);
-            this.uxTextViewer.TabIndex = 1;
-            this.uxTextViewer.TabStop = false;
-            this.uxToolTip.SetToolTip(this.uxTextViewer, "This allows you to view the data for the seed you are editing. You can also save " +
-        "the data for this seed by clicking a button.");
+            this.uxMenuItemToggleListDisplay.Name = "uxMenuItemToggleListDisplay";
+            this.uxMenuItemToggleListDisplay.Size = new System.Drawing.Size(299, 24);
+            this.uxMenuItemToggleListDisplay.Text = "Toggle List Display";
+            this.uxMenuItemToggleListDisplay.Click += new System.EventHandler(this.uxMenuItemToggleListDisplay_Click);
             // 
             // uxToolTip
             // 
             this.uxToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.uxToolTip.ToolTipTitle = "What This Does:";
-            // 
-            // uxSaveSeed
-            // 
-            this.uxSaveSeed.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uxSaveSeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxSaveSeed.Location = new System.Drawing.Point(7, 220);
-            this.uxSaveSeed.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uxSaveSeed.Name = "uxSaveSeed";
-            this.uxSaveSeed.Size = new System.Drawing.Size(182, 43);
-            this.uxSaveSeed.TabIndex = 4;
-            this.uxSaveSeed.Text = "Save Row Data";
-            this.uxToolTip.SetToolTip(this.uxSaveSeed, "Allows you to save the data for this seed. Won\'t affect anything unless you also " +
-        "save the file after doing this.");
-            this.uxSaveSeed.UseVisualStyleBackColor = true;
-            this.uxSaveSeed.Click += new System.EventHandler(this.SaveSeedData);
             // 
             // uxHeaderLog
             // 
@@ -230,7 +160,7 @@ namespace ImageJImporter
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.uxHeaderLog.Size = new System.Drawing.Size(858, 153);
             this.uxHeaderLog.TabIndex = 0;
-            this.uxHeaderLog.Text = "Hello and welcome to 24 Mar 21 v2.4 of ImageJ Data Importation Program";
+            this.uxHeaderLog.Text = "Hello and welcome to 2 Apr 21 v2.5 of ImageJ Data Importation Program";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
             // 
             // uxCurrentDateTime
@@ -244,40 +174,20 @@ namespace ImageJImporter
             this.uxCurrentDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.uxToolTip.SetToolTip(this.uxCurrentDateTime, "Shows the current date and time");
             // 
-            // uxLockListSelection
-            // 
-            this.uxLockListSelection.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uxLockListSelection.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxLockListSelection.Location = new System.Drawing.Point(458, 220);
-            this.uxLockListSelection.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uxLockListSelection.Name = "uxLockListSelection";
-            this.uxLockListSelection.Size = new System.Drawing.Size(182, 43);
-            this.uxLockListSelection.TabIndex = 6;
-            this.uxLockListSelection.Text = "Lock List Selection";
-            this.uxToolTip.SetToolTip(this.uxLockListSelection, "Allows you to lock the list of rows so that you won\'t accidentally change the sel" +
-        "ection.");
-            this.uxLockListSelection.UseVisualStyleBackColor = true;
-            this.uxLockListSelection.Click += new System.EventHandler(this.uxLockListSelectionClick);
-            // 
             // uxRowDisplayGroup
             // 
             this.uxRowDisplayGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.uxRowDisplayGroup.Controls.Add(this.uxRowListView);
-            this.uxRowDisplayGroup.Controls.Add(this.uxLockListSelection);
-            this.uxRowDisplayGroup.Controls.Add(this.uxTextViewer);
-            this.uxRowDisplayGroup.Controls.Add(this.uxSaveSeed);
-            this.uxRowDisplayGroup.Controls.Add(this.uxViewRow);
-            this.uxRowDisplayGroup.Controls.Add(this.uxEditRow);
             this.uxRowDisplayGroup.Enabled = false;
             this.uxRowDisplayGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxRowDisplayGroup.Location = new System.Drawing.Point(12, 228);
             this.uxRowDisplayGroup.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
             this.uxRowDisplayGroup.Name = "uxRowDisplayGroup";
             this.uxRowDisplayGroup.Padding = new System.Windows.Forms.Padding(4, 4, 6, 0);
-            this.uxRowDisplayGroup.Size = new System.Drawing.Size(867, 643);
+            this.uxRowDisplayGroup.Size = new System.Drawing.Size(858, 963);
             this.uxRowDisplayGroup.TabIndex = 6;
             this.uxRowDisplayGroup.TabStop = false;
-            this.uxRowDisplayGroup.Text = "Row Display";
+            this.uxRowDisplayGroup.Text = "List Display";
             // 
             // uxRowListView
             // 
@@ -309,11 +219,11 @@ namespace ImageJImporter
             this.uxRowListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.uxRowListView.HeaderUsesThemes = true;
             this.uxRowListView.HideSelection = false;
-            this.uxRowListView.Location = new System.Drawing.Point(7, 270);
+            this.uxRowListView.Location = new System.Drawing.Point(7, 29);
             this.uxRowListView.Name = "uxRowListView";
             this.uxRowListView.ShowCommandMenuOnRightClick = true;
             this.uxRowListView.ShowSortIndicators = false;
-            this.uxRowListView.Size = new System.Drawing.Size(851, 361);
+            this.uxRowListView.Size = new System.Drawing.Size(842, 922);
             this.uxRowListView.SortGroupItemsByPrimaryColumn = false;
             this.uxRowListView.TabIndex = 10;
             this.uxRowListView.UseCompatibleStateImageBehavior = false;
@@ -399,20 +309,33 @@ namespace ImageJImporter
             // 
             // uxGridDisplay
             // 
-            this.uxGridDisplay.AutoSize = true;
             this.uxGridDisplay.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.uxGridDisplay.Controls.Add(this.uxStartReference);
+            this.uxGridDisplay.Controls.Add(this.uxProcessingPanel);
+            this.uxGridDisplay.Controls.Add(this.uxGridPanel);
             this.uxGridDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxGridDisplay.Location = new System.Drawing.Point(915, 31);
+            this.uxGridDisplay.Location = new System.Drawing.Point(885, 31);
             this.uxGridDisplay.Name = "uxGridDisplay";
-            this.uxGridDisplay.Size = new System.Drawing.Size(105, 118);
+            this.uxGridDisplay.Size = new System.Drawing.Size(243, 308);
             this.uxGridDisplay.TabIndex = 8;
             this.uxGridDisplay.TabStop = false;
             this.uxGridDisplay.Text = "Grid Display";
             // 
+            // uxGridPanel
+            // 
+            this.uxGridPanel.AutoSize = true;
+            this.uxGridPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.uxGridPanel.BackColor = System.Drawing.Color.Moccasin;
+            this.uxGridPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.uxGridPanel.Controls.Add(this.uxStartReference);
+            this.uxGridPanel.Location = new System.Drawing.Point(6, 25);
+            this.uxGridPanel.Name = "uxGridPanel";
+            this.uxGridPanel.Size = new System.Drawing.Size(85, 51);
+            this.uxGridPanel.TabIndex = 10;
+            this.uxGridPanel.SizeChanged += new System.EventHandler(this.uxGridPanel_SizeChanged);
+            // 
             // uxStartReference
             // 
-            this.uxStartReference.Location = new System.Drawing.Point(24, 52);
+            this.uxStartReference.Location = new System.Drawing.Point(3, 3);
             this.uxStartReference.Name = "uxStartReference";
             this.uxStartReference.Size = new System.Drawing.Size(75, 41);
             this.uxStartReference.TabIndex = 0;
@@ -420,32 +343,48 @@ namespace ImageJImporter
             this.uxStartReference.UseVisualStyleBackColor = true;
             this.uxStartReference.Visible = false;
             // 
+            // uxProcessingPanel
+            // 
+            this.uxProcessingPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.uxProcessingPanel.Location = new System.Drawing.Point(6, 82);
+            this.uxProcessingPanel.Name = "uxProcessingPanel";
+            this.uxProcessingPanel.Size = new System.Drawing.Size(231, 100);
+            this.uxProcessingPanel.TabIndex = 11;
+            // 
+            // uxToggleGroupsCollapsed
+            // 
+            this.uxToggleGroupsCollapsed.Name = "uxToggleGroupsCollapsed";
+            this.uxToggleGroupsCollapsed.Size = new System.Drawing.Size(299, 24);
+            this.uxToggleGroupsCollapsed.Text = "Toggle Collapsed-ness Of Groups";
+            this.uxToggleGroupsCollapsed.Click += new System.EventHandler(this.uxToggleGroupsCollapsed_Click);
+            // 
             // View
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(901, 519);
-            this.Controls.Add(this.uxCurrentDateTime);
+            this.ClientSize = new System.Drawing.Size(891, 534);
             this.Controls.Add(this.uxGridDisplay);
+            this.Controls.Add(this.uxCurrentDateTime);
             this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxRowDisplayGroup);
-            this.Controls.Add(this.ViewFormMenuStrip);
+            this.Controls.Add(this.uxMainMenuToolStrip);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.ViewFormMenuStrip;
+            this.MainMenuStrip = this.uxMainMenuToolStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "View";
-            this.Text = "NS ImageJ Data 24 Mar 21 v2.4";
+            this.Text = "NS ImageJ Data 2 Apr 21 v2.5";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
             this.Load += new System.EventHandler(this.OpenForm);
-            this.ViewFormMenuStrip.ResumeLayout(false);
-            this.ViewFormMenuStrip.PerformLayout();
+            this.uxMainMenuToolStrip.ResumeLayout(false);
+            this.uxMainMenuToolStrip.PerformLayout();
             this.uxRowDisplayGroup.ResumeLayout(false);
-            this.uxRowDisplayGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).EndInit();
             this.uxGridDisplay.ResumeLayout(false);
+            this.uxGridDisplay.PerformLayout();
+            this.uxGridPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -453,26 +392,19 @@ namespace ImageJImporter
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip ViewFormMenuStrip;
+        private System.Windows.Forms.MenuStrip uxMainMenuToolStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uxMenuOpenFile;
         private System.Windows.Forms.ToolStripMenuItem uxMenuSaveFile;
         private System.Windows.Forms.ToolStripMenuItem uxMenuSaveFileAs;
         private System.Windows.Forms.ToolTip uxToolTip;
-        private System.Windows.Forms.Button uxEditRow;
-        private System.Windows.Forms.Button uxViewRow;
-        private System.Windows.Forms.TextBox uxTextViewer;
-        private System.Windows.Forms.Button uxSaveSeed;
         private System.Windows.Forms.GroupBox uxRowDisplayGroup;
         private System.Windows.Forms.ToolStripMenuItem uxMenuCloseFile;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toggleWordWrappingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem uxCurrentFilenameRequest;
         private System.Windows.Forms.TextBox uxHeaderLog;
         private System.Windows.Forms.GroupBox uxGridDisplay;
         private System.Windows.Forms.Button uxStartReference;
         private System.Windows.Forms.TextBox uxCurrentDateTime;
-        private System.Windows.Forms.Button uxLockListSelection;
         private BrightIdeasSoftware.ObjectListView uxRowListView;
         private BrightIdeasSoftware.OLVColumn rowName;
         private BrightIdeasSoftware.OLVColumn rowArea;
@@ -486,6 +418,10 @@ namespace ImageJImporter
         private BrightIdeasSoftware.OLVColumn rowAR;
         private BrightIdeasSoftware.OLVColumn rowRound;
         private BrightIdeasSoftware.OLVColumn rowSolidity;
+        private System.Windows.Forms.Panel uxGridPanel;
+        private System.Windows.Forms.ToolStripMenuItem uxMenuItemToggleListDisplay;
+        private System.Windows.Forms.Panel uxProcessingPanel;
+        private System.Windows.Forms.ToolStripMenuItem uxToggleGroupsCollapsed;
     }
 }
 
