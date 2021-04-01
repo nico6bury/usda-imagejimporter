@@ -25,7 +25,7 @@ namespace ImageJImporter
         /// <summary>
         /// this is the name of the file that we most recently used
         /// </summary>
-        public string file;
+        public string file = null;
 
         /// <summary>
         /// the name this class uses for it's config file
@@ -56,7 +56,6 @@ namespace ImageJImporter
         /// </summary>
         public FileIO()
         {
-            file = "";
             configFileAbsolutePath = "";
         }//end no-arg constructor
 
@@ -71,54 +70,117 @@ namespace ImageJImporter
         }//end 1-arg constructor
 
         /// <summary>
+        /// creates a default configuration file with the defualt levels
+        /// and all the other stuff
+        /// </summary>
+        /// <param name="levels">out parameter for levelInformation</param>
+        /// <returns>returns the list of strings you could write to a file</returns>
+        private List<string> CreateDefaultConfigFile(out LevelInformation levels)
+        {
+            List<string> linesToOutput = new List<string>();
+            levels = LevelInformation.DefaultLevels;
+
+            //add the current file name to the file
+            linesToOutput.Add(file);
+
+            //add all the lines from the level information to our output list
+            foreach(string line in levels.MakeLinesToSaveToFile())
+            {
+                linesToOutput.Add(line);
+            }//end adding all the level information to output lines
+
+            return linesToOutput;
+        }//end CreateDefaultConfigFile()
+
+        /// <summary>
         /// this method saves the configuration file so loading the program
         /// is easier next time
         /// </summary>
-        public void SaveConfigFile()
+        /// <param name="levelInformation">The level information to save
+        /// to this file. If this parameter is null, then no information
+        /// will be saved.</param>
+        public void SaveConfigFile(LevelInformation levelInformation)
         {
             //creates config file. If it already exists, we overwrite it
             using (StreamWriter scribe = new StreamWriter(configFileAbsolutePath))
             {
                 //write default filename to config file
                 scribe.WriteLine(file);
+
+                //write all the levelInformation
+                if(levelInformation != null)
+                {
+                    foreach(string line in levelInformation.MakeLinesToSaveToFile())
+                    {
+                        scribe.WriteLine(line);
+                    }//end looping over the lines of level information
+                }//end if levelInformation isn't null
             }//end use of StreamWriter
         }//end SaveConfigFile()
 
         /// <summary>
         /// loads the configuration file in the same directory as the executable
         /// </summary>
-        /// <returns>returns information from file as object array. If no file exists,
-        /// returns null</returns>
-        public List<string> LoadConfigFile()
+        /// <param name="levelInformation">The level information that was loaded from
+        /// the configuration file</param>
+        /// <returns>returns name of the file we should open</returns>
+        public string LoadConfigFile(out LevelInformation levelInformation)
         {
+            //initialize levelInformation out parameter
+            levelInformation = new LevelInformation();
+
             if (File.Exists(configFilename))
             {
                 //save absolute path of config file
                 configFileAbsolutePath = Path.GetFullPath(configFilename);
 
-                //initialize an array of objects
-                List<string> data = new List<string>();
+                //initialize a list of our lines
+                List<string> allLinesFromFile = new List<string>();
 
                 //open a stream reader to read info from config file
                 using(StreamReader reader = new StreamReader(configFilename))
                 {
                     while (!reader.EndOfStream)
                     {
-                        //asynchronously reads line
-                        string line = reader.ReadLineAsync().Result;
-                        
-                        //adds line to list
-                        data.Add(line);
-                    }//end looping while there's still more to read
+                        allLinesFromFile.Add(reader.ReadLineAsync().Result);
+                    }//end getting all the lines from the file
                 }//end use of StreamReader
 
+                //get the filename from the first line
+                string savedFileName = allLinesFromFile[0];
+
+                //loop through rest of the lines to get whatever other data we want
+                for(int i = 1; i < allLinesFromFile.Count; i++)
+                {
+                    //get all the components
+                    string[] componentsFromThisLine = allLinesFromFile[i].Split(';');
+                    if(componentsFromThisLine[0] == "LI")
+                    {
+                        levelInformation.AddNewLevel(
+                            LevelInformation.Level.ReadSerializedString(allLinesFromFile[i]));
+                    }//end if we have level information here
+                }//end looping over all the lines of other configuration information
+
                 //return information we just found
-                return data;
+                return savedFileName;
             }//end if the configuration file exists
             else
             {
                 //create config file
-                File.Create(configFilename);
+                File.Create(configFilename).Close();
+
+                //start fileIO stuff
+                using (StreamWriter scribe = new StreamWriter(configFilename))
+                {
+                    //initialize some objects
+                    List<string> linesToWrite = CreateDefaultConfigFile(out levelInformation);
+                    
+                    //add all the lines to the files
+                    foreach(string line in linesToWrite)
+                    {
+                        scribe.WriteLine(line);
+                    }//end writing each default line to the config file
+                }//end use of stream writer
 
                 //save absolute path of config file
                 configFileAbsolutePath = Path.GetFullPath(configFilename);

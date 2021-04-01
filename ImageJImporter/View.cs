@@ -29,6 +29,16 @@ namespace ImageJImporter
         /// </summary>
         public RequestString requestFileName;
 
+        /// <summary>
+        /// function pointer to tell the controller we got new level information
+        /// </summary>
+        public SendLevelInformation sendLevelInformation;
+
+        /// <summary>
+        /// the level information for this session
+        /// </summary>
+        private LevelInformation allLevelInformation;
+
         private System.Timers.Timer timer;
 
         /// <summary>
@@ -37,6 +47,9 @@ namespace ImageJImporter
         /// </summary>
         private List<CellButtonDisplay> displays;
 
+        /// <summary>
+        /// the typed version of our OLV
+        /// </summary>
         private TypedObjectListView<Row> tlist;
 
         private Point defaultRowDisplayGroupLocation;
@@ -95,13 +108,17 @@ namespace ImageJImporter
                 group.Id = groupCell[0].RowNum;
                 parms.GroupComparer = Comparer<OLVGroup>.Create((x, y) => (x.Id.CompareTo(y.Id)));
             };
-            uxRowListView.BeforeCreatingGroups += uxRowListViewGroupSorting;
         }//end constructor
 
-        private void uxRowListViewGroupSorting(object sender, CreateGroupsEventArgs e)
+        /// <summary>
+        /// Updates the level information saved by the view
+        /// </summary>
+        /// <param name="levelInformation">the level information we
+        /// got from the file</param>
+        public void UpdateLevelInformation(LevelInformation levelInformation)
         {
-            e.Parameters.GroupComparer = Comparer<OLVGroup>.Create((x, y) => (x.GroupId.CompareTo(y.GroupId)));
-        }
+            this.allLevelInformation = levelInformation;
+        }//end UpdateLevelInformation(levelInformation)
 
         private SendString sendDateTime;
         private void UpdateCurrentDateTime(object sender, System.Timers.ElapsedEventArgs e)

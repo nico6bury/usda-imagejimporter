@@ -31,6 +31,10 @@ namespace ImageJImporter
             set { cell = value; }
         }//end constructor
 
+        private LevelInformation levels = LevelInformation.DefaultLevels;
+
+        private string cellPropertyNameToCompareToLevel;
+
         /// <summary>
         /// constructor for this class. Must initialize with a Cell object.
         /// </summary>
@@ -38,7 +42,20 @@ namespace ImageJImporter
         public CellButton(Cell cell) : base()
         {
             this.cell = new Cell(cell);
+            cellPropertyNameToCompareToLevel = nameof(cell.Chalk);
         }//end CellButton no-arg constructor
+
+        /// <summary>
+        /// the the levelInformation for this object
+        /// </summary>
+        /// <param name="levels">the level information for this object</param>
+        /// <param name="cellParamName">The name of the property in our cell object
+        /// that we should compare with the level information.</param>
+        public void SetLevelInformation(LevelInformation levels, string cellParamName)
+        {
+            this.levels = levels;
+            cellPropertyNameToCompareToLevel = cellParamName;
+        }//end SetLevelInformation(levels)
 
         /// <summary>
         /// Formats this CellButton based on the flags of its
@@ -52,13 +69,23 @@ namespace ImageJImporter
             //format the text of the button
             Text = Cell.RowSpan.ToString();
 
+            Tuple<string, int> correctLevel = levels.FindLevel((decimal)Cell.GetType().GetProperty(cellPropertyNameToCompareToLevel).GetValue(cell));
+
+            if(correctLevel.Item1 != null)
+            {
+                BackColor = levels.Levels[correctLevel.Item2].BackColor;
+                ForeColor = levels.Levels[correctLevel.Item2].ForeColor;
+            }//end if we have a level to set this to
+            else
+            {
+                BackColor = Color.Transparent;
+                ForeColor = Color.Black;
+            }//end else the level wasn't found
+            
+
             //format color and tooltip
             if (Cell.IsNewRowFlag)
             {
-                //set button color coding
-                BackColor = Color.Black;
-                ForeColor = Color.White;
-
                 //set tooltip
                 tip?.SetToolTip(this, "This cell" +
                     " simply represents a new grid row and " +
@@ -66,10 +93,6 @@ namespace ImageJImporter
             }//end if the button represents a flag for a new row
             else if (Cell.IsEmptyCell)
             {
-                //set button color coding
-                BackColor = Color.LightSeaGreen;
-                ForeColor = Color.PaleGreen;
-
                 //set tooltip
                 tip?.SetToolTip(this, "This cell is" +
                     "correctly formatted, but it doesn't have any" +
@@ -77,10 +100,6 @@ namespace ImageJImporter
             }//end if the cell is properly formatted but empty
             else if (Cell.RowSpan == 2 && Cell.IsFullCell)
             {
-                //set button color coding
-                BackColor = Color.Green;
-                ForeColor = Color.Honeydew;
-
                 //set tooltip
                 tip?.SetToolTip(this, "This cell is " +
                     "correctly formatted and has normal data, making " +
@@ -88,10 +107,6 @@ namespace ImageJImporter
             }//end if we have a normal cell
             else if (Cell.IsFullCell)
             {
-                //set button color coding
-                BackColor = Color.LimeGreen;
-                ForeColor = Color.MintCream;
-
                 //set tooltip
                 tip?.SetToolTip(this, "This cell is " +
                     "correctly formatted, but because of its data, " +
@@ -99,10 +114,6 @@ namespace ImageJImporter
             }//end else we have a properly formatted by abnormal cell
             else
             {
-                //set button color coding
-                BackColor = Color.DarkMagenta;
-                ForeColor = Color.Thistle;
-
                 //set tooltip
                 tip?.SetToolTip(this, "This cell is formatted " +
                     "incorrectly. This could either be a problem with processing" +

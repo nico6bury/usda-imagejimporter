@@ -57,6 +57,7 @@
       <DependentUpon>CellButtonDisplay.cs</DependentUpon>
     </Compile>
     <Compile Include="Grid.cs" />
+    <Compile Include="LevelInformation.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="DelegateDefinitions.cs" />

@@ -45,6 +45,11 @@ namespace ImageJImporter
         public RequestSpecificString getNewFilename;
 
         /// <summary>
+        /// function pointer to tell the view to update it's level information
+        /// </summary>
+        public SendLevelInformation updateLevelInformation;
+
+        /// <summary>
         /// the grid that represents all of this object's cells and the rows
         /// that comprise them
         /// </summary>
@@ -54,6 +59,12 @@ namespace ImageJImporter
         /// stores whether or not there is currently a file loaded in the program
         /// </summary>
         private bool IsFileCurrentlyLoaded = false;
+
+        /// <summary>
+        /// all the information for the levels of seed stuff. This should be updated
+        /// directly whenever the view gets it updated
+        /// </summary>
+        private LevelInformation allLevelInformation = new LevelInformation();
 
         /// <summary>
         /// this is the standard constructor for this class. It requires a FileIO
@@ -281,43 +292,45 @@ namespace ImageJImporter
         }//end SaveRowData(rowIndexPairs)
 
         /// <summary>
+        /// Updates the level information saved by the controller
+        /// </summary>
+        /// <param name="levelInformation">the level information we
+        /// got from the user</param>
+        public void UpdateLevelInformation(LevelInformation levelInformation)
+        {
+            this.allLevelInformation = levelInformation;
+        }//end UpdateLevelInformation(levelInformation)
+
+        /// <summary>
         /// loads some information from the config file and sends
         /// relevant information to the view
         /// </summary>
         public void OpenView()
         {
-            List<string> data = fileIO.LoadConfigFile();
+            //get data file to load plus level information
+            string defaultFileName = fileIO.LoadConfigFile(out allLevelInformation);
 
-            if(data != null)
+            //load data if there was a file to load
+            if(!String.IsNullOrEmpty(defaultFileName))
             {
-                try
-                {
-                    //load all the row information from config file
-                    List<Row> rows = fileIO.LoadFile(data[0]);
+                //load all the row information from config file
+                List<Row> rows = fileIO.LoadFile(defaultFileName);
 
-                    //save our row list to our internal grid
-                    internalGrid = new Grid(rows);
+                //save our row list to our internal grid
+                internalGrid = new Grid(rows);
 
-                    //pass row info back to the view [OBSOLETE]
-                    //updateSeedList(rows);
+                //pass grid back to the view
+                updateGrid(internalGrid);
 
-                    //pass grid back to the view
-                    updateGrid(internalGrid);
+                //update boolean flag
+                IsFileCurrentlyLoaded = true;
 
-                    //update boolean flag
-                    IsFileCurrentlyLoaded = true;
+                //update fileIO's most recently used file property
+                fileIO.file = defaultFileName;
 
-                    //update fileIO's most recently used file property
-                    fileIO.file = data[0];
-
-                    //update log with recent file name and row count
-                    AppendToHeaderLog("Found configuration file. Loaded" +
-                        $" {BuildFileMessage(fileIO.file, internalGrid.Rows)}");
-                }//end trying to get input from the config
-                catch
-                {
-                    
-                }//end catching any errors from reading the config
+                //update log with recent file name and row count
+                AppendToHeaderLog("Found configuration file. Loaded" +
+                    $" {BuildFileMessage(fileIO.file, internalGrid.Rows)}");
             }//end if the data isn't null
         }//end OpenView()
 
@@ -367,7 +380,7 @@ namespace ImageJImporter
         public void CloseView()
         {
             //saves configuration info to config file
-            fileIO.SaveConfigFile();
+            fileIO.SaveConfigFile(allLevelInformation);
         }//end CloseView()
 
         /// <summary>

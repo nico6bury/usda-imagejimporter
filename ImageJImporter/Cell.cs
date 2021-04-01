@@ -153,16 +153,16 @@ namespace ImageJImporter
                 {
                     if(rows.Count == 4)
                     {
-                        return rows[2].Area / rows[1].Area;
+                        return rows[2].Area / rows[1].Area * 100;
                     }//end if we have the normal amount of rows
                     else if (rows.Count == 5)
                     {
                         decimal totalChalkiness = rows[2].Area + rows[3].Area;
-                        return totalChalkiness / rows[1].Area;
+                        return totalChalkiness / rows[1].Area * 100;
                     }//end else if we have two rows of chalkiness
                     else
                     {
-                        return 0;
+                        return (decimal)0.1*100;
                     }//end else we have a seed with very little chalkiness
                 }//end else this must be a complete cell
             }//end getter

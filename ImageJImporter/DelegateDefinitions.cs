@@ -104,4 +104,12 @@ namespace ImageJImporter
     /// </summary>
     /// <param name="text">the string you want to send</param>
     public delegate void SendString(string text);
+
+    /// <summary>
+    /// Allows you to send a collection of level information to...
+    /// somewhere
+    /// </summary>
+    /// <param name="levelInformation">the collection of level information you
+    /// want to send</param>
+    public delegate void SendLevelInformation(LevelInformation levelInformation);
 }//end namespace
