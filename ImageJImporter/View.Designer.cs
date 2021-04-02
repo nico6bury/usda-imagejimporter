@@ -37,8 +37,9 @@ namespace ImageJImporter
             this.uxMenuSaveFile = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuSaveFileAs = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuCloseFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuItemToggleListDisplay = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxToggleGroupsCollapsed = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.uxHeaderLog = new System.Windows.Forms.TextBox();
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
@@ -57,10 +58,10 @@ namespace ImageJImporter
             this.rowRound = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.rowSolidity = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.uxGridDisplay = new System.Windows.Forms.GroupBox();
+            this.uxProcessingPanel = new System.Windows.Forms.Panel();
             this.uxGridPanel = new System.Windows.Forms.Panel();
             this.uxStartReference = new System.Windows.Forms.Button();
-            this.uxProcessingPanel = new System.Windows.Forms.Panel();
-            this.uxToggleGroupsCollapsed = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxConfigureColorLevelsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMainMenuToolStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).BeginInit();
@@ -73,7 +74,7 @@ namespace ImageJImporter
             this.uxMainMenuToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.uxMainMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.toolsToolStripMenuItem});
+            this.optionsToolStripMenuItem});
             this.uxMainMenuToolStrip.Location = new System.Drawing.Point(0, 0);
             this.uxMainMenuToolStrip.Name = "uxMainMenuToolStrip";
             this.uxMainMenuToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
@@ -127,15 +128,16 @@ namespace ImageJImporter
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
             // 
-            // toolsToolStripMenuItem
+            // optionsToolStripMenuItem
             // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.uxMenuItemToggleListDisplay,
-            this.uxToggleGroupsCollapsed});
-            this.toolsToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(56, 24);
-            this.toolsToolStripMenuItem.Text = "Tools";
+            this.uxToggleGroupsCollapsed,
+            this.uxConfigureColorLevelsMenuItem});
+            this.optionsToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 24);
+            this.optionsToolStripMenuItem.Text = "Options";
             // 
             // uxMenuItemToggleListDisplay
             // 
@@ -143,6 +145,13 @@ namespace ImageJImporter
             this.uxMenuItemToggleListDisplay.Size = new System.Drawing.Size(299, 24);
             this.uxMenuItemToggleListDisplay.Text = "Toggle List Display";
             this.uxMenuItemToggleListDisplay.Click += new System.EventHandler(this.uxMenuItemToggleListDisplay_Click);
+            // 
+            // uxToggleGroupsCollapsed
+            // 
+            this.uxToggleGroupsCollapsed.Name = "uxToggleGroupsCollapsed";
+            this.uxToggleGroupsCollapsed.Size = new System.Drawing.Size(299, 24);
+            this.uxToggleGroupsCollapsed.Text = "Toggle Collapsed-ness Of Groups";
+            this.uxToggleGroupsCollapsed.Click += new System.EventHandler(this.uxToggleGroupsCollapsed_Click);
             // 
             // uxToolTip
             // 
@@ -320,6 +329,14 @@ namespace ImageJImporter
             this.uxGridDisplay.TabStop = false;
             this.uxGridDisplay.Text = "Grid Display";
             // 
+            // uxProcessingPanel
+            // 
+            this.uxProcessingPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.uxProcessingPanel.Location = new System.Drawing.Point(6, 82);
+            this.uxProcessingPanel.Name = "uxProcessingPanel";
+            this.uxProcessingPanel.Size = new System.Drawing.Size(231, 100);
+            this.uxProcessingPanel.TabIndex = 11;
+            // 
             // uxGridPanel
             // 
             this.uxGridPanel.AutoSize = true;
@@ -343,20 +360,12 @@ namespace ImageJImporter
             this.uxStartReference.UseVisualStyleBackColor = true;
             this.uxStartReference.Visible = false;
             // 
-            // uxProcessingPanel
+            // uxConfigureColorLevelsMenuItem
             // 
-            this.uxProcessingPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.uxProcessingPanel.Location = new System.Drawing.Point(6, 82);
-            this.uxProcessingPanel.Name = "uxProcessingPanel";
-            this.uxProcessingPanel.Size = new System.Drawing.Size(231, 100);
-            this.uxProcessingPanel.TabIndex = 11;
-            // 
-            // uxToggleGroupsCollapsed
-            // 
-            this.uxToggleGroupsCollapsed.Name = "uxToggleGroupsCollapsed";
-            this.uxToggleGroupsCollapsed.Size = new System.Drawing.Size(299, 24);
-            this.uxToggleGroupsCollapsed.Text = "Toggle Collapsed-ness Of Groups";
-            this.uxToggleGroupsCollapsed.Click += new System.EventHandler(this.uxToggleGroupsCollapsed_Click);
+            this.uxConfigureColorLevelsMenuItem.Name = "uxConfigureColorLevelsMenuItem";
+            this.uxConfigureColorLevelsMenuItem.Size = new System.Drawing.Size(299, 24);
+            this.uxConfigureColorLevelsMenuItem.Text = "Configure Color Levels";
+            this.uxConfigureColorLevelsMenuItem.Click += new System.EventHandler(this.uxConfigureColorLevelsMenuItem_Click);
             // 
             // View
             // 
@@ -400,7 +409,7 @@ namespace ImageJImporter
         private System.Windows.Forms.ToolTip uxToolTip;
         private System.Windows.Forms.GroupBox uxRowDisplayGroup;
         private System.Windows.Forms.ToolStripMenuItem uxMenuCloseFile;
-        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.TextBox uxHeaderLog;
         private System.Windows.Forms.GroupBox uxGridDisplay;
         private System.Windows.Forms.Button uxStartReference;
@@ -422,6 +431,7 @@ namespace ImageJImporter
         private System.Windows.Forms.ToolStripMenuItem uxMenuItemToggleListDisplay;
         private System.Windows.Forms.Panel uxProcessingPanel;
         private System.Windows.Forms.ToolStripMenuItem uxToggleGroupsCollapsed;
+        private System.Windows.Forms.ToolStripMenuItem uxConfigureColorLevelsMenuItem;
     }
 }
 

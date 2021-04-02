@@ -56,8 +56,17 @@
     <Compile Include="CellButtonDisplay.Designer.cs">
       <DependentUpon>CellButtonDisplay.cs</DependentUpon>
     </Compile>
+    <Compile Include="ColorLevelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ColorLevelDialog.Designer.cs">
+      <DependentUpon>ColorLevelDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Grid.cs" />
     <Compile Include="LevelInformation.cs" />
+    <Compile Include="LevelPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Row.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="DelegateDefinitions.cs" />
@@ -76,6 +85,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="CellButtonDisplay.resx">
       <DependentUpon>CellButtonDisplay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorLevelDialog.resx">
+      <DependentUpon>ColorLevelDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -218,6 +218,9 @@ namespace ImageJImporter
             //just define the margin between buttons
             int buttonMargin = 5;
 
+            //reset the controls in the uxGridPanel
+            uxGridPanel.Controls.Clear();
+
             //add our buttons to the groupbox so they're visible and put them in a snazzy grid
             for (int i = 0; i < allCells.Count; i++)
             {
@@ -379,22 +382,6 @@ namespace ImageJImporter
             closeFile();
         }//end event handler for closing a file
 
-        /// <summary>
-        /// When given a listbox, returns an integer list containing all the indices
-        /// of the listbox which are selected.
-        /// </summary>
-        /// <param name="listBox">the listbox to pull SelectedIndices from</param>
-        /// <returns>a list of integers representing the indices</returns>
-        private List<int> GetSelectedIndexList(ListView listView)
-        {
-            List<int> indices = new List<int>();
-            foreach(int index in listView.SelectedIndices)
-            {
-                indices.Add(index);
-            }//end adding all selected indices to indices
-            return indices;
-        }//end GetSelectedIndexList
-
         public CallMethod formOpening;
         /// <summary>
         /// event for when the form opens. Does startup things
@@ -464,6 +451,9 @@ namespace ImageJImporter
             editCell(rowIndexPairs);
         }//end CellEditFinished event handler
 
+        /// <summary>
+        /// Updates size and position of stuff based on an auto-sized control
+        /// </summary>
         private void uxGridPanel_SizeChanged(object sender, EventArgs e)
         {
             //define extra margin between panels
@@ -515,5 +505,14 @@ namespace ImageJImporter
                 }//end looping over all the groups
             }//end else we should collapsed them
         }
+
+        /// <summary>
+        /// Opens a dialog form in order to make the user select colors for stuff
+        /// </summary>
+        private void uxConfigureColorLevelsMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorLevelDialog cld = new ColorLevelDialog(allLevelInformation, UpdateLevelInformation);
+            cld.ShowDialog();
+        }//end uxConfigureColorLevelsMenuItem Click Event Handler
     }//end class
 }//end namespace

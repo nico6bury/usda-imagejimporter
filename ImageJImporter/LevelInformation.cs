@@ -26,32 +26,9 @@ namespace ImageJImporter
         public List<Level> Levels { get; private set; }
 
         /// <summary>
-        /// initializes this object
+        /// The number of Levels in this collection
         /// </summary>
-        public LevelInformation()
-        {
-            Levels = new List<Level>();
-        }//end no-arg constructor
-
-        /// <summary>
-        /// Adds a new level to this object
-        /// </summary>
-        /// <param name="start">the start of the level</param>
-        /// <param name="end">the end of the level</param>
-        /// <param name="name">the name of the level</param>
-        public void AddNewLevel(decimal start, decimal end, string name)
-        {
-            Levels.Add(new Level(start, end, name));
-        }//end AddNewLevel(start, end)
-
-        /// <summary>
-        /// Adds a new level to this object
-        /// </summary>
-        /// <param name="level">the level struct to add</param>
-        public void AddNewLevel(Level level)
-        {
-            Levels.Add(level);
-        }//end AddNewLevel(level)
+        public int Count => Levels.Count;
 
         /// <summary>
         /// default level information
@@ -97,6 +74,40 @@ namespace ImageJImporter
                 return outputLevels;
             }//end getter
         }//end DefaultLevels
+
+        public Level this[int index]
+        {
+            get { return Levels[index]; }
+            set { Levels[index] = value; }
+        }//end indexer
+
+        /// <summary>
+        /// initializes this object
+        /// </summary>
+        public LevelInformation()
+        {
+            Levels = new List<Level>();
+        }//end no-arg constructor
+
+        /// <summary>
+        /// Adds a new level to this object
+        /// </summary>
+        /// <param name="start">the start of the level</param>
+        /// <param name="end">the end of the level</param>
+        /// <param name="name">the name of the level</param>
+        public void AddNewLevel(decimal start, decimal end, string name)
+        {
+            Levels.Add(new Level(start, end, name));
+        }//end AddNewLevel(start, end)
+
+        /// <summary>
+        /// Adds a new level to this object
+        /// </summary>
+        /// <param name="level">the level struct to add</param>
+        public void AddNewLevel(Level level)
+        {
+            Levels.Add(level);
+        }//end AddNewLevel(level)
 
         /// <summary>
         /// Tests a specific value against the levels in this object, and then returns
