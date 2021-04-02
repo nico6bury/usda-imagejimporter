@@ -65,7 +65,7 @@ namespace ImageJImporter
                 LevelPanel subPanel = GetCloseComponents(out TextBox label1,
                     out Button button1, out Button button2,
                     out NumericUpDown numeric1, out NumericUpDown numeric2,
-                    levels[i]);
+                    levels[i], i);
                 subPanel.Location = new Point(12, subPanel.Height * i);
                 mainPanel.Controls.Add(subPanel);
             }//end looping over each level
@@ -75,10 +75,10 @@ namespace ImageJImporter
 
         private LevelPanel GetCloseComponents(out TextBox levelLabel, out Button foreColorButton,
             out Button backColorButton, out NumericUpDown levelMin,
-            out NumericUpDown levelMax, LevelInformation.Level level)
+            out NumericUpDown levelMax, LevelInformation.Level level, int index)
         {
             //set up Panel
-            LevelPanel subPanel = new LevelPanel(level)
+            LevelPanel subPanel = new LevelPanel(level, index)
             {
                 BackColor = Color.GhostWhite,
                 ForeColor = Color.Indigo,
@@ -94,6 +94,7 @@ namespace ImageJImporter
                 Text = subPanel.Level.LevelName,
             };
             levelLabel.Location = new Point(levelLabel.Location.X, 12);
+            levelLabel.TextChanged += LevelLabel_TextChanged;
 
             //set up foreColorButton
             foreColorButton = new Button
@@ -105,6 +106,7 @@ namespace ImageJImporter
                 Text = "Text Color",
             };
             foreColorButton.Location = new Point(foreColorButton.Location.X, levelLabel.Location.Y + levelLabel.Height + 10);
+            foreColorButton.Click += ForeColorButton_Click;
 
             //set up backColorButton
             backColorButton = new Button
@@ -116,6 +118,7 @@ namespace ImageJImporter
                 Text = "Button Color",
             };
             backColorButton.Location = new Point(backColorButton.Location.X, foreColorButton.Location.Y + foreColorButton.Height + 10);
+            backColorButton.Click += BackColorButton_Click;
 
             //set up levelMin
             levelMin = new NumericUpDown
@@ -129,6 +132,7 @@ namespace ImageJImporter
                 DecimalPlaces = 2,
             };
             levelMin.Location = new Point(foreColorButton.Location.X + foreColorButton.Width + 50, foreColorButton.Location.Y);
+            levelMin.ValueChanged += LevelMin_ValueChanged;
 
             //set up levelMax
             levelMax = new NumericUpDown
@@ -142,6 +146,7 @@ namespace ImageJImporter
                 Maximum = 100,
             };
             levelMax.Location = new Point(backColorButton.Location.X + backColorButton.Width + 50, backColorButton.Location.Y);
+            levelMax.ValueChanged += LevelMax_ValueChanged;
 
             //add everything to the panel
             subPanel.Controls.Add(levelLabel);
@@ -152,6 +157,83 @@ namespace ImageJImporter
 
             return subPanel;
         }//end GetCloseComponents(params...)
+
+        private void LevelLabel_TextChanged(object sender, EventArgs e)
+        {
+            if(sender is TextBox textBox)
+            {
+                if(textBox.Parent is LevelPanel lvlPanel)
+                {
+                    lvlPanel.Level.LevelName = textBox.Text;
+                    currentLevelInformation[lvlPanel.LevelInformationIndex] = lvlPanel.Level;
+                    BuildLevelsShowing(currentLevelInformation);
+                }//end if sender parent is LevelPanel, cast it
+            }//end sender is a textbox, cast it
+        }//end event handler for changing level name
+
+        private void ForeColorButton_Click(object sender, EventArgs e)
+        {
+            if(sender is Button button)
+            {
+                if(button.Parent is LevelPanel lvlPanel)
+                {
+                    using (ColorDialog colorPicker = new ColorDialog())
+                    {
+                        if(colorPicker.ShowDialog() == DialogResult.OK)
+                        {
+                            lvlPanel.Level.ForeColor = colorPicker.Color;
+                            currentLevelInformation[lvlPanel.LevelInformationIndex] = lvlPanel.Level;
+                            BuildLevelsShowing(currentLevelInformation);
+                        }//end if the use selected ok on picking a new dialog
+                    }//end use of Color Picking Dialog
+                }//end if sender parent is a LevelPanel, cast it
+            }//end if sender is a button, cast it
+        }//end event handler for changing level forecolor
+
+        private void BackColorButton_Click(object sender, EventArgs e)
+        {
+            if (sender is Button button)
+            {
+                if (button.Parent is LevelPanel lvlPanel)
+                {
+                    using (ColorDialog colorPicker = new ColorDialog())
+                    {
+                        if (colorPicker.ShowDialog() == DialogResult.OK)
+                        {
+                            lvlPanel.Level.BackColor = colorPicker.Color;
+                            currentLevelInformation[lvlPanel.LevelInformationIndex] = lvlPanel.Level;
+                            BuildLevelsShowing(currentLevelInformation);
+                        }//end if the use selected ok on picking a new dialog
+                    }//end use of Color Picking Dialog
+                }//end if sender parent is a LevelPanel, cast it
+            }//end if sender is a button, cast it
+        }//end event handler for changing level backcolor
+
+        private void LevelMax_ValueChanged(object sender, EventArgs e)
+        {
+            if(sender is NumericUpDown nud)
+            {
+                if(nud.Parent is LevelPanel lvlPanel)
+                {
+                    lvlPanel.Level.LevelEnd = nud.Value;
+                    currentLevelInformation[lvlPanel.LevelInformationIndex] = lvlPanel.Level;
+                    BuildLevelsShowing(currentLevelInformation);
+                }//end if sender parent is LevelPanel, cast it
+            }//end if sender is a numericUpDown
+        }//end event handler for changing level inclusive max
+
+        private void LevelMin_ValueChanged(object sender, EventArgs e)
+        {
+            if (sender is NumericUpDown nud)
+            {
+                if (nud.Parent is LevelPanel lvlPanel)
+                {
+                    lvlPanel.Level.LevelStart = nud.Value;
+                    currentLevelInformation[lvlPanel.LevelInformationIndex] = lvlPanel.Level;
+                    BuildLevelsShowing(currentLevelInformation);
+                }//end if sender parent is LevelPanel, cast it
+            }//end if sender is a numericUpDown
+        }//end event handler for changing level exclusive min
 
         /// <summary>
         /// default delegate pointer so we don't get null pointer

@@ -23,7 +23,7 @@ namespace ImageJImporter
         /// <summary>
         /// the levels which are apart of this object
         /// </summary>
-        public List<Level> Levels { get; private set; }
+        public List<Level> Levels { get; set; }
 
         /// <summary>
         /// The number of Levels in this collection
@@ -159,7 +159,7 @@ namespace ImageJImporter
         /// <summary>
         /// holds some information for a level
         /// </summary>
-        public struct Level
+        public class Level
         {
             /// <summary>
             /// the beginning of the level
@@ -247,6 +247,6 @@ namespace ImageJImporter
                 //return the level object we built
                 return output;
             }//end ReadSerializedString(serialized)
-        }//end Level
+        }//end inner class Level
     }//end class
 }//end namespace

@@ -111,7 +111,7 @@ namespace ImageJImporter
         }//end constructor
 
         /// <summary>
-        /// Updates the level information saved by the view
+        /// Updates the level information saved by the controller
         /// </summary>
         /// <param name="levelInformation">the level information we
         /// got from the file</param>
@@ -119,6 +119,12 @@ namespace ImageJImporter
         {
             this.allLevelInformation = levelInformation;
         }//end UpdateLevelInformation(levelInformation)
+
+        public SendLevelInformation updateControllerLevelInformation;
+        private void TellControllerToUpdateLevel(LevelInformation levelInformation)
+        {
+            updateControllerLevelInformation(levelInformation);
+        }//end TellControllerToUpdateLevel(levelInformation)
 
         private SendString sendDateTime;
         private void UpdateCurrentDateTime(object sender, System.Timers.ElapsedEventArgs e)
@@ -207,7 +213,8 @@ namespace ImageJImporter
         }//end UpdateGrid(grid)
 
         /// <summary>
-        /// builds the grid of buttons that represents the current grid. Very WIP
+        /// builds the grid of buttons that represents the current grid.
+        /// No longer WIP
         /// </summary>
         /// <param name="grid">the grid that you want to build</param>
         private void BuildButtonGrid(Grid grid)
@@ -511,7 +518,7 @@ namespace ImageJImporter
         /// </summary>
         private void uxConfigureColorLevelsMenuItem_Click(object sender, EventArgs e)
         {
-            ColorLevelDialog cld = new ColorLevelDialog(allLevelInformation, UpdateLevelInformation);
+            ColorLevelDialog cld = new ColorLevelDialog(allLevelInformation, TellControllerToUpdateLevel);
             cld.ShowDialog();
         }//end uxConfigureColorLevelsMenuItem Click Event Handler
     }//end class

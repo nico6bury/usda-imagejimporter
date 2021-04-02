@@ -45,6 +45,7 @@ namespace ImageJImporter
             view.formClosing = controller.CloseView;
             view.formClosingSaveLog = controller.SaveLogToFile;
             view.sendLevelInformation = controller.UpdateLevelInformation;
+            view.updateControllerLevelInformation = controller.GetLevelInfoFromView;
 
             //this connects the method(s) in the view to the delegates
             ShowFormMessage showMessage = view.ShowMessage;

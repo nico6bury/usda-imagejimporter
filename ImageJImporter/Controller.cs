@@ -78,6 +78,12 @@ namespace ImageJImporter
             this.fileIO = new FileIO(fileIO);
         }//end constructor
 
+        public void GetLevelInfoFromView(LevelInformation levels)
+        {
+            this.allLevelInformation = levels;
+            updateGrid(internalGrid);
+        }
+
         /// <summary>
         /// handle event of user wanting to open a file
         /// </summary>

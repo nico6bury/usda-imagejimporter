@@ -17,10 +17,12 @@ namespace ImageJImporter
     class LevelPanel : Panel
     {
         public LevelInformation.Level Level { get; set; }
+        public int LevelInformationIndex {get;set; }
 
-        public LevelPanel(LevelInformation.Level level) : base()
+        public LevelPanel(LevelInformation.Level level, int index) : base()
         {
             this.Level = level;
+            this.LevelInformationIndex = index;
         }//end 1-arg constructor
     }//end class
 }//end namespace
