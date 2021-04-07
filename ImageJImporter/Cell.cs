@@ -131,7 +131,7 @@ namespace ImageJImporter
         /// The chalkniess of this cell. If this is a new row flag, 
         /// an empty cell, or incorrectly formatted, then this will
         /// return -1. Otherwise, it will return percent chalkiness
-        /// of this cell as a decimal.
+        /// of this cell as a percent
         /// </summary>
         public decimal Chalk
         {
@@ -153,16 +153,16 @@ namespace ImageJImporter
                 {
                     if(rows.Count == 4)
                     {
-                        return rows[2].Area / rows[1].Area;
+                        return rows[2].Area / rows[1].Area*100;
                     }//end if we have the normal amount of rows
                     else if (rows.Count == 5)
                     {
                         decimal totalChalkiness = rows[2].Area + rows[3].Area;
-                        return totalChalkiness / rows[1].Area;
+                        return totalChalkiness / rows[1].Area*100;
                     }//end else if we have two rows of chalkiness
                     else
                     {
-                        return (decimal)0.01;
+                        return (decimal)0.01*100;
                     }//end else we have a seed with very little chalkiness
                 }//end else this must be a complete cell
             }//end getter
