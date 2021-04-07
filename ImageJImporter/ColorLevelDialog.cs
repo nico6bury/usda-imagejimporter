@@ -12,9 +12,19 @@ namespace ImageJImporter
 {
     public partial class ColorLevelDialog : Form
     {
+        /// <summary>
+        /// level information we're editing
+        /// </summary>
         private LevelInformation currentLevelInformation;
+        /// <summary>
+        /// delegate to update level information in view
+        /// </summary>
         private SendLevelInformation sendLevelsBack;
+        /// <summary>
+        /// the main layout panel we have in the dialog
+        /// </summary>
         private FlowLayoutPanel mainPanel;
+
         public ColorLevelDialog(LevelInformation defaultLevelInformation,
             SendLevelInformation levelCallBackDelegate)
         {
@@ -31,9 +41,6 @@ namespace ImageJImporter
 
             //make all the levels show up
             BuildLevelsShowing(currentLevelInformation);
-
-            //resize stuff
-            ResizeMainPanelAndExitButton(null, null);
         }//end constructor
 
         private void ResizeMainPanelAndExitButton(object sender, EventArgs e)
@@ -60,6 +67,7 @@ namespace ImageJImporter
                 FlowDirection = FlowDirection.TopDown,
                 WrapContents = true,
                 Margin = new Padding(50),
+                ContextMenuStrip = uxMainPanelContextMenuStrip,
             };
             //just make sure the controls are reset
             mainPanel.Controls.Clear();
@@ -77,6 +85,7 @@ namespace ImageJImporter
 
             Controls.Clear();
             Controls.Add(mainPanel);
+            ResizeMainPanelAndExitButton(this, null);
         }//end BuildLevelsShowing()
 
         private LevelPanel GetCloseComponents(out TextBox levelLabel, out Button foreColorButton,
@@ -90,6 +99,7 @@ namespace ImageJImporter
                 ForeColor = Color.Indigo,
                 AutoSize = true,
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                ContextMenuStrip = uxSubPanelContextMenuStrip,
             };
 
             //set up TextBox
@@ -225,6 +235,7 @@ namespace ImageJImporter
                 {
                     lvlPanel.Level.LevelEnd = nud.Value;
                     currentLevelInformation[lvlPanel.LevelInformationIndex] = lvlPanel.Level;
+                    currentLevelInformation.ReSortLevels();
                     BuildLevelsShowing(currentLevelInformation);
                 }//end if sender parent is LevelPanel, cast it
             }//end if sender is a numericUpDown
@@ -238,6 +249,7 @@ namespace ImageJImporter
                 {
                     lvlPanel.Level.LevelStart = nud.Value;
                     currentLevelInformation[lvlPanel.LevelInformationIndex] = lvlPanel.Level;
+                    currentLevelInformation.ReSortLevels();
                     BuildLevelsShowing(currentLevelInformation);
                 }//end if sender parent is LevelPanel, cast it
             }//end if sender is a numericUpDown
@@ -257,5 +269,31 @@ namespace ImageJImporter
         {
             sendLevelsBack(currentLevelInformation);
         }//end ColorLevelDialog FormClosing Event Handler
+
+        /// <summary>
+        /// event for when we want to remove a level
+        /// </summary>
+        private void uxRemoveLevel_Click(object sender, EventArgs e)
+        {
+            if(sender is ToolStripMenuItem menuStrip)
+            {
+                if(menuStrip.Owner is ContextMenuStrip contextMenu)
+                {
+                    if(contextMenu.SourceControl is LevelPanel panel)
+                    {
+                        //force level information to remove a level
+                        List<LevelInformation.Level> tempLevelList = currentLevelInformation.Levels;
+                        tempLevelList.RemoveAt(panel.LevelInformationIndex);
+                        currentLevelInformation.Levels = tempLevelList;
+                        BuildLevelsShowing(currentLevelInformation);
+                    }//end if we're right clicking a level panel
+                }//end if we're doing a right click action
+            }//end if we came from the right place
+        }//end Remove Level Click event handler
+
+        private void uxAddNewLevel_Click(object sender, EventArgs e)
+        {
+            
+        }//end Add Level Click event handler
     }//end class
 }//end namespace

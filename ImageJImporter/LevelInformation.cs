@@ -20,10 +20,27 @@ namespace ImageJImporter
     /// </summary>
     public class LevelInformation
     {
+        private List<Level> levels = new List<Level>();
         /// <summary>
-        /// the levels which are apart of this object
+        /// the levels which are apart of this object. If trying to change
+        /// a specific index of the levels, please use indexer
         /// </summary>
-        public List<Level> Levels { get; set; }
+        public List<Level> Levels
+        {
+            get
+            {
+                return levels;
+            }//end getter
+            set
+            {
+                List<Level> tempLevelList = new List<Level>();
+                foreach(Level level in value)
+                {
+                    tempLevelList.Add(level);
+                }//end looping over all the levels
+                levels = tempLevelList;
+            }//end setter
+        }//end Levels
 
         /// <summary>
         /// The number of Levels in this collection
@@ -89,10 +106,21 @@ namespace ImageJImporter
             }//end getter
         }//end DefaultLevels
 
+        /// <summary>
+        /// indexer for this object
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public Level this[int index]
         {
             get { return Levels[index]; }
-            set { Levels[index] = value; }
+            set
+            {
+                //sets the index to what the user wants
+                levels[index] = value;
+                //make sure our levels match up
+                RefreshLevelBounds();
+            }//end setter
         }//end indexer
 
         /// <summary>
@@ -122,6 +150,30 @@ namespace ImageJImporter
         {
             Levels.Add(level);
         }//end AddNewLevel(level)
+
+        /// <summary>
+        /// makes sure that the bounds of levels in this object don't
+        /// overlap. This is done by iterating through the list of
+        /// levels in ascending order and changing LevelStart
+        /// </summary>
+        public void RefreshLevelBounds()
+        {
+            for(int i = 0; i < levels.Count - 1; i++)
+            {
+                if(levels[i].LevelEnd != levels[i + 1].LevelStart)
+                {
+                    levels[i + 1].LevelStart = levels[i].LevelEnd;
+                }//end if we found an incorrect level bound
+            }//end looping over all the levels
+        }//end RefreshLevelBounds()
+
+        /// <summary>
+        /// sorts the levels so that they are in ascending order
+        /// </summary>
+        public void ReSortLevels()
+        {
+            levels.Sort(Comparer<Level>.Create((x, y) => (x.LevelStart.CompareTo(y.LevelEnd))));
+        }//end ReSortLevels()
 
         /// <summary>
         /// Tests a specific value against the levels in this object, and then returns
