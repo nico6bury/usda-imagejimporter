@@ -30,6 +30,27 @@ namespace ImageJImporter
         /// </summary>
         public int Count => Levels.Count;
 
+        private string propertyToTest = "";
+        /// <summary>
+        /// the name of the property we usually test for with
+        /// these levels. Just used for reference by users of this
+        /// class, not referenced internally. Set to "" by default.
+        /// It cannot be set to null
+        /// </summary>
+        public string PropertyToTest
+        {
+            get
+            {
+                if (propertyToTest == null) propertyToTest = "";
+                return propertyToTest;
+            }//end getter
+            set
+            {
+                propertyToTest = value;
+                if (propertyToTest == null) propertyToTest = "";
+            }//end setter
+        }//end PropertyToTest
+
         /// <summary>
         /// default level information
         /// </summary>
@@ -39,6 +60,9 @@ namespace ImageJImporter
             {
                 //initialize level collection to return
                 LevelInformation outputLevels = new LevelInformation();
+
+                //set default property to test
+                outputLevels.PropertyToTest = "Chalk";
 
                 //define level0 (-10 - 0)
                 Level level0 = new Level(-10, 0, "Lvl0", Color.Black, Color.White);
@@ -126,6 +150,10 @@ namespace ImageJImporter
         {
             List<string> output = new List<string>();
 
+            //add line for property we want to test
+            output.Add($"LIE1;{nameof(PropertyToTest)}:{PropertyToTest}");
+
+            //add all the lines for each level
             for(int i = 0; i < Levels.Count; i++)
             {
                 output.Add(Levels[i].FormatSerializedString());
@@ -138,7 +166,16 @@ namespace ImageJImporter
         {
             List<Level> levels = new List<Level>();
 
-            for(int i = 0; i < lines.Count; i++)
+            //read property we want to test from file
+            string[] option1 = lines[0].Split(';');
+            if(option1[0] == "LIE1")
+            {
+                string[] option1Info = option1[1].Split(':');
+                GetType().GetProperty(option1Info[0]).SetValue(this, option1Info[1]);
+            }//end if we can set option level info options
+
+            //add all the levels from the lines
+            for(int i = 1; i < lines.Count; i++)
             {
                 levels.Add(Level.ReadSerializedString(lines[i]));
             }//end looping over each line
@@ -194,7 +231,7 @@ namespace ImageJImporter
             public string FormatSerializedString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append($"LI");
+                sb.Append($"LI1");
                 foreach(PropertyInfo property in this.GetType().GetProperties())
                 {
                     string serializedPrintout = property.GetValue(this).ToString();

@@ -83,8 +83,11 @@ namespace ImageJImporter
             //add the current file name to the file
             linesToOutput.Add(file);
 
+            //add the level information options
+            linesToOutput.Add($"LIE1;{nameof(levels.PropertyToTest)}:{levels.PropertyToTest}");
+
             //add all the lines from the level information to our output list
-            foreach(string line in levels.MakeLinesToSaveToFile())
+            foreach (string line in levels.MakeLinesToSaveToFile())
             {
                 linesToOutput.Add(line);
             }//end adding all the level information to output lines
@@ -99,6 +102,8 @@ namespace ImageJImporter
         /// <param name="levelInformation">The level information to save
         /// to this file. If this parameter is null, then no information
         /// will be saved.</param>
+        /// <param name="cellParamName">The name of the property we're comparing
+        /// using the levels</param>
         public void SaveConfigFile(LevelInformation levelInformation)
         {
             //creates config file. If it already exists, we overwrite it
@@ -110,6 +115,9 @@ namespace ImageJImporter
                 //write all the levelInformation
                 if(levelInformation != null)
                 {
+                    string propName = levelInformation.PropertyToTest;
+                    if (String.IsNullOrEmpty(propName)) propName = "Chalk";
+                    scribe.WriteLine($"LIE1;{nameof(levelInformation.PropertyToTest)}:{propName}");
                     foreach(string line in levelInformation.MakeLinesToSaveToFile())
                     {
                         scribe.WriteLine(line);
@@ -154,7 +162,15 @@ namespace ImageJImporter
                 {
                     //get all the components
                     string[] componentsFromThisLine = allLinesFromFile[i].Split(';');
-                    if(componentsFromThisLine[0] == "LI")
+                    if(componentsFromThisLine[0] == "LIE1")
+                    {
+                        string[] componentInfo = componentsFromThisLine[1].Split(':');
+                        if(componentInfo[0] == nameof(levelInformation.PropertyToTest))
+                        {
+                            levelInformation.GetType().GetProperty(nameof(levelInformation.PropertyToTest)).SetValue(levelInformation, componentInfo[1]);
+                        }//end if we can set the propertyToTest
+                    }//end if we have a extended level options info here
+                    else if(componentsFromThisLine[0] == "LI1")
                     {
                         levelInformation.AddNewLevel(
                             LevelInformation.Level.ReadSerializedString(allLinesFromFile[i]));

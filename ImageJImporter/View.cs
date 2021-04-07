@@ -237,7 +237,7 @@ namespace ImageJImporter
                 for(int j = 0; j < allCells[i].Count; j++)
                 {
                     CellButton thisButton = new CellButton(allCells[i][j]);
-                    thisButton.SetLevelInformation(allLevelInformation, "Chalk");
+                    thisButton.SetLevelInformation(allLevelInformation, null);
                     thisButton.FormatCellButton(uxToolTip);
                     thisButton.Size = uxStartReference.Size;
                     thisButton.Click += GridButtonClickEvent;

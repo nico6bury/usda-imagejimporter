@@ -50,11 +50,19 @@ namespace ImageJImporter
         /// </summary>
         /// <param name="levels">the level information for this object</param>
         /// <param name="cellParamName">The name of the property in our cell object
-        /// that we should compare with the level information.</param>
+        /// that we should compare with the level information. If set to null, will
+        /// use whatever we find in levels</param>
         public void SetLevelInformation(LevelInformation levels, string cellParamName)
         {
             this.levels = levels;
-            cellPropertyNameToCompareToLevel = cellParamName;
+            if(cellParamName != null)
+            {
+                cellPropertyNameToCompareToLevel = cellParamName;
+            }//end if the user wants to specify a specific cellParamName
+            else
+            {
+                cellPropertyNameToCompareToLevel = levels.PropertyToTest;
+            }//end else we'll use the name from the level info
         }//end SetLevelInformation(levels)
 
         /// <summary>
