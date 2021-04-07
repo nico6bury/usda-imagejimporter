@@ -33,11 +33,12 @@ namespace ImageJImporter
             // 
             // ColorLevelDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Honeydew;
-            this.ClientSize = new System.Drawing.Size(446, 287);
+            this.ClientSize = new System.Drawing.Size(818, 534);
             this.ForeColor = System.Drawing.Color.Navy;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "ColorLevelDialog";
             this.Text = "Color Level Dialog";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ColorLevelDialog_FormClosing);

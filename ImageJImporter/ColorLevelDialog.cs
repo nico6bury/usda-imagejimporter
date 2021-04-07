@@ -38,8 +38,11 @@ namespace ImageJImporter
 
         private void ResizeMainPanelAndExitButton(object sender, EventArgs e)
         {
-            mainPanel.Size = new Size(this.Width - 100, this.Height - 100);
-            mainPanel.Location = new Point(12, 12);
+            if(mainPanel != null)
+            {
+                mainPanel.Size = new Size(this.Width - 100, this.Height - 100);
+                mainPanel.Location = new Point(12, 12);
+            }//end if the main panel is not null
         }//end event handler for the form being resized
 
         private void BuildLevelsShowing(LevelInformation levels)
@@ -54,7 +57,7 @@ namespace ImageJImporter
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
                 Font = new Font(FontFamily.GenericSerif, 12),
                 Location = new Point(12, 12),
-                FlowDirection = FlowDirection.LeftToRight,
+                FlowDirection = FlowDirection.TopDown,
                 WrapContents = true,
                 Margin = new Padding(50),
             };

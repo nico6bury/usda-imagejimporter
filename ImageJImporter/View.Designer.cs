@@ -40,6 +40,7 @@ namespace ImageJImporter
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuItemToggleListDisplay = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToggleGroupsCollapsed = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxConfigureColorLevelsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.uxHeaderLog = new System.Windows.Forms.TextBox();
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
@@ -61,7 +62,6 @@ namespace ImageJImporter
             this.uxProcessingPanel = new System.Windows.Forms.Panel();
             this.uxGridPanel = new System.Windows.Forms.Panel();
             this.uxStartReference = new System.Windows.Forms.Button();
-            this.uxConfigureColorLevelsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMainMenuToolStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).BeginInit();
@@ -153,6 +153,13 @@ namespace ImageJImporter
             this.uxToggleGroupsCollapsed.Text = "Toggle Collapsed-ness Of Groups";
             this.uxToggleGroupsCollapsed.Click += new System.EventHandler(this.uxToggleGroupsCollapsed_Click);
             // 
+            // uxConfigureColorLevelsMenuItem
+            // 
+            this.uxConfigureColorLevelsMenuItem.Name = "uxConfigureColorLevelsMenuItem";
+            this.uxConfigureColorLevelsMenuItem.Size = new System.Drawing.Size(299, 24);
+            this.uxConfigureColorLevelsMenuItem.Text = "Configure Color Levels";
+            this.uxConfigureColorLevelsMenuItem.Click += new System.EventHandler(this.uxConfigureColorLevelsMenuItem_Click);
+            // 
             // uxToolTip
             // 
             this.uxToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
@@ -169,7 +176,7 @@ namespace ImageJImporter
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.uxHeaderLog.Size = new System.Drawing.Size(858, 153);
             this.uxHeaderLog.TabIndex = 0;
-            this.uxHeaderLog.Text = "Hello and welcome to 2 Apr 21 v2.5 of ImageJ Data Importation Program";
+            this.uxHeaderLog.Text = "Hello and welcome to 7 Apr 21 v2.6 of ImageJ Data Importation Program";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
             // 
             // uxCurrentDateTime
@@ -346,7 +353,7 @@ namespace ImageJImporter
             this.uxGridPanel.Controls.Add(this.uxStartReference);
             this.uxGridPanel.Location = new System.Drawing.Point(6, 25);
             this.uxGridPanel.Name = "uxGridPanel";
-            this.uxGridPanel.Size = new System.Drawing.Size(85, 51);
+            this.uxGridPanel.Size = new System.Drawing.Size(51, 44);
             this.uxGridPanel.TabIndex = 10;
             this.uxGridPanel.SizeChanged += new System.EventHandler(this.uxGridPanel_SizeChanged);
             // 
@@ -354,18 +361,11 @@ namespace ImageJImporter
             // 
             this.uxStartReference.Location = new System.Drawing.Point(3, 3);
             this.uxStartReference.Name = "uxStartReference";
-            this.uxStartReference.Size = new System.Drawing.Size(75, 41);
+            this.uxStartReference.Size = new System.Drawing.Size(41, 34);
             this.uxStartReference.TabIndex = 0;
             this.uxStartReference.Text = "Reference Button";
             this.uxStartReference.UseVisualStyleBackColor = true;
             this.uxStartReference.Visible = false;
-            // 
-            // uxConfigureColorLevelsMenuItem
-            // 
-            this.uxConfigureColorLevelsMenuItem.Name = "uxConfigureColorLevelsMenuItem";
-            this.uxConfigureColorLevelsMenuItem.Size = new System.Drawing.Size(299, 24);
-            this.uxConfigureColorLevelsMenuItem.Text = "Configure Color Levels";
-            this.uxConfigureColorLevelsMenuItem.Click += new System.EventHandler(this.uxConfigureColorLevelsMenuItem_Click);
             // 
             // View
             // 
@@ -384,7 +384,7 @@ namespace ImageJImporter
             this.MainMenuStrip = this.uxMainMenuToolStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "View";
-            this.Text = "NS ImageJ Data 2 Apr 21 v2.5";
+            this.Text = "NS ImageJ Data 7 Apr 21 v2.6";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
             this.Load += new System.EventHandler(this.OpenForm);
             this.uxMainMenuToolStrip.ResumeLayout(false);

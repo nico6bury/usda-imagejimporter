@@ -205,6 +205,9 @@ namespace ImageJImporter
             //builds the button grid for this data
             BuildButtonGrid(grid);
 
+            //makes the button grid visible
+            uxGridDisplay.Visible = true;
+
             //update list
             uxRowListView.SetObjects(tempRows);
 
@@ -262,6 +265,10 @@ namespace ImageJImporter
 
             //disable the elements for editing seeds so they can't be interacted with by the user
             uxRowDisplayGroup.Enabled = false;
+
+            //remove all the buttons from the grid, and make that section invisible
+            uxGridPanel.Controls.Clear();
+            uxGridDisplay.Visible = false;
         }//end CloseRowList()
 
         /// <summary>
