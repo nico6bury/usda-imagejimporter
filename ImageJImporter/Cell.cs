@@ -162,7 +162,7 @@ namespace ImageJImporter
                     }//end else if we have two rows of chalkiness
                     else
                     {
-                        return (decimal)0.1*100;
+                        return (decimal)0.01*100;
                     }//end else we have a seed with very little chalkiness
                 }//end else this must be a complete cell
             }//end getter

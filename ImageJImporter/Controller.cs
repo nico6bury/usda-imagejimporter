@@ -81,8 +81,9 @@ namespace ImageJImporter
         public void GetLevelInfoFromView(LevelInformation levels)
         {
             this.allLevelInformation = levels;
+            updateLevelInformation(allLevelInformation);
             updateGrid(internalGrid);
-        }
+        }//end GetLevelInfoFromView(levels)
 
         /// <summary>
         /// handle event of user wanting to open a file
@@ -313,8 +314,17 @@ namespace ImageJImporter
         /// </summary>
         public void OpenView()
         {
+            //Make a level information object to pass as out param
+            LevelInformation tempLevelsRef;
+
             //get data file to load plus level information
-            string defaultFileName = fileIO.LoadConfigFile(out allLevelInformation);
+            string defaultFileName = fileIO.LoadConfigFile(out tempLevelsRef);
+
+            //set our level information up correctly, we hope
+            allLevelInformation = tempLevelsRef;
+
+            //we should always send level information to the view
+            updateLevelInformation(allLevelInformation);
 
             //load data if there was a file to load
             if(!String.IsNullOrEmpty(defaultFileName))

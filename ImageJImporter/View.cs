@@ -234,6 +234,7 @@ namespace ImageJImporter
                 for(int j = 0; j < allCells[i].Count; j++)
                 {
                     CellButton thisButton = new CellButton(allCells[i][j]);
+                    thisButton.SetLevelInformation(allLevelInformation, "Chalk");
                     thisButton.FormatCellButton(uxToolTip);
                     thisButton.Size = uxStartReference.Size;
                     thisButton.Click += GridButtonClickEvent;
@@ -518,7 +519,7 @@ namespace ImageJImporter
         /// </summary>
         private void uxConfigureColorLevelsMenuItem_Click(object sender, EventArgs e)
         {
-            ColorLevelDialog cld = new ColorLevelDialog(allLevelInformation, TellControllerToUpdateLevel);
+            ColorLevelDialog cld = new ColorLevelDialog(this.allLevelInformation, TellControllerToUpdateLevel);
             cld.ShowDialog();
         }//end uxConfigureColorLevelsMenuItem Click Event Handler
     }//end class

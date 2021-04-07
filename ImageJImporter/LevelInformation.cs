@@ -41,33 +41,23 @@ namespace ImageJImporter
                 LevelInformation outputLevels = new LevelInformation();
 
                 //define level0 (-10 - 0)
-                Level level0 = new Level(-10, 0, "Lvl0");
-                level0.BackColor = Color.Black;
-                level0.ForeColor = Color.White;
+                Level level0 = new Level(-10, 0, "Lvl0", Color.Black, Color.White);
                 outputLevels.AddNewLevel(level0);
 
                 //define level1 (0 - 10)
-                Level level1 = new Level(0, 10, "Lvl1");
-                level1.BackColor = Color.White;
-                level1.ForeColor = Color.Black;
+                Level level1 = new Level(0, 10, "Lvl1", Color.White, Color.Black);
                 outputLevels.AddNewLevel(level1);
 
                 //define level2 (10 - 25)
-                Level level2 = new Level(10, 25, "Lvl2");
-                level2.BackColor = Color.PaleGreen;
-                level2.ForeColor = Color.DarkGreen;
+                Level level2 = new Level(10, 25, "Lvl2", Color.PaleGreen, Color.DarkGreen);
                 outputLevels.AddNewLevel(level2);
 
                 //define level3 (25 - 45)
-                Level level3 = new Level(25, 45, "Lvl3");
-                level3.BackColor = Color.Gold;
-                level3.ForeColor = Color.Maroon;
+                Level level3 = new Level(25, 45, "Lvl3", Color.Gold, Color.Maroon);
                 outputLevels.AddNewLevel(level3);
 
                 //define level4 ( > 45)
-                Level level4 = new Level(45, 100, "Lvl4");
-                level4.BackColor = Color.DeepPink;
-                level4.ForeColor = Color.Purple;
+                Level level4 = new Level(45, 100, "Lvl4", Color.DeepPink, Color.Purple);
                 outputLevels.AddNewLevel(level4);
 
                 //return that to whoever called this
@@ -95,9 +85,9 @@ namespace ImageJImporter
         /// <param name="start">the start of the level</param>
         /// <param name="end">the end of the level</param>
         /// <param name="name">the name of the level</param>
-        public void AddNewLevel(decimal start, decimal end, string name)
+        public void AddNewLevel(decimal start, decimal end, string name, Color BackColor, Color ForeColor)
         {
-            Levels.Add(new Level(start, end, name));
+            Levels.Add(new Level(start, end, name, BackColor, ForeColor));
         }//end AddNewLevel(start, end)
 
         /// <summary>
@@ -192,13 +182,13 @@ namespace ImageJImporter
             /// <param name="levelStart">the start of the level</param>
             /// <param name="levelEnd">the end of the level</param>
             /// <param name="levelName">the name of the level</param>
-            public Level(decimal levelStart, decimal levelEnd, string levelName)
+            public Level(decimal levelStart, decimal levelEnd, string levelName, Color BackColor, Color ForeColor)
             {
                 this.LevelStart = levelStart;
                 this.LevelEnd = levelEnd;
                 this.LevelName = levelName;
-                this.BackColor = Color.White;
-                this.ForeColor = Color.Black;
+                this.BackColor = BackColor;
+                this.ForeColor = ForeColor;
             }//end Level(levelStart, levelEnd, levelName)
 
             public string FormatSerializedString()
@@ -207,14 +197,22 @@ namespace ImageJImporter
                 sb.Append($"LI");
                 foreach(PropertyInfo property in this.GetType().GetProperties())
                 {
-                    sb.Append($";{property.Name}:{property.GetValue(this)}");
+                    string serializedPrintout = property.GetValue(this).ToString();
+
+                    if(property.PropertyType == typeof(Color))
+                    {
+                        Color someColor = (Color)property.GetValue(this);
+                        serializedPrintout = someColor.ToArgb().ToString();
+                    }//end if we have a color type
+
+                    sb.Append($";{property.Name}:{serializedPrintout}");
                 }//end looping over all the properties
                 return sb.ToString();
             }//end FormatSerializedString()
 
             public static Level ReadSerializedString(string serialized)
             {
-                Level output = new Level(-1, -1, String.Empty);
+                Level output = new Level(-1, -1, String.Empty, Color.Black, Color.Black);
                 //split up each of the properties
                 string[] lineComponents = serialized.Split(';');
                 //loop over all the properties we found
@@ -240,7 +238,7 @@ namespace ImageJImporter
                     else if(type == typeof(Color))
                     {
                         //parse value to color and set corresponding value in output
-                        property.SetValue(output, Color.FromName(nameAndValue[1]));
+                        property.SetValue(output, Color.FromArgb(Convert.ToInt32(nameAndValue[1])));
                     }//end if it's a color type
                 }//end looping over all the components
 

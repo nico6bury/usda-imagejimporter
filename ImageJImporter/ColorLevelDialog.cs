@@ -58,27 +58,30 @@ namespace ImageJImporter
                 WrapContents = true,
                 Margin = new Padding(50),
             };
+            //just make sure the controls are reset
+            mainPanel.Controls.Clear();
 
             //start trying to do panels
-            for(int i = 0; i < levels.Count; i++)
+            for (int i = 0; i < levels.Count; i++)
             {
                 LevelPanel subPanel = GetCloseComponents(out TextBox label1,
                     out Button button1, out Button button2,
                     out NumericUpDown numeric1, out NumericUpDown numeric2,
-                    levels[i], i);
+                    levels, i);
                 subPanel.Location = new Point(12, subPanel.Height * i);
                 mainPanel.Controls.Add(subPanel);
             }//end looping over each level
-            
+
+            Controls.Clear();
             Controls.Add(mainPanel);
         }//end BuildLevelsShowing()
 
         private LevelPanel GetCloseComponents(out TextBox levelLabel, out Button foreColorButton,
             out Button backColorButton, out NumericUpDown levelMin,
-            out NumericUpDown levelMax, LevelInformation.Level level, int index)
+            out NumericUpDown levelMax, LevelInformation levels, int index)
         {
             //set up Panel
-            LevelPanel subPanel = new LevelPanel(level, index)
+            LevelPanel subPanel = new LevelPanel(levels[index], index)
             {
                 BackColor = Color.GhostWhite,
                 ForeColor = Color.Indigo,
@@ -99,24 +102,26 @@ namespace ImageJImporter
             //set up foreColorButton
             foreColorButton = new Button
             {
-                BackColor = subPanel.Level.ForeColor,
-                ForeColor = subPanel.Level.BackColor,
                 AutoSize = true,
                 Font = new Font(FontFamily.GenericSerif, 12),
                 Text = "Text Color",
+                FlatStyle = FlatStyle.Flat,
             };
+            foreColorButton.BackColor = subPanel.Level.ForeColor;
+            foreColorButton.ForeColor = subPanel.Level.BackColor;
             foreColorButton.Location = new Point(foreColorButton.Location.X, levelLabel.Location.Y + levelLabel.Height + 10);
             foreColorButton.Click += ForeColorButton_Click;
 
             //set up backColorButton
             backColorButton = new Button
             {
-                BackColor = subPanel.Level.BackColor,
-                ForeColor = subPanel.Level.ForeColor,
                 AutoSize = true,
                 Font = new Font(FontFamily.GenericSerif, 12),
                 Text = "Button Color",
+                FlatStyle = FlatStyle.Flat,
             };
+            backColorButton.BackColor = subPanel.Level.BackColor;
+            backColorButton.ForeColor = subPanel.Level.ForeColor;
             backColorButton.Location = new Point(backColorButton.Location.X, foreColorButton.Location.Y + foreColorButton.Height + 10);
             backColorButton.Click += BackColorButton_Click;
 
