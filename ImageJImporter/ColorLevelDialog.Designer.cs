@@ -58,7 +58,7 @@ namespace ImageJImporter
             this.uxMainPanelContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.uxAddNewLevel});
             this.uxMainPanelContextMenuStrip.Name = "uxMainPanelContextMenuStrip";
-            this.uxMainPanelContextMenuStrip.Size = new System.Drawing.Size(181, 48);
+            this.uxMainPanelContextMenuStrip.Size = new System.Drawing.Size(127, 26);
             this.uxMainPanelContextMenuStrip.Text = "Level Options";
             // 
             // uxAddNewLevel
@@ -76,6 +76,7 @@ namespace ImageJImporter
             this.ClientSize = new System.Drawing.Size(614, 434);
             this.ForeColor = System.Drawing.Color.Navy;
             this.Name = "ColorLevelDialog";
+            this.ShowIcon = false;
             this.Text = "Color Level Dialog";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ColorLevelDialog_FormClosing);
             this.Resize += new System.EventHandler(this.ResizeMainPanelAndExitButton);

@@ -112,4 +112,10 @@ namespace ImageJImporter
     /// <param name="levelInformation">the collection of level information you
     /// want to send</param>
     public delegate void SendLevelInformation(LevelInformation levelInformation);
+
+    /// <summary>
+    /// allows you to send a level somewhere
+    /// </summary>
+    /// <param name="level">the level you want to send</param>
+    public delegate void SendLevel(LevelInformation.Level level);
 }//end namespace
