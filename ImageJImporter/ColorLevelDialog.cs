@@ -194,8 +194,6 @@ namespace ImageJImporter
                 {
                     lvlPanel.Level.LevelName = textBox.Text;
                     currentLevelInformation[lvlPanel.LevelInformationIndex] = lvlPanel.Level;
-                    BuildLevelsShowing(currentLevelInformation, this);
-                    ResizeMainPanelAndExitButton(null, null);
                 }//end if sender parent is LevelPanel, cast it
             }//end sender is a textbox, cast it
         }//end event handler for changing level name
