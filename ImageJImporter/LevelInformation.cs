@@ -123,6 +123,21 @@ namespace ImageJImporter
             }//end setter
         }//end indexer
 
+        public Level this[string levelName]
+        {
+            get
+            {
+                foreach(Level level in levels)
+                {
+                    if(level.LevelName == levelName)
+                    {
+                        return level;
+                    }//end if we found the level
+                }//end looping over all the levels
+                return null;
+            }//end getter
+        }//end indexer
+
         /// <summary>
         /// initializes this object
         /// </summary>
@@ -148,7 +163,15 @@ namespace ImageJImporter
         /// <param name="level">the level struct to add</param>
         public void AddNewLevel(Level level)
         {
-            Levels.Add(level);
+            if(this[level.LevelName] == null)
+            {
+                Levels.Add(level);
+            }//end if we can add the level
+            else
+            {
+                level.LevelName += "1";
+                Levels.Add(level);
+            }//end else the level is already here
         }//end AddNewLevel(level)
 
         /// <summary>

@@ -376,5 +376,100 @@ namespace ImageJImporter
         {
             return GetEnumerator();
         }//end IEnumerable.GetEnumerator()
+
+        /// <summary>
+        /// basically a fancy struct, just generates the properties
+        /// from the spreadsheet that used to do this work. In this
+        /// class, the "kernel row" of the cell refers to the first
+        /// non-flag row, as that row contains the data for the entire
+        /// seed. The "spot row" refers to the other non-flag row(s)
+        /// in the cell, as they refer to any spots in the seed.
+        /// <para/>
+        /// Note: Many of the properties in this class may seem like
+        /// they're calculated on the spot, but in reality whenever
+        /// you specify a cell object, they're all calculated and
+        /// set. So if you somehow manage to get around setting a cell
+        /// and end up with weird results, that's why.
+        /// </summary>
+        public class GermReport
+        {
+            private int germThreshold = 50;
+            public int GermThreshold
+            {
+                get { return germThreshold; }
+                set
+                {
+                    //sets to 0 if less than 0, or value otherwise
+                    germThreshold = value < 0 ? 0 : value;
+                    //recalculate properties
+
+                }//end setter
+            }//end GermThreshold
+
+            /// <summary>
+            /// this is the X of the kernel minus the X of the spot
+            /// on the seed that represents Chalk.
+            /// </summary>
+            public decimal dx { get; private set; } = -1;
+            public decimal dy { get; private set; } = -1;
+            /// <summary>
+            /// ((dx^2)+(dy^2))^(0.5), top of ratio
+            /// </summary>
+            public decimal z { get; private set; } = -1;
+            /// <summary>
+            /// the major of the kernel row (first row), divided
+            /// by 2, bottom of ratio
+            /// </summary>
+            public decimal halfMajor { get; private set; } = -1;
+            /// <summary>
+            /// the number of rows between the cell start and end
+            /// flags that we have detected for the specified cell
+            /// </summary>
+            public int detectedDataRows { get; private set; } = 0;
+            /// <summary>
+            /// the fraction of z / halfMajor as a decimal
+            /// </summary>
+            public decimal ratio { get; private set; } = -1;
+            /// <summary>
+            /// whether or not this cell seems to contain a germ
+            /// </summary>
+            public bool isGerm { get; private set; } = false;
+            /// <summary>
+            /// whether or not there are two spots in this seed
+            /// </summary>
+            public bool twoSpots { get; private set; } = false;
+
+            /// <summary>
+            /// generates a germ report for a particular cell
+            /// </summary>
+            /// <param name="cell">the cell you want a germ report for</param>
+            public GermReport(Cell cell)
+            {
+                CalculateProperties(cell);
+            }//end 1-arg constructor
+
+            /// <summary>
+            /// calculates all the properties of this class
+            /// </summary>
+            /// <param name="cell"></param>
+            private void CalculateProperties(Cell cell)
+            {
+                throw new NotImplementedException();
+            }//end CalculateProperties(cell)
+
+            /// <summary>
+            /// calculates and returns the real chalk for a cell based
+            /// on germ detection in a way optimized for simple referencing
+            /// </summary>
+            /// <param name="cell">The cell to calculate Chalk for</param>
+            /// <returns>returns normal chalk percent if non-germ spot detected, or
+            /// 0 if the only spot seems to be a germ</returns>
+            /// <param name="germThreshold">The threshold percent to test
+            /// the ratio against. If this is -1, then we'll use the default</param>
+            public static decimal CalculateChalk2(Cell cell, int germThreshold)
+            {
+                throw new NotImplementedException();
+            }//end CalculateChalk2(cell)
+        }//end GermReport
     }//end class
 }//end namespace

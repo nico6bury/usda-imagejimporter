@@ -2,12 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 
 /*
  * Author: Nicholas Sixbury
@@ -64,6 +62,9 @@ namespace ImageJImporter
             //this basically makes all the controls visible (buttons, textbox, etc)
             InitializeComponent();
 
+            uxProcessingPanel.AutoSize = true;
+            uxGridDisplay.AutoSize = true;
+
             //initialize typedObjectListView
             tlist = new TypedObjectListView<Row>(this.uxRowListView);
 
@@ -93,12 +94,14 @@ namespace ImageJImporter
             this.rowName.GroupKeyToTitleConverter = delegate (object groupKey)
             {
                 Cell cell = (Cell)groupKey;
+                string cellTypePlusChalkPlusLevel = "";
                 //determine header based on cell state
-                if (cell.IsNewRowFlag) return ("New Row Flag");
-                else if (!cell.IsFullCell) return ("Incomplete Cell");
-                else if (cell.IsEmptyCell) return ("Empty Cell");
-                else if (cell.RowSpan == -2) return ("Abnormal Cell");
-                else return ($"Normal Cell with {cell.Chalk.ToString("N3")} Chaulkiness");
+                if (cell.IsNewRowFlag) cellTypePlusChalkPlusLevel = $"New Row Flag";
+                else if (!cell.IsFullCell) cellTypePlusChalkPlusLevel = $"Incomplete Cell";
+                else if (cell.IsEmptyCell) cellTypePlusChalkPlusLevel = $"Empty Cell";
+                else if (cell.RowSpan == -2) cellTypePlusChalkPlusLevel = $"Abnormal Cell";
+                else cellTypePlusChalkPlusLevel = $"Normal Cell - Chalk = {cell.Chalk:N1}% - Level = {allLevelInformation.FindLevel(cell.Chalk).Item1}";
+                return $"{cellTypePlusChalkPlusLevel}";
             };
             this.rowName.GroupFormatter = (OLVGroup group,
                 GroupingParameters parms) =>
@@ -205,6 +208,9 @@ namespace ImageJImporter
             //builds the button grid for this data
             BuildButtonGrid(grid);
 
+            //builds the buttons for selecting grid levels
+            BuildLevelSelectionButtons(uxGridPanel, uxProcessingPanel, LevelSelectionButton_Click);
+
             //makes the button grid visible
             uxGridDisplay.Visible = true;
 
@@ -231,6 +237,8 @@ namespace ImageJImporter
             //reset the controls in the uxGridPanel
             uxGridPanel.Controls.Clear();
 
+            Point furthestLoc = new Point();
+
             //add our buttons to the groupbox so they're visible and put them in a snazzy grid
             for (int i = 0; i < allCells.Count; i++)
             {
@@ -247,13 +255,84 @@ namespace ImageJImporter
                     int Y = uxStartReference.Location.Y + i * (uxStartReference.Size.Height + buttonMargin);
                     thisButton.Location = new Point(X, Y);
 
+                    //updated furthest point
+                    if (furthestLoc.X < thisButton.Location.X + thisButton.Width) furthestLoc.X = thisButton.Location.X + thisButton.Width;
+                    if (furthestLoc.Y < thisButton.Location.Y + thisButton.Height) furthestLoc.Y = thisButton.Location.Y + thisButton.Height;
+
                     //add our button to the groupbox so it gets displayed
                     uxGridPanel.Controls.Add(thisButton);
                 }//end looping over cell buttons
             }//end looping over lists of cell buttons
+
+            uxGridPanel.Size = new Size(furthestLoc.X + buttonMargin, furthestLoc.Y + buttonMargin);
         }//end BuildButtonGrid(rows)
 
+        /// <summary>
+        /// Builds all the buttons for selecting and de-selecting different levels
+        /// </summary>
+        /// <param name="grid">the panel of CellButtons which displays them as a grid</param>
+        /// <param name="outputPanel">the panel which we will output level selection buttons to</param>
+        /// <param name="buttonClickHandler">the event handler for each button</param>
+        private void BuildLevelSelectionButtons(Panel grid, Panel outputPanel, EventHandler buttonClickHandler)
+        {
+            Point prevLocation = new Point();
+            int buttonMargin = 5;
+            int prevWidth = 0;
+            for(int i = 0; i < allLevelInformation.Count; i++)
+            {
+                //save current level for reference
+                LevelInformation.Level thisLevel = allLevelInformation[i];
 
+                //initialize button
+                Button levelButton = new Button
+                {
+                    Text = thisLevel.LevelName,
+                    ForeColor = thisLevel.ForeColor,
+                    BackColor = thisLevel.BackColor,
+                    AutoSize = true,
+                    Font = new Font(FontFamily.GenericSansSerif, 12),
+                };
+                int X = prevLocation.X + prevWidth + buttonMargin;
+                int Y = buttonMargin;
+                levelButton.Location = new Point(X, Y);
+                prevLocation = levelButton.Location;
+                prevWidth = levelButton.Width;
+
+                levelButton.Click += buttonClickHandler;
+
+                //add this control to the panel
+                outputPanel.Controls.Add(levelButton);
+            }//end building button for each level in allLevelInformation
+
+            //make the button for resetting stuff
+
+            grid.AutoSize = false;
+        }//end BuildLevelSelectionButtons(grid, outputPanel, buttonClickHandler)
+
+        private void LevelSelectionButton_Click(object sender, EventArgs e)
+        {
+            if(sender is Button button)
+            {
+                LevelInformation.Level level = allLevelInformation[button.Text];
+                foreach(Control child in uxGridPanel.Controls)
+                {
+                    if(child is CellButton cellButton)
+                    {
+                        PropertyInfo property = cellButton.Cell.GetType()
+                            .GetProperty(allLevelInformation.PropertyToTest);
+                        decimal propValue = (decimal)property.GetValue(cellButton.Cell);
+                        if (propValue > level.LevelStart && propValue <= level.LevelEnd)
+                        {
+                            child.Visible = true;
+                        }//end if the value is within the level
+                        else
+                        {
+                            child.Visible = false;
+                        }//end else the value is not the correct level
+                    }//end if this is a cellButton
+                }//end looping over all the children of the grid panel
+            }//end if sender is a button
+        }//end LevelSelectionButton_Click(sender, e)
 
         /// <summary>
         /// closes the file and mostly resets things
@@ -529,5 +608,17 @@ namespace ImageJImporter
             ColorLevelDialog cld = new ColorLevelDialog(this.allLevelInformation, TellControllerToUpdateLevel);
             cld.ShowDialog();
         }//end uxConfigureColorLevelsMenuItem Click Event Handler
+
+        private void uxRowListView_FormatRow(object sender, FormatRowEventArgs e)
+        {
+            if(e.Model is Row currentRow)
+            {
+                Cell owningCell = currentRow.CurrentCellOwner;
+                Tuple<string, int> level = allLevelInformation.FindLevel(owningCell.Chalk);
+                LevelInformation.Level thisLevel = allLevelInformation[level.Item2];
+                e.Item.BackColor = thisLevel.BackColor;
+                e.Item.ForeColor = thisLevel.ForeColor;
+            }//end if our model is a row
+        }//end event handler for formatting each row in OLV
     }//end class
 }//end namespace
