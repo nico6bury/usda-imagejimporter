@@ -315,6 +315,7 @@ namespace ImageJImporter
         /// Format all the data for one file into a one-line summary based on the 
         /// provided level information. It should be noted that counts ignore
         /// cells which are not both full and non-empty, as does seed total.
+        /// Also adds the percent
         /// </summary>
         /// <param name="filename">the file you got the grid info from</param>
         /// <param name="grid">the grid of data</param>
@@ -357,9 +358,11 @@ namespace ImageJImporter
             for(int i = 0; i < counters.Count; i++)
             {
                 //find the percentage for this level
-                //decimal percent = (decimal)counters[i] / (decimal)nonFlagCount * 100;
+                decimal percent = (decimal)counters[i] / (decimal)nonFlagCount * 100;
+                string percentStr = "";
+                if(levels.Levels[i].LevelStart > 0) percentStr = $"({percent.ToString("N0")}%)";
                 //add this to the output stringbuilder
-                summaryBuilder.Append($"  {levels.Levels[i].LevelName}:{counters[i]}");
+                summaryBuilder.Append($"  {levels.Levels[i].LevelName}:{counters[i]}{percentStr}");
             }//end looping over counts of 
 
             //add total seed number
