@@ -77,6 +77,10 @@ namespace ImageJImporter
             //format the text of the button
             Text = Cell.RowSpan.ToString();
 
+            //set the font size
+            Font = new Font(FontFamily.GenericSansSerif, 10);
+
+            //basically we're figuring out what the levels are based off of here
             Tuple<string, int> correctLevel = levels.FindLevel((decimal)Cell.GetType().GetProperty(cellPropertyNameToCompareToLevel).GetValue(cell));
 
             if(correctLevel.Item1 != null)

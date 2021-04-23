@@ -59,7 +59,7 @@ namespace ImageJImporter
             this.rowRound = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.rowSolidity = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.uxGridDisplay = new System.Windows.Forms.GroupBox();
-            this.uxProcessingPanel = new System.Windows.Forms.Panel();
+            this.uxProcessingPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.uxGridPanel = new System.Windows.Forms.Panel();
             this.uxStartReference = new System.Windows.Forms.Button();
             this.uxMainMenuToolStrip.SuspendLayout();
@@ -78,7 +78,7 @@ namespace ImageJImporter
             this.uxMainMenuToolStrip.Location = new System.Drawing.Point(0, 0);
             this.uxMainMenuToolStrip.Name = "uxMainMenuToolStrip";
             this.uxMainMenuToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(1128, 28);
+            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(960, 28);
             this.uxMainMenuToolStrip.TabIndex = 0;
             this.uxMainMenuToolStrip.Text = "menuStrip1";
             // 
@@ -174,7 +174,7 @@ namespace ImageJImporter
             this.uxHeaderLog.Name = "uxHeaderLog";
             this.uxHeaderLog.ReadOnly = true;
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.uxHeaderLog.Size = new System.Drawing.Size(858, 153);
+            this.uxHeaderLog.Size = new System.Drawing.Size(664, 153);
             this.uxHeaderLog.TabIndex = 0;
             this.uxHeaderLog.Text = "Hello and welcome to 7 Apr 21 v2.6.1 of ImageJ Data Importation Program";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
@@ -185,7 +185,7 @@ namespace ImageJImporter
             this.uxCurrentDateTime.Location = new System.Drawing.Point(12, 31);
             this.uxCurrentDateTime.Name = "uxCurrentDateTime";
             this.uxCurrentDateTime.ReadOnly = true;
-            this.uxCurrentDateTime.Size = new System.Drawing.Size(858, 29);
+            this.uxCurrentDateTime.Size = new System.Drawing.Size(664, 29);
             this.uxCurrentDateTime.TabIndex = 9;
             this.uxCurrentDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.uxToolTip.SetToolTip(this.uxCurrentDateTime, "Shows the current date and time");
@@ -200,7 +200,7 @@ namespace ImageJImporter
             this.uxRowDisplayGroup.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
             this.uxRowDisplayGroup.Name = "uxRowDisplayGroup";
             this.uxRowDisplayGroup.Padding = new System.Windows.Forms.Padding(4, 4, 6, 0);
-            this.uxRowDisplayGroup.Size = new System.Drawing.Size(858, 505);
+            this.uxRowDisplayGroup.Size = new System.Drawing.Size(664, 505);
             this.uxRowDisplayGroup.TabIndex = 6;
             this.uxRowDisplayGroup.TabStop = false;
             this.uxRowDisplayGroup.Text = "List Display";
@@ -239,7 +239,7 @@ namespace ImageJImporter
             this.uxRowListView.Name = "uxRowListView";
             this.uxRowListView.ShowCommandMenuOnRightClick = true;
             this.uxRowListView.ShowSortIndicators = false;
-            this.uxRowListView.Size = new System.Drawing.Size(842, 464);
+            this.uxRowListView.Size = new System.Drawing.Size(648, 464);
             this.uxRowListView.SortGroupItemsByPrimaryColumn = false;
             this.uxRowListView.TabIndex = 10;
             this.uxRowListView.UseCompatibleStateImageBehavior = false;
@@ -330,7 +330,7 @@ namespace ImageJImporter
             this.uxGridDisplay.Controls.Add(this.uxProcessingPanel);
             this.uxGridDisplay.Controls.Add(this.uxGridPanel);
             this.uxGridDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxGridDisplay.Location = new System.Drawing.Point(885, 31);
+            this.uxGridDisplay.Location = new System.Drawing.Point(682, 31);
             this.uxGridDisplay.Name = "uxGridDisplay";
             this.uxGridDisplay.Size = new System.Drawing.Size(243, 308);
             this.uxGridDisplay.TabIndex = 8;
@@ -339,11 +339,10 @@ namespace ImageJImporter
             // 
             // uxProcessingPanel
             // 
-            this.uxProcessingPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.uxProcessingPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.uxProcessingPanel.Location = new System.Drawing.Point(6, 82);
+            this.uxProcessingPanel.Location = new System.Drawing.Point(7, 71);
             this.uxProcessingPanel.Name = "uxProcessingPanel";
-            this.uxProcessingPanel.Size = new System.Drawing.Size(231, 100);
+            this.uxProcessingPanel.Size = new System.Drawing.Size(200, 100);
             this.uxProcessingPanel.TabIndex = 11;
             // 
             // uxGridPanel
@@ -355,15 +354,16 @@ namespace ImageJImporter
             this.uxGridPanel.Controls.Add(this.uxStartReference);
             this.uxGridPanel.Location = new System.Drawing.Point(6, 25);
             this.uxGridPanel.Name = "uxGridPanel";
-            this.uxGridPanel.Size = new System.Drawing.Size(51, 44);
+            this.uxGridPanel.Size = new System.Drawing.Size(39, 34);
             this.uxGridPanel.TabIndex = 10;
             this.uxGridPanel.SizeChanged += new System.EventHandler(this.uxGridPanel_SizeChanged);
             // 
             // uxStartReference
             // 
+            this.uxStartReference.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.uxStartReference.Location = new System.Drawing.Point(3, 3);
             this.uxStartReference.Name = "uxStartReference";
-            this.uxStartReference.Size = new System.Drawing.Size(41, 34);
+            this.uxStartReference.Size = new System.Drawing.Size(29, 24);
             this.uxStartReference.TabIndex = 0;
             this.uxStartReference.Text = "Reference Button";
             this.uxStartReference.UseVisualStyleBackColor = true;
@@ -374,7 +374,7 @@ namespace ImageJImporter
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(925, 547);
+            this.ClientSize = new System.Drawing.Size(977, 455);
             this.Controls.Add(this.uxGridDisplay);
             this.Controls.Add(this.uxCurrentDateTime);
             this.Controls.Add(this.uxHeaderLog);
@@ -431,9 +431,9 @@ namespace ImageJImporter
         private BrightIdeasSoftware.OLVColumn rowSolidity;
         private System.Windows.Forms.Panel uxGridPanel;
         private System.Windows.Forms.ToolStripMenuItem uxMenuItemToggleListDisplay;
-        private System.Windows.Forms.Panel uxProcessingPanel;
         private System.Windows.Forms.ToolStripMenuItem uxToggleGroupsCollapsed;
         private System.Windows.Forms.ToolStripMenuItem uxConfigureColorLevelsMenuItem;
+        private System.Windows.Forms.FlowLayoutPanel uxProcessingPanel;
     }
 }
 

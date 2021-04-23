@@ -271,13 +271,10 @@ namespace ImageJImporter
         /// Builds all the buttons for selecting and de-selecting different levels
         /// </summary>
         /// <param name="grid">the panel of CellButtons which displays them as a grid</param>
-        /// <param name="outputPanel">the panel which we will output level selection buttons to</param>
+        /// <param name="outputPanel">the flowLayoutPanel which we will output level selection buttons to</param>
         /// <param name="buttonClickHandler">the event handler for each button</param>
-        private void BuildLevelSelectionButtons(Panel grid, Panel outputPanel, EventHandler buttonClickHandler)
+        private void BuildLevelSelectionButtons(Panel grid, FlowLayoutPanel outputPanel, EventHandler buttonClickHandler)
         {
-            Point prevLocation = new Point();
-            int buttonMargin = 5;
-            int prevWidth = 0;
             for(int i = 0; i < allLevelInformation.Count; i++)
             {
                 //save current level for reference
@@ -290,13 +287,9 @@ namespace ImageJImporter
                     ForeColor = thisLevel.ForeColor,
                     BackColor = thisLevel.BackColor,
                     AutoSize = true,
-                    Font = new Font(FontFamily.GenericSansSerif, 12),
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    Font = new Font(FontFamily.GenericSansSerif, 10),
                 };
-                int X = prevLocation.X + prevWidth + buttonMargin;
-                int Y = buttonMargin;
-                levelButton.Location = new Point(X, Y);
-                prevLocation = levelButton.Location;
-                prevWidth = levelButton.Width;
 
                 levelButton.Click += buttonClickHandler;
 
@@ -323,11 +316,12 @@ namespace ImageJImporter
                         decimal propValue = (decimal)property.GetValue(cellButton.Cell);
                         if (propValue > level.LevelStart && propValue <= level.LevelEnd)
                         {
-                            child.Visible = true;
+                            //just toggles the visibility
+                            child.Visible = !child.Visible;
                         }//end if the value is within the level
                         else
                         {
-                            child.Visible = false;
+                            //child.Visible = false;
                         }//end else the value is not the correct level
                     }//end if this is a cellButton
                 }//end looping over all the children of the grid panel
@@ -558,10 +552,11 @@ namespace ImageJImporter
             int height = uxGridPanel.Location.Y + uxGridPanel.Height + panelMargin;
             uxGridDisplay.Size = new Size(width, height);
 
-            //move the panel down so that it's not blocking the buttons
+            //move the panel down so that it's not blocking the buttons and resize it
             int X = uxProcessingPanel.Location.X;
             int Y = uxGridPanel.Location.Y + uxGridPanel.Height + panelMargin;
             uxProcessingPanel.Location = new Point(X, Y);
+            uxProcessingPanel.MaximumSize = new Size(uxGridDisplay.Width, Int32.MaxValue);
 
             //go ahead and move the edge of the grid display group box down to cover the panel
             uxGridDisplay.Size = new Size(uxGridDisplay.Width, uxGridDisplay.Height + uxProcessingPanel.Height + panelMargin);
