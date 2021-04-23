@@ -52,10 +52,11 @@ namespace ImageJImporter
             // uxCloseAll
             // 
             this.uxCloseAll.DialogResult = System.Windows.Forms.DialogResult.Abort;
+            this.uxCloseAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.uxCloseAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.uxCloseAll.Location = new System.Drawing.Point(316, 402);
+            this.uxCloseAll.Location = new System.Drawing.Point(226, 447);
             this.uxCloseAll.Name = "uxCloseAll";
-            this.uxCloseAll.Size = new System.Drawing.Size(298, 30);
+            this.uxCloseAll.Size = new System.Drawing.Size(244, 30);
             this.uxCloseAll.TabIndex = 1;
             this.uxCloseAll.Text = "Close All Cell Display Windows";
             this.uxCloseAll.UseVisualStyleBackColor = true;
@@ -64,10 +65,11 @@ namespace ImageJImporter
             // uxCloseThis
             // 
             this.uxCloseThis.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.uxCloseThis.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.uxCloseThis.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.uxCloseThis.Location = new System.Drawing.Point(12, 402);
+            this.uxCloseThis.Location = new System.Drawing.Point(12, 447);
             this.uxCloseThis.Name = "uxCloseThis";
-            this.uxCloseThis.Size = new System.Drawing.Size(298, 30);
+            this.uxCloseThis.Size = new System.Drawing.Size(208, 30);
             this.uxCloseThis.TabIndex = 0;
             this.uxCloseThis.Text = "Close This Window";
             this.uxCloseThis.UseVisualStyleBackColor = true;
@@ -106,7 +108,7 @@ namespace ImageJImporter
             this.uxCellView.HideSelection = false;
             this.uxCellView.Location = new System.Drawing.Point(12, 12);
             this.uxCellView.Name = "uxCellView";
-            this.uxCellView.Size = new System.Drawing.Size(602, 232);
+            this.uxCellView.Size = new System.Drawing.Size(458, 232);
             this.uxCellView.TabIndex = 2;
             this.uxCellView.UseCompatibleStateImageBehavior = false;
             this.uxCellView.View = System.Windows.Forms.View.Details;
@@ -121,26 +123,31 @@ namespace ImageJImporter
             // 
             this.rowArea.AspectName = "Area";
             this.rowArea.Text = "Area";
+            this.rowArea.Width = 78;
             // 
             // rowX
             // 
             this.rowX.AspectName = "X";
             this.rowX.Text = "X";
+            this.rowX.Width = 37;
             // 
             // rowY
             // 
             this.rowY.AspectName = "Y";
             this.rowY.Text = "Y";
+            this.rowY.Width = 52;
             // 
             // rowPerim
             // 
             this.rowPerim.AspectName = "Perim";
             this.rowPerim.Text = "Perim";
+            this.rowPerim.Width = 56;
             // 
             // rowMajor
             // 
             this.rowMajor.AspectName = "Major";
             this.rowMajor.Text = "Major";
+            this.rowMajor.Width = 62;
             // 
             // rowMinor
             // 
@@ -190,7 +197,7 @@ namespace ImageJImporter
             this.uxGermReportDisplay.Name = "uxGermReportDisplay";
             this.uxGermReportDisplay.ReadOnly = true;
             this.uxGermReportDisplay.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.uxGermReportDisplay.Size = new System.Drawing.Size(602, 145);
+            this.uxGermReportDisplay.Size = new System.Drawing.Size(458, 190);
             this.uxGermReportDisplay.TabIndex = 3;
             this.uxGermReportDisplay.Text = "";
             // 
@@ -198,7 +205,7 @@ namespace ImageJImporter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(626, 444);
+            this.ClientSize = new System.Drawing.Size(482, 489);
             this.ControlBox = false;
             this.Controls.Add(this.uxGermReportDisplay);
             this.Controls.Add(this.uxCellView);

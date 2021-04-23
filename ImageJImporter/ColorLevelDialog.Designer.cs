@@ -49,7 +49,7 @@ namespace ImageJImporter
             // uxRemoveLevel
             // 
             this.uxRemoveLevel.Name = "uxRemoveLevel";
-            this.uxRemoveLevel.Size = new System.Drawing.Size(180, 22);
+            this.uxRemoveLevel.Size = new System.Drawing.Size(147, 22);
             this.uxRemoveLevel.Text = "Remove Level";
             this.uxRemoveLevel.Click += new System.EventHandler(this.uxRemoveLevel_Click);
             // 
@@ -64,7 +64,7 @@ namespace ImageJImporter
             // uxAddNewLevel
             // 
             this.uxAddNewLevel.Name = "uxAddNewLevel";
-            this.uxAddNewLevel.Size = new System.Drawing.Size(180, 22);
+            this.uxAddNewLevel.Size = new System.Drawing.Size(126, 22);
             this.uxAddNewLevel.Text = "Add Level";
             this.uxAddNewLevel.Click += new System.EventHandler(this.uxAddNewLevel_Click);
             // 
@@ -74,6 +74,7 @@ namespace ImageJImporter
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Honeydew;
             this.ClientSize = new System.Drawing.Size(614, 434);
+            this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.Navy;
             this.Name = "ColorLevelDialog";
             this.ShowIcon = false;

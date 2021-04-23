@@ -310,5 +310,62 @@ namespace ImageJImporter
                 }//end looping over all the lines we want to write
             }//end use of scribe
         }//end SaveLinesToLog(lines)
+
+        /// <summary>
+        /// Format all the data for one file into a one-line summary based on the 
+        /// provided level information. It should be noted that counts ignore
+        /// cells which are not both full and non-empty, as does seed total.
+        /// </summary>
+        /// <param name="filename">the file you got the grid info from</param>
+        /// <param name="grid">the grid of data</param>
+        /// <param name="levels">the object which tells us what level a cell
+        /// belongs to</param>
+        /// <returns>returns a string with all the summary information formatted into a
+        /// single line</returns>
+        public static string FileLevelsProcessedToOneLine(string filename, Grid grid, LevelInformation levels)
+        {
+            //initialize stringbuilder for making output
+            StringBuilder summaryBuilder = new StringBuilder();
+            
+            //add the fileID
+            summaryBuilder.Append($"  {Path.GetFileName(filename)}  ");
+
+            //add the timestamp
+            summaryBuilder.Append(DateTime.Now.ToString("f"));
+
+            //find sums for each level
+            List<int> counters = new List<int>(levels.Count);
+            foreach(LevelInformation.Level level in levels.Levels)
+            {
+                counters.Add(0);
+            }//end initializing list of counters
+            //count up all the levels
+            int nonFlagCount = 0;
+            foreach(Cell cell in grid.Cells)
+            {
+                //find out what level the cell is in
+                Tuple<string, int> levelresult = levels.FindLevel((decimal)cell.GetType().GetProperty(levels.PropertyToTest).GetValue(cell));
+                //increment the corresponding counter
+                counters[levelresult.Item2]++;
+                //increment nonFLagCount
+                if(cell.IsFullCell && !cell.IsEmptyCell)
+                {
+                    nonFlagCount++;
+                }//end if cell 
+            }//end looping over cells in grid to add levels
+            //add all the level counts to the string
+            for(int i = 0; i < counters.Count; i++)
+            {
+                //find the percentage for this level
+                //decimal percent = (decimal)counters[i] / (decimal)nonFlagCount * 100;
+                //add this to the output stringbuilder
+                summaryBuilder.Append($"  {levels.Levels[i].LevelName}:{counters[i]}");
+            }//end looping over counts of 
+
+            //add total seed number
+            summaryBuilder.Append($", TotalSeeds:{nonFlagCount}");
+
+            return summaryBuilder.ToString();
+        }//end FileLevelsProcessedToOneLine(grid, levels)
     }//end class
 }//end namespace

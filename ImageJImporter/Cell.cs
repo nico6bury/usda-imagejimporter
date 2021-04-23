@@ -140,15 +140,15 @@ namespace ImageJImporter
             {
                 if (IsNewRowFlag)
                 {
-                    return -1;
+                    return -2;
                 }//end if this is a flag for a new row in grid
                 else if (!IsFullCell)
                 {
-                    return -1;
+                    return -10;
                 }//end else if this isn't a complete cell
                 else if (IsEmptyCell)
                 {
-                    return -1;
+                    return -0.1M;
                 }//end else if this cell is empty
                 else
                 {
@@ -158,20 +158,22 @@ namespace ImageJImporter
                     }//end if this seed has a germ on it
                     else if(rows.Count == 4)
                     {
+                        //just normal chalk area divided by kernel area
                         return rows[2].Area / rows[1].Area*100;
                     }//end if we have the normal amount of rows
                     else if (rows.Count == 5)
                     {
-                        if(isGerm && twoSpots)
+                        if (isGerm && twoSpots)
                         {
-                            return rows[2].Area / rows[1].Area * 100;
+                            //divide third data row area (chalk area) by first data row area (kernel area)
+                            return rows[3].Area / rows[1].Area * 100;
                         }//end if we should exclude area of the germ
                         else
                         {
+                            //add both chalkiness areas together and divide that by kernel area
                             decimal totalChalkiness = rows[2].Area + rows[3].Area;
                             return totalChalkiness / rows[1].Area * 100;
                         }//end else we have a normal instance of weird chalkiness
-                        
                     }//end else if we have two rows of chalkiness
                     else
                     {
@@ -194,15 +196,15 @@ namespace ImageJImporter
             {
                 if (IsNewRowFlag)
                 {
-                    return -1;
+                    return -2;
                 }//end if this is a flag for a new row in grid
                 else if (!IsFullCell)
                 {
-                    return -1;
+                    return -10;
                 }//end else if this isn't a complete cell
                 else if (IsEmptyCell)
                 {
-                    return -1;
+                    return -0.1M;
                 }//end else if this cell is empty
                 else
                 {
@@ -247,8 +249,10 @@ namespace ImageJImporter
         }//end RowSpan
 
         /// <summary>
-        /// this is the X of the kernel minus the X of the spot
-        /// on the seed that represents Chalk.
+        /// this is the X of the spot on the seed that
+        /// represents Chalk minus the X of the kernel.
+        /// Doesn't take any potential third data row
+        /// into account if it exists.
         /// </summary>
         public decimal dx
         {
@@ -265,13 +269,16 @@ namespace ImageJImporter
                     decimal kernel = rows[1].X;
                     //add first spot
                     decimal spots = rows[2].X;
-                    //add second spot if it's there
-                    if (RowSpan == 3)
-                        spots += rows[3].X;
-                    return kernel - spots;
+                    ////add second spot if it's there
+                    //if (RowSpan == 3)
+                    //    spots += rows[3].X;
+                    return spots - kernel;
                 }//end else we can calculate stuff
             }//end getter
         }//end dx
+        /// <summary>
+        /// same as dx for for the Y
+        /// </summary>
         public decimal dy
         {
             get
@@ -287,10 +294,10 @@ namespace ImageJImporter
                     decimal kernel = rows[1].Y;
                     //add first spot
                     decimal spots = rows[2].Y;
-                    //add second spot if it's there
-                    if (RowSpan == 3)
-                        spots += rows[3].Y;
-                    return kernel - spots;
+                    ////add second spot if it's there
+                    //if (RowSpan == 3)
+                    //    spots += rows[3].Y;
+                    return spots - kernel;
                 }//end else we can calculate stuff
             }//end getter
         }//end dy

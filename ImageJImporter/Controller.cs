@@ -83,6 +83,7 @@ namespace ImageJImporter
             this.allLevelInformation = levels;
             updateLevelInformation(allLevelInformation);
             updateGrid(internalGrid);
+            AppendShortSummaryToLog(fileIO.file, this.internalGrid, this.allLevelInformation);
         }//end GetLevelInfoFromView(levels)
 
         /// <summary>
@@ -114,6 +115,7 @@ namespace ImageJImporter
 
                     //update log
                     AppendToHeaderLog($"Loaded {BuildFileMessage(filename, internalGrid.Rows)}");
+                    AppendShortSummaryToLog(filename, grid, this.allLevelInformation);
                 }//end if operation was successful
                 else
                 {
@@ -306,6 +308,7 @@ namespace ImageJImporter
         public void UpdateLevelInformation(LevelInformation levelInformation)
         {
             this.allLevelInformation = levelInformation;
+            AppendShortSummaryToLog(fileIO.file, this.internalGrid, this.allLevelInformation);
         }//end UpdateLevelInformation(levelInformation)
 
         /// <summary>
@@ -347,6 +350,7 @@ namespace ImageJImporter
                 //update log with recent file name and row count
                 AppendToHeaderLog("Found configuration file. Loaded" +
                     $" {BuildFileMessage(fileIO.file, internalGrid.Rows)}");
+                AppendShortSummaryToLog(defaultFileName, internalGrid, tempLevelsRef);
             }//end if the data isn't null
         }//end OpenView()
 
@@ -414,5 +418,17 @@ namespace ImageJImporter
         {
             appendTextLog(text);
         }//end AppendToHeaderLog(text)
+
+        /// <summary>
+        /// Appends the short format summary information for a particular file
+        /// to the log. 
+        /// </summary>
+        /// <param name="filename">the file the data came from</param>
+        /// <param name="grid">the data from the file</param>
+        /// <param name="levels">the object which tells us how to categorize data</param>
+        private void AppendShortSummaryToLog(string filename, Grid grid, LevelInformation levels)
+        {
+            AppendToHeaderLog(FileIO.FileLevelsProcessedToOneLine(filename, grid, levels));
+        }//end AppendShortSummaryToLog(filename, grid, levels)
     }//end class
 }//end namespace

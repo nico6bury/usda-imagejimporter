@@ -105,8 +105,14 @@ namespace ImageJImporter
                 ForeColor = Color.Indigo,
                 //AutoSize = true,
                 //AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                ContextMenuStrip = subPanelContextStrip,
+                ContextMenuStrip = subPanelContextStrip,                
             };
+            //forces subpanel to be double buffered
+            subPanel.GetType()
+                .GetProperty("DoubleBuffered",
+                System.Reflection.BindingFlags.Instance
+                | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(subPanel, true, null);
 
             //set up TextBox
             levelLabel = new TextBox
@@ -152,6 +158,7 @@ namespace ImageJImporter
                 AutoSize = true,
                 Font = new Font(FontFamily.GenericSerif, 12),
                 Minimum = -10,
+                Maximum = 99,
                 Value = subPanel.Level.LevelStart,
                 DecimalPlaces = 2,
             };
@@ -165,9 +172,10 @@ namespace ImageJImporter
                 ForeColor = Color.Indigo,
                 AutoSize = true,
                 Font = new Font(FontFamily.GenericSerif, 12),
-                Value = subPanel.Level.LevelEnd,
                 DecimalPlaces = 2,
+                Minimum = -9,
                 Maximum = 100,
+                Value = subPanel.Level.LevelEnd,
             };
             levelMax.Location = new Point(backColorButton.Location.X + backColorButton.Width + 50, backColorButton.Location.Y);
             levelMax.ValueChanged += lvlEndChange;

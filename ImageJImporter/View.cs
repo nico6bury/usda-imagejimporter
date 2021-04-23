@@ -433,7 +433,7 @@ namespace ImageJImporter
             }//end adding old lines to new
 
             //add new line
-            newLines[newLines.Length - 1] = $"{DateTime.Now:T} " + text;
+            newLines[newLines.Length - 1] = $"{DateTime.Now:g} " + text;
 
             //update the textbox
             uxHeaderLog.Lines = newLines;
