@@ -93,7 +93,16 @@ namespace ImageJImporter
                 BackColor = Color.Transparent;
                 ForeColor = Color.Black;
             }//end else the level wasn't found
-            
+
+            //set germ thing
+            if (Cell.isGerm)
+            {
+                FlatStyle = FlatStyle.Standard;
+            }//end if cell has a germ
+            else
+            {
+                FlatStyle = FlatStyle.Popup;
+            }//end else the cell doesn't have a germ
 
             //format color and tooltip
             if (Cell.IsNewRowFlag)

@@ -238,7 +238,8 @@ namespace ImageJImporter
 
         /// <summary>
         /// This method loads a .txt file processed by imageJ and returns 
-        /// a list of the Cell objects generated.
+        /// a list of the Cell objects generated. Might throw an error if
+        /// the specified file does not exist
         /// </summary>
         /// <param name="file">The file to open and read</param>
         /// <returns>returns a list of rows generated from the file</returns>

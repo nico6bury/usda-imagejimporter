@@ -152,7 +152,7 @@ namespace ImageJImporter
                 }//end else if this cell is empty
                 else
                 {
-                    if (isGerm)
+                    if (isGerm && !twoSpots)
                     {
                         return (decimal)0.01 * 100;
                     }//end if this seed has a germ on it
@@ -162,8 +162,16 @@ namespace ImageJImporter
                     }//end if we have the normal amount of rows
                     else if (rows.Count == 5)
                     {
-                        decimal totalChalkiness = rows[2].Area + rows[3].Area;
-                        return totalChalkiness / rows[1].Area*100;
+                        if(isGerm && twoSpots)
+                        {
+                            return rows[2].Area / rows[1].Area * 100;
+                        }//end if we should exclude area of the germ
+                        else
+                        {
+                            decimal totalChalkiness = rows[2].Area + rows[3].Area;
+                            return totalChalkiness / rows[1].Area * 100;
+                        }//end else we have a normal instance of weird chalkiness
+                        
                     }//end else if we have two rows of chalkiness
                     else
                     {
@@ -215,16 +223,14 @@ namespace ImageJImporter
             }//end getter
         }//end Chalk1
 
-        private int germThreshold = 50;
-        public int GermThreshold
+        private decimal germThreshold = 0.50M;
+        public decimal GermThreshold
         {
             get { return germThreshold; }
             set
             {
                 //sets to 0 if less than 0, or value otherwise
                 germThreshold = value < 0 ? 0 : value;
-                //recalculate properties
-
             }//end setter
         }//end GermThreshold
 
@@ -311,7 +317,7 @@ namespace ImageJImporter
             {
                 if (RowSpan < 1)
                 {
-                    return 0;
+                    return 0.0001M;
                 }//end if there are no data rows
                 else
                 {
@@ -359,13 +365,14 @@ namespace ImageJImporter
             }//end getter
         }//end ratio
         /// <summary>
-        /// whether or not this cell seems to contain a germ
+        /// whether or not this cell seems to contain a germ. Doesn't account
+        /// for twoSpots
         /// </summary>
         public bool isGerm
         {
             get
             {
-                return !twoSpots && ratio > germThreshold;
+                return ratio > germThreshold;
             }//end getter
         }//end isGerm
         /// <summary>
@@ -377,7 +384,7 @@ namespace ImageJImporter
             {
                 //check to make sure stuff isn't borken
                 int dataRows = detectedDataRows;
-                if (dataRows != RowSpan) throw new InvalidOperationException("detectedDataRows and RowSpan don't match");
+                if (dataRows != RowSpan && RowSpan >= 0) throw new InvalidOperationException("detectedDataRows and RowSpan don't match");
                 return dataRows > 2;
             }//end getter
         }//end twoSpots

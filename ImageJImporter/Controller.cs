@@ -327,7 +327,7 @@ namespace ImageJImporter
             updateLevelInformation(allLevelInformation);
 
             //load data if there was a file to load
-            if(!String.IsNullOrEmpty(defaultFileName))
+            if(!String.IsNullOrEmpty(defaultFileName) && File.Exists(defaultFileName))
             {
                 //load all the row information from config file
                 List<Row> rows = fileIO.LoadFile(defaultFileName);

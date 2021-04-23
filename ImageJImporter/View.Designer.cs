@@ -78,7 +78,7 @@ namespace ImageJImporter
             this.uxMainMenuToolStrip.Location = new System.Drawing.Point(0, 0);
             this.uxMainMenuToolStrip.Name = "uxMainMenuToolStrip";
             this.uxMainMenuToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(960, 28);
+            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(904, 28);
             this.uxMainMenuToolStrip.TabIndex = 0;
             this.uxMainMenuToolStrip.Text = "menuStrip1";
             // 
@@ -167,16 +167,16 @@ namespace ImageJImporter
             // 
             // uxHeaderLog
             // 
-            this.uxHeaderLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uxHeaderLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxHeaderLog.Location = new System.Drawing.Point(12, 67);
             this.uxHeaderLog.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uxHeaderLog.Multiline = true;
             this.uxHeaderLog.Name = "uxHeaderLog";
             this.uxHeaderLog.ReadOnly = true;
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.uxHeaderLog.Size = new System.Drawing.Size(664, 153);
+            this.uxHeaderLog.Size = new System.Drawing.Size(605, 153);
             this.uxHeaderLog.TabIndex = 0;
-            this.uxHeaderLog.Text = "Hello and welcome to 7 Apr 21 v2.6.1 of ImageJ Data Importation Program";
+            this.uxHeaderLog.Text = "Hello and welcome to 23 Apr 21 v2.7.0 of ImageJ Data Importation Program";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
             // 
             // uxCurrentDateTime
@@ -185,7 +185,7 @@ namespace ImageJImporter
             this.uxCurrentDateTime.Location = new System.Drawing.Point(12, 31);
             this.uxCurrentDateTime.Name = "uxCurrentDateTime";
             this.uxCurrentDateTime.ReadOnly = true;
-            this.uxCurrentDateTime.Size = new System.Drawing.Size(664, 29);
+            this.uxCurrentDateTime.Size = new System.Drawing.Size(605, 29);
             this.uxCurrentDateTime.TabIndex = 9;
             this.uxCurrentDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.uxToolTip.SetToolTip(this.uxCurrentDateTime, "Shows the current date and time");
@@ -195,12 +195,12 @@ namespace ImageJImporter
             this.uxRowDisplayGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.uxRowDisplayGroup.Controls.Add(this.uxRowListView);
             this.uxRowDisplayGroup.Enabled = false;
-            this.uxRowDisplayGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uxRowDisplayGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxRowDisplayGroup.Location = new System.Drawing.Point(12, 228);
             this.uxRowDisplayGroup.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
             this.uxRowDisplayGroup.Name = "uxRowDisplayGroup";
             this.uxRowDisplayGroup.Padding = new System.Windows.Forms.Padding(4, 4, 6, 0);
-            this.uxRowDisplayGroup.Size = new System.Drawing.Size(664, 505);
+            this.uxRowDisplayGroup.Size = new System.Drawing.Size(605, 431);
             this.uxRowDisplayGroup.TabIndex = 6;
             this.uxRowDisplayGroup.TabStop = false;
             this.uxRowDisplayGroup.Text = "List Display";
@@ -230,16 +230,17 @@ namespace ImageJImporter
             this.rowMajor,
             this.rowMinor});
             this.uxRowListView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.uxRowListView.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxRowListView.FullRowSelect = true;
             this.uxRowListView.GridLines = true;
             this.uxRowListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.uxRowListView.HeaderUsesThemes = true;
             this.uxRowListView.HideSelection = false;
-            this.uxRowListView.Location = new System.Drawing.Point(7, 29);
+            this.uxRowListView.Location = new System.Drawing.Point(7, 26);
             this.uxRowListView.Name = "uxRowListView";
             this.uxRowListView.ShowCommandMenuOnRightClick = true;
             this.uxRowListView.ShowSortIndicators = false;
-            this.uxRowListView.Size = new System.Drawing.Size(648, 464);
+            this.uxRowListView.Size = new System.Drawing.Size(589, 393);
             this.uxRowListView.SortGroupItemsByPrimaryColumn = false;
             this.uxRowListView.TabIndex = 10;
             this.uxRowListView.UseCompatibleStateImageBehavior = false;
@@ -251,37 +252,37 @@ namespace ImageJImporter
             // 
             this.rowName.AspectName = "RowNum";
             this.rowName.Text = "Row";
-            this.rowName.Width = 82;
+            this.rowName.Width = 73;
             // 
             // rowArea
             // 
             this.rowArea.AspectName = "Area";
             this.rowArea.Text = "Area";
-            this.rowArea.Width = 112;
+            this.rowArea.Width = 95;
             // 
             // rowX
             // 
             this.rowX.AspectName = "X";
             this.rowX.Text = "X";
-            this.rowX.Width = 57;
+            this.rowX.Width = 40;
             // 
             // rowY
             // 
             this.rowY.AspectName = "Y";
             this.rowY.Text = "Y";
-            this.rowY.Width = 91;
+            this.rowY.Width = 76;
             // 
             // rowPerim
             // 
             this.rowPerim.AspectName = "Perim";
             this.rowPerim.Text = "Perim";
-            this.rowPerim.Width = 77;
+            this.rowPerim.Width = 72;
             // 
             // rowMajor
             // 
             this.rowMajor.AspectName = "Major";
             this.rowMajor.Text = "Major";
-            this.rowMajor.Width = 71;
+            this.rowMajor.Width = 61;
             // 
             // rowMinor
             // 
@@ -330,7 +331,7 @@ namespace ImageJImporter
             this.uxGridDisplay.Controls.Add(this.uxProcessingPanel);
             this.uxGridDisplay.Controls.Add(this.uxGridPanel);
             this.uxGridDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxGridDisplay.Location = new System.Drawing.Point(682, 31);
+            this.uxGridDisplay.Location = new System.Drawing.Point(623, 31);
             this.uxGridDisplay.Name = "uxGridDisplay";
             this.uxGridDisplay.Size = new System.Drawing.Size(243, 308);
             this.uxGridDisplay.TabIndex = 8;
@@ -360,6 +361,7 @@ namespace ImageJImporter
             // 
             // uxStartReference
             // 
+            this.uxStartReference.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.uxStartReference.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.uxStartReference.Location = new System.Drawing.Point(3, 3);
             this.uxStartReference.Name = "uxStartReference";
@@ -374,7 +376,7 @@ namespace ImageJImporter
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(977, 455);
+            this.ClientSize = new System.Drawing.Size(921, 562);
             this.Controls.Add(this.uxGridDisplay);
             this.Controls.Add(this.uxCurrentDateTime);
             this.Controls.Add(this.uxHeaderLog);
@@ -386,7 +388,7 @@ namespace ImageJImporter
             this.MainMenuStrip = this.uxMainMenuToolStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "View";
-            this.Text = "NS ImageJ Data 7 Apr 21 v2.6.1";
+            this.Text = "NS ImageJ Data 23 Apr 21 v2.7.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
             this.Load += new System.EventHandler(this.OpenForm);
             this.uxMainMenuToolStrip.ResumeLayout(false);

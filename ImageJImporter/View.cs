@@ -62,8 +62,12 @@ namespace ImageJImporter
             //this basically makes all the controls visible (buttons, textbox, etc)
             InitializeComponent();
 
+            //set some properties for the user
             uxProcessingPanel.AutoSize = true;
             uxGridDisplay.AutoSize = true;
+
+            //resize form for similar reason as previous two statements
+            this.Height = 700;
 
             //initialize typedObjectListView
             tlist = new TypedObjectListView<Row>(this.uxRowListView);
@@ -95,12 +99,14 @@ namespace ImageJImporter
             {
                 Cell cell = (Cell)groupKey;
                 string cellTypePlusChalkPlusLevel = "";
+                string germMessage = cell.isGerm ? " - IsGerm = true" : "";
                 //determine header based on cell state
                 if (cell.IsNewRowFlag) cellTypePlusChalkPlusLevel = $"New Row Flag";
                 else if (!cell.IsFullCell) cellTypePlusChalkPlusLevel = $"Incomplete Cell";
                 else if (cell.IsEmptyCell) cellTypePlusChalkPlusLevel = $"Empty Cell";
                 else if (cell.RowSpan == -2) cellTypePlusChalkPlusLevel = $"Abnormal Cell";
-                else cellTypePlusChalkPlusLevel = $"Normal Cell - Chalk = {cell.Chalk:N1}% - Level = {allLevelInformation.FindLevel(cell.Chalk).Item1}";
+                else cellTypePlusChalkPlusLevel = $"Normal Cell - Chalk = {cell.Chalk:N1}% - Level = {allLevelInformation.FindLevel(cell.Chalk).Item1}" +
+                    $"{germMessage}";
                 return $"{cellTypePlusChalkPlusLevel}";
             };
             this.rowName.GroupFormatter = (OLVGroup group,
@@ -188,7 +194,7 @@ namespace ImageJImporter
             if (button == null) return;
 
             //display the button's cell
-            CellButtonDisplay display = new CellButtonDisplay(CloseAllCellButtonDisplays, button.Cell);
+            CellButtonDisplay display = new CellButtonDisplay(CloseAllCellButtonDisplays, button.Cell, allLevelInformation);
             displays.Add(display);
             display.Show();
         }//end GridButton Click Event
@@ -208,6 +214,8 @@ namespace ImageJImporter
             //builds the button grid for this data
             BuildButtonGrid(grid);
 
+            //resets uxProcessingPanel before we add to it
+            uxProcessingPanel.Controls.Clear();
             //builds the buttons for selecting grid levels
             BuildLevelSelectionButtons(uxGridPanel, uxProcessingPanel, LevelSelectionButton_Click);
 
@@ -289,6 +297,7 @@ namespace ImageJImporter
                     AutoSize = true,
                     AutoSizeMode = AutoSizeMode.GrowAndShrink,
                     Font = new Font(FontFamily.GenericSansSerif, 10),
+                    FlatStyle = FlatStyle.Popup,
                 };
 
                 levelButton.Click += buttonClickHandler;

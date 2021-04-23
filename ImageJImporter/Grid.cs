@@ -10,7 +10,9 @@ using System.Threading.Tasks;
  * File: Grid.cs
  * Purpose: To serve as a sort of wrapper around a list of Cells
  * in order to at least partially treat a list of lists as one
- * dimensional.
+ * dimensional. It should be noted that the "OwningObject" properties
+ * in the cell and row objects don't work great unless you go through
+ * the expected avenue of creating a grid object.
  */
 
 namespace ImageJImporter
@@ -267,6 +269,7 @@ namespace ImageJImporter
         public void Add(Cell cell)
         {
             cells.Add(new Cell(cell));
+            cell.OwningGridObject = this;
         }//end Add(item)
 
         /// <summary>
