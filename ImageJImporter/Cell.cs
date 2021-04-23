@@ -131,7 +131,8 @@ namespace ImageJImporter
         /// The chalkniess of this cell. If this is a new row flag, 
         /// an empty cell, or incorrectly formatted, then this will
         /// return -1. Otherwise, it will return percent chalkiness
-        /// of this cell as a percent
+        /// of this cell as a percent. If the seed is a germ, 
+        /// returns 1%
         /// </summary>
         public decimal Chalk
         {
@@ -151,7 +152,11 @@ namespace ImageJImporter
                 }//end else if this cell is empty
                 else
                 {
-                    if(rows.Count == 4)
+                    if (isGerm)
+                    {
+                        return (decimal)0.01 * 100;
+                    }//end if this seed has a germ on it
+                    else if(rows.Count == 4)
                     {
                         return rows[2].Area / rows[1].Area*100;
                     }//end if we have the normal amount of rows
@@ -162,11 +167,66 @@ namespace ImageJImporter
                     }//end else if we have two rows of chalkiness
                     else
                     {
-                        return (decimal)0.01*100;
+                        return (decimal)0.01 * 100;
                     }//end else we have a seed with very little chalkiness
                 }//end else this must be a complete cell
             }//end getter
         }//end Chalk
+
+        /// <summary>
+        /// The chalkniess of this cell. If this is a new row flag, 
+        /// an empty cell, or incorrectly formatted, then this will
+        /// return -1. Otherwise, it will return percent chalkiness
+        /// of this cell as a percent. This property doesn't take
+        /// germ potential into account
+        /// </summary>
+        public decimal Chalk1
+        {
+            get
+            {
+                if (IsNewRowFlag)
+                {
+                    return -1;
+                }//end if this is a flag for a new row in grid
+                else if (!IsFullCell)
+                {
+                    return -1;
+                }//end else if this isn't a complete cell
+                else if (IsEmptyCell)
+                {
+                    return -1;
+                }//end else if this cell is empty
+                else
+                {
+                    if (rows.Count == 4)
+                    {
+                        return rows[2].Area / rows[1].Area * 100;
+                    }//end if we have the normal amount of rows
+                    else if (rows.Count == 5)
+                    {
+                        decimal totalChalkiness = rows[2].Area + rows[3].Area;
+                        return totalChalkiness / rows[1].Area * 100;
+                    }//end else if we have two rows of chalkiness
+                    else
+                    {
+                        return (decimal)0.01 * 100;
+                    }//end else we have a seed with very little chalkiness
+                }//end else this must be a complete cell
+            }//end getter
+        }//end Chalk1
+
+        private int germThreshold = 50;
+        public int GermThreshold
+        {
+            get { return germThreshold; }
+            set
+            {
+                //sets to 0 if less than 0, or value otherwise
+                germThreshold = value < 0 ? 0 : value;
+                //recalculate properties
+
+            }//end setter
+        }//end GermThreshold
 
         /// <summary>
         /// The number of rows in this cell, minus 2 to account for the 
@@ -179,6 +239,148 @@ namespace ImageJImporter
                 return rows.Count - 2;
             }//end getter
         }//end RowSpan
+
+        /// <summary>
+        /// this is the X of the kernel minus the X of the spot
+        /// on the seed that represents Chalk.
+        /// </summary>
+        public decimal dx
+        {
+            get
+            {
+                if (RowSpan < 2)
+                {
+                    //just return arbitrary small value
+                    return 0;
+                }//end if data rows are less than 2
+                else
+                {
+                    //get kernel X
+                    decimal kernel = rows[1].X;
+                    //add first spot
+                    decimal spots = rows[2].X;
+                    //add second spot if it's there
+                    if (RowSpan == 3)
+                        spots += rows[3].X;
+                    return kernel - spots;
+                }//end else we can calculate stuff
+            }//end getter
+        }//end dx
+        public decimal dy
+        {
+            get
+            {
+                if (RowSpan < 2)
+                {
+                    //just return arbitrary small value
+                    return 0;
+                }//end if data rows are less than 2
+                else
+                {
+                    //get kernel X
+                    decimal kernel = rows[1].Y;
+                    //add first spot
+                    decimal spots = rows[2].Y;
+                    //add second spot if it's there
+                    if (RowSpan == 3)
+                        spots += rows[3].Y;
+                    return kernel - spots;
+                }//end else we can calculate stuff
+            }//end getter
+        }//end dy
+        /// <summary>
+        /// ((dx^2)+(dy^2))^(0.5), top of ratio
+        /// </summary>
+        public decimal z
+        {
+            get
+            {
+                decimal dx2 = dx * dx;
+                decimal dy2 = dy * dy;
+                double result = Math.Sqrt((double)dx2 + (double)dy2);
+                return (decimal)result;
+            }//end getter
+        }//end z
+        /// <summary>
+        /// the major of the kernel row (first row), divided
+        /// by 2, bottom of ratio
+        /// </summary>
+        public decimal halfMajor
+        {
+            get
+            {
+                if (RowSpan < 1)
+                {
+                    return 0;
+                }//end if there are no data rows
+                else
+                {
+                    return rows[1].Major / (decimal)2.0;
+                }//end else we can calculate major
+            }//end getter
+        }//end halfMajor
+        /// <summary>
+        /// the number of rows between the cell start and end
+        /// flags that we have detected for the specified cell
+        /// </summary>
+        public int detectedDataRows
+        {
+            get
+            {
+                //whether we should increment counter
+                bool flag = false;
+                //the number of rows we're looking for
+                int counter = 0;
+                foreach (Row row in rows)
+                {
+                    if (row.IsSeedEndFlag) flag = false;
+
+                    if (flag)
+                    {
+                        counter++;
+                    }//end if flag true
+                    else
+                    {
+                        if (row.IsSeedStartFlag) flag = true;
+                    }//end else flag false
+                }//end looping
+
+                return counter;
+            }//end get
+        }//end detectedDataRows
+        /// <summary>
+        /// the fraction of z / halfMajor as a decimal
+        /// </summary>
+        public decimal ratio
+        {
+            get
+            {
+                return z / halfMajor;
+            }//end getter
+        }//end ratio
+        /// <summary>
+        /// whether or not this cell seems to contain a germ
+        /// </summary>
+        public bool isGerm
+        {
+            get
+            {
+                return !twoSpots && ratio > germThreshold;
+            }//end getter
+        }//end isGerm
+        /// <summary>
+        /// whether or not there are two spots in this seed
+        /// </summary>
+        public bool twoSpots
+        {
+            get
+            {
+                //check to make sure stuff isn't borken
+                int dataRows = detectedDataRows;
+                if (dataRows != RowSpan) throw new InvalidOperationException("detectedDataRows and RowSpan don't match");
+                return dataRows > 2;
+            }//end getter
+        }//end twoSpots
 
         /// <summary>
         /// the Grid object that contains this cell. If this
@@ -376,100 +578,5 @@ namespace ImageJImporter
         {
             return GetEnumerator();
         }//end IEnumerable.GetEnumerator()
-
-        /// <summary>
-        /// basically a fancy struct, just generates the properties
-        /// from the spreadsheet that used to do this work. In this
-        /// class, the "kernel row" of the cell refers to the first
-        /// non-flag row, as that row contains the data for the entire
-        /// seed. The "spot row" refers to the other non-flag row(s)
-        /// in the cell, as they refer to any spots in the seed.
-        /// <para/>
-        /// Note: Many of the properties in this class may seem like
-        /// they're calculated on the spot, but in reality whenever
-        /// you specify a cell object, they're all calculated and
-        /// set. So if you somehow manage to get around setting a cell
-        /// and end up with weird results, that's why.
-        /// </summary>
-        public class GermReport
-        {
-            private int germThreshold = 50;
-            public int GermThreshold
-            {
-                get { return germThreshold; }
-                set
-                {
-                    //sets to 0 if less than 0, or value otherwise
-                    germThreshold = value < 0 ? 0 : value;
-                    //recalculate properties
-
-                }//end setter
-            }//end GermThreshold
-
-            /// <summary>
-            /// this is the X of the kernel minus the X of the spot
-            /// on the seed that represents Chalk.
-            /// </summary>
-            public decimal dx { get; private set; } = -1;
-            public decimal dy { get; private set; } = -1;
-            /// <summary>
-            /// ((dx^2)+(dy^2))^(0.5), top of ratio
-            /// </summary>
-            public decimal z { get; private set; } = -1;
-            /// <summary>
-            /// the major of the kernel row (first row), divided
-            /// by 2, bottom of ratio
-            /// </summary>
-            public decimal halfMajor { get; private set; } = -1;
-            /// <summary>
-            /// the number of rows between the cell start and end
-            /// flags that we have detected for the specified cell
-            /// </summary>
-            public int detectedDataRows { get; private set; } = 0;
-            /// <summary>
-            /// the fraction of z / halfMajor as a decimal
-            /// </summary>
-            public decimal ratio { get; private set; } = -1;
-            /// <summary>
-            /// whether or not this cell seems to contain a germ
-            /// </summary>
-            public bool isGerm { get; private set; } = false;
-            /// <summary>
-            /// whether or not there are two spots in this seed
-            /// </summary>
-            public bool twoSpots { get; private set; } = false;
-
-            /// <summary>
-            /// generates a germ report for a particular cell
-            /// </summary>
-            /// <param name="cell">the cell you want a germ report for</param>
-            public GermReport(Cell cell)
-            {
-                CalculateProperties(cell);
-            }//end 1-arg constructor
-
-            /// <summary>
-            /// calculates all the properties of this class
-            /// </summary>
-            /// <param name="cell"></param>
-            private void CalculateProperties(Cell cell)
-            {
-                throw new NotImplementedException();
-            }//end CalculateProperties(cell)
-
-            /// <summary>
-            /// calculates and returns the real chalk for a cell based
-            /// on germ detection in a way optimized for simple referencing
-            /// </summary>
-            /// <param name="cell">The cell to calculate Chalk for</param>
-            /// <returns>returns normal chalk percent if non-germ spot detected, or
-            /// 0 if the only spot seems to be a germ</returns>
-            /// <param name="germThreshold">The threshold percent to test
-            /// the ratio against. If this is -1, then we'll use the default</param>
-            public static decimal CalculateChalk2(Cell cell, int germThreshold)
-            {
-                throw new NotImplementedException();
-            }//end CalculateChalk2(cell)
-        }//end GermReport
     }//end class
 }//end namespace
