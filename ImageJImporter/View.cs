@@ -740,5 +740,40 @@ namespace ImageJImporter
                 }//end else if the row has a griditem
             }//end if the sender is an object listbox
         }//end uxGridListView_DoubleClick event handler
+
+        private void uxAskWhereStart_Click(object sender, EventArgs e)
+        {
+            HelpMessageGeneration.AskWhereStart();
+        }//end event handler
+
+        private void uxAskSelectFile_Click(object sender, EventArgs e)
+        {
+            HelpMessageGeneration.AskGridSelection();
+        }//end event handler
+
+        private void uxAskConfigFileStorage_Click(object sender, EventArgs e)
+        {
+            HelpMessageGeneration.AskConfigContents();
+        }//end event handler
+
+        private void uxAskAvailableOptions_Click(object sender, EventArgs e)
+        {
+            HelpMessageGeneration.AskAvailableOptions();
+        }//end event handler
+
+        private void uxAskLogFunction_Click(object sender, EventArgs e)
+        {
+            HelpMessageGeneration.AskLogFunction();
+        }//end event handler
+
+        private void uxAskListFunctions_Click(object sender, EventArgs e)
+        {
+            HelpMessageGeneration.AskListFunction();
+        }//end event handler
+
+        private void uxAskGridFunctions_Click(object sender, EventArgs e)
+        {
+            HelpMessageGeneration.AskGridSelection();
+        }//end event handler
     }//end class
 }//end namespace

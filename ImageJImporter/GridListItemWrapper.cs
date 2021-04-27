@@ -4,6 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * Author: Nicholas Sixbury
+ * File: GridListItemWrapper.cs
+ * Purpose: To provide a dynamic wrapper around a Grid object for
+ * easier use in an ObjectListView
+ */
+
 namespace ImageJImporter
 {
     class GridListItemWrapper
@@ -18,6 +25,9 @@ namespace ImageJImporter
             set { grid = value; }
         }//end Grid
 
+        /// <summary>
+        /// the level information this class will use to calculate summaries
+        /// </summary>
         public static LevelInformation levels { get; set; } = LevelInformation.DefaultLevels;
 
         /// <summary>
