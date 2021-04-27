@@ -35,6 +35,11 @@ namespace ImageJImporter
         public SendGrid updateGrid;
 
         /// <summary>
+        /// function pointer for UpdateGrids in view. set up in program.cs
+        /// </summary>
+        public SendGrids updateGrids;
+
+        /// <summary>
         /// function pointer for the CloseRowList in view. set up in program.cs
         /// </summary>
         public CallMethod closeSeedList;
@@ -42,7 +47,7 @@ namespace ImageJImporter
         /// <summary>
         /// function pointer to request a new filename from the view
         /// </summary>
-        public RequestSpecificString getNewFilename;
+        public RequestSpecificStrings getNewFilename;
 
         /// <summary>
         /// function pointer to tell the view to update it's level information
@@ -53,7 +58,7 @@ namespace ImageJImporter
         /// the grid that represents all of this object's cells and the rows
         /// that comprise them
         /// </summary>
-        private Grid internalGrid = new Grid();
+        private List<Grid> internalGrids = new List<Grid>();
 
         /// <summary>
         /// stores whether or not there is currently a file loaded in the program
@@ -82,8 +87,11 @@ namespace ImageJImporter
         {
             this.allLevelInformation = levels;
             updateLevelInformation(allLevelInformation);
-            updateGrid(internalGrid);
-            AppendShortSummaryToLog(fileIO.file, this.internalGrid, this.allLevelInformation);
+            updateGrids(internalGrids);
+            for(int i = 0; i < internalGrids.Count; i++)
+            {
+                AppendShortSummaryToLog(internalGrids[i].Filename, internalGrids[i], this.allLevelInformation);
+            }//end looping over all the grids
         }//end GetLevelInfoFromView(levels)
 
         /// <summary>
@@ -92,36 +100,84 @@ namespace ImageJImporter
         public void OpenDataFile()
         {
             //get filename from the view
-            string filename = getNewFilename(Request.OpenFile);
-            if (filename != null)
+            string[] filenames = getNewFilename(Request.OpenFile);
+            if (filenames != null)
             {
-                //get the row list from the file
-                List<Row> curList = fileIO.LoadFile(filename);
+                //get the row lists from the file
+                List<List<Row>> curLists = new List<List<Row>>();
+                List<string> curFilenames = new List<string>();
+                foreach(string filename in filenames)
+                {
+                    List<Row> curList = fileIO.LoadFile(filename);
+                    curLists.Add(curList);
+                    curFilenames.Add(filename);
+                }//end looping over all the files
 
-                //create our grid
-                Grid grid = new Grid(curList);
+                //create our grids
+                List<Grid> grids = new List<Grid>();
+                for(int i = 0; i < curLists.Count; i++)
+                {
+                    Grid grid = new Grid(curLists[i]);
+                    grid.Filename = Path.GetFileName(curFilenames[i]);
+                    grids.Add(grid);
+                }//end looping foreach row list in curlists
 
                 //reset the view before we update it
                 closeSeedList();
 
                 //update list of seeds in the view
-                if (updateGrid(grid))
+                if(grids.Count == 1)
                 {
-                    //reset and update CurrentRowList
-                    internalGrid = new Grid(curList);
+                    if (updateGrid(grids[0]))
+                    {
+                        //reset and update internal grid
+                        internalGrids = new List<Grid>();
+                        internalGrids.Add(new Grid(curLists[0]));
 
-                    //updates boolean
-                    IsFileCurrentlyLoaded = true;
+                        //updates boolean
+                        IsFileCurrentlyLoaded = true;
 
-                    //update log
-                    AppendToHeaderLog($"Loaded {BuildFileMessage(filename, internalGrid.Rows)}");
-                    AppendShortSummaryToLog(filename, grid, this.allLevelInformation);
-                }//end if operation was successful
+                        //update log
+                        AppendToHeaderLog($"Loaded {BuildFileMessage(internalGrids[0].Filename, internalGrids[0].Rows)}");
+                        AppendShortSummaryToLog(internalGrids[0].Filename, grids[0], this.allLevelInformation);
+                    }//end if operation was successful
+                    else
+                    {
+                        showMessage("An error has occured while updating the row list.",
+                            "File Open Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }//end else the operation failed
+                }//end if we're only doing one grid
                 else
                 {
-                    showMessage("An error has occured while updating the row list.",
-                        "File Open Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }//end else the operation failed
+                    //tries updating view with all grids, then gets whether we were successful
+                    List<bool> successes = updateGrids(grids);
+
+                    //update boolean
+                    IsFileCurrentlyLoaded = true;
+
+                    if (successes.Contains(false))
+                    {
+                        //display error message
+                        showMessage("Some or all of the grids we tried to display have failed.",
+                            "Grid Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //append short error message to log
+                        AppendToHeaderLog("An attempt to display multiple grids was made, but some of" +
+                            "them failed to be properly displayed.");
+                    }//end if we had an error
+                    else
+                    {
+                        //reset and update internal grid
+                        internalGrids = new List<Grid>();
+                        internalGrids = grids;
+
+                        //update log
+                        for (int i = 0; i < grids.Count; i++)
+                        {
+                            AppendToHeaderLog($"Loaded {BuildFileMessage(grids[i].Filename, grids[i].Rows)}");
+                            AppendShortSummaryToLog(grids[i].Filename, grids[i], this.allLevelInformation);
+                        }//end looping over all the grids
+                    }//end else we're all clear
+                }//end else we're doing several grids
             }//end if the filename isn't empty
             //if the filename was empty, don't do anything
         }//end OpenDataFile()
@@ -129,15 +185,15 @@ namespace ImageJImporter
         /// <summary>
         /// Saves the file that is currently loaded
         /// </summary>
-        public void SaveCurrentFile()
+        public void SaveCurrentFile(int index)
         {
             if (IsFileCurrentlyLoaded)
             {
                 //tell fileIO to save our current file with current data
-                fileIO.SaveFile(fileIO.file, internalGrid.Rows);
+                fileIO.SaveFile(internalGrids[index].Filename, internalGrids[index].Rows);
 
                 //update log
-                AppendToHeaderLog($"Successfully saved {internalGrid.Count}" +
+                AppendToHeaderLog($"Successfully saved {internalGrids[index].Count}" +
                     $" rows to \"{fileIO.file}\"");
             }//end if a file is currently loaded
             else
@@ -150,20 +206,20 @@ namespace ImageJImporter
         /// <summary>
         /// saves the current row information in the specified file
         /// </summary>
-        public void SaveCurrentListAsNewFile()
+        public void SaveCurrentListAsNewFile(int index)
         {
             if (IsFileCurrentlyLoaded)
             {
-                //get the filename from the 
-                string newFileName = getNewFilename(Request.SaveFileAs);
-                if(newFileName != null)
+                //get the filenames from the view
+                string[] newFileNames = getNewFilename(Request.SaveFileAs);
+                if(newFileNames != null)
                 {
                     //save the row information as the specified filename
-                    fileIO.SaveFile(newFileName, internalGrid.Rows);
+                    fileIO.SaveFile(newFileNames[0], internalGrids[index].Rows);
 
                     //update log
-                    AppendToHeaderLog($"Successfully saved {internalGrid.Count}" +
-                        $" rows to \"{newFileName}\"");
+                    AppendToHeaderLog($"Successfully saved {internalGrids[index].Count}" +
+                        $" rows to \"{newFileNames[0]}\"");
                 }//end if we have a file
                 //if the filename was empty, we don't want to do anything
             }//end if there's currently a file loaded
@@ -180,7 +236,7 @@ namespace ImageJImporter
         public void CloseCurrentFile()
         {
             //updates reference variables in this class
-            internalGrid.Clear();
+            internalGrids.Clear();
             IsFileCurrentlyLoaded = false;
 
             StringBuilder tempFileNameRef = new StringBuilder(fileIO.file);
@@ -202,38 +258,38 @@ namespace ImageJImporter
         /// <param name="indices">the enumerable collection of indices</param>
         /// <exception cref="ArgumentOutOfRangeException">Exception thrown when
         /// an index supplied is outside the bounds of CurrentRowList</exception>
-        private void CheckIndices(IEnumerable<int> indices)
+        private void CheckIndices(IEnumerable<int> indices, Grid grid)
         {
             foreach (int index in indices)
             {
-                if (index < 0 || index >= internalGrid.Count)
+                if (index < 0 || index >= grid.Count)
                 {
                     throw new ArgumentOutOfRangeException($"The supplied index" +
                         $" {index} was outside the acceptable range from 0 " +
-                        $"to {internalGrid.Count - 1}.");
+                        $"to {grid.Count - 1}.");
                 }//end if the index is outside range of list
             }//end checking each index is valid
         }//end CheckIndices(indices)
 
-        /// <summary>
-        /// Builds a list of all the rows at the specified indices with
-        /// CurrentRowList. Doesn't do any sort of verification that indices are
-        /// valid.
-        /// </summary>
-        /// <param name="indices">indices at which to grab rows</param>
-        /// <returns>list of rows at specified indices</returns>
-        private List<Row> GetRowsAtIndices(List<int> indices)
-        {
-            //initialize list of rows
-            List<Row> rowRegister = new List<Row>();
+        ///// <summary>
+        ///// Builds a list of all the rows at the specified indices with
+        ///// CurrentRowList. Doesn't do any sort of verification that indices are
+        ///// valid.
+        ///// </summary>
+        ///// <param name="indices">indices at which to grab rows</param>
+        ///// <returns>list of rows at specified indices</returns>
+        //private List<Row> GetRowsAtIndices(List<int> indices)
+        //{
+        //    //initialize list of rows
+        //    List<Row> rowRegister = new List<Row>();
 
-            foreach (int index in indices)
-            {
-                rowRegister.Add(internalGrid[index]);
-            }//end adding each requested row to rowRegister
+        //    foreach (int index in indices)
+        //    {
+        //        rowRegister.Add(internalGrid[index]);
+        //    }//end adding each requested row to rowRegister
 
-            return rowRegister;
-        }//end GetRowsAtIndices(indices)
+        //    return rowRegister;
+        //}//end GetRowsAtIndices(indices)
 
         /// <summary>
         /// Saves the row data of the specified rows at the specified indices
@@ -241,10 +297,10 @@ namespace ImageJImporter
         /// <param name="rowIndexPairs">a dictionary which contains KeyValuePairs
         /// for each row. The Key is the string which represents the row, and 
         /// the value is the index of that row within the larger list</param>
-        public void SaveRowData(Dictionary<string, int> rowIndexPairs)
+        public void SaveRowData(Dictionary<string, int> rowIndexPairs, int gridIndex)
         {
             //verify all indices are valid
-            CheckIndices(rowIndexPairs.Values);
+            CheckIndices(rowIndexPairs.Values, internalGrids[gridIndex]);
 
             //start trying to get all the row data
             try
@@ -263,7 +319,7 @@ namespace ImageJImporter
                 }//end processing data for each row
 
                 //update our internal list of row information
-                Grid tempGrid = new Grid(internalGrid);
+                Grid tempGrid = new Grid(internalGrids[gridIndex]);
                 foreach(Row newRow in processedRowIndexPairs.Keys)
                 {
                     int index = processedRowIndexPairs[newRow];
@@ -273,7 +329,7 @@ namespace ImageJImporter
                 //try to update the grid in the view
                 if (updateGrid(tempGrid))
                 {
-                    internalGrid = new Grid(tempGrid);
+                    internalGrids[gridIndex] = new Grid(tempGrid);
                     //update log so user knows save operation was successful
                     AppendToHeaderLog($"Successfully saved {processedRowIndexPairs.Count}" +
                         $" rows to internal reference list. To update file, select" +
@@ -308,7 +364,7 @@ namespace ImageJImporter
         public void UpdateLevelInformation(LevelInformation levelInformation)
         {
             this.allLevelInformation = levelInformation;
-            AppendShortSummaryToLog(fileIO.file, this.internalGrid, this.allLevelInformation);
+            AppendShortSummaryToLog(internalGrids, this.allLevelInformation);
         }//end UpdateLevelInformation(levelInformation)
 
         /// <summary>
@@ -336,10 +392,13 @@ namespace ImageJImporter
                 List<Row> rows = fileIO.LoadFile(defaultFileName);
 
                 //save our row list to our internal grid
-                internalGrid = new Grid(rows);
+                Grid tempGrid = new Grid(rows);
+                tempGrid.Filename = Path.GetFileName(defaultFileName);
+                internalGrids.Clear();
+                internalGrids.Add(tempGrid);
 
                 //pass grid back to the view
-                updateGrid(internalGrid);
+                updateGrid(internalGrids[0]);
 
                 //update boolean flag
                 IsFileCurrentlyLoaded = true;
@@ -349,8 +408,8 @@ namespace ImageJImporter
 
                 //update log with recent file name and row count
                 AppendToHeaderLog("Found configuration file. Loaded" +
-                    $" {BuildFileMessage(fileIO.file, internalGrid.Rows)}");
-                AppendShortSummaryToLog(defaultFileName, internalGrid, tempLevelsRef);
+                    $" {BuildFileMessage(fileIO.file, internalGrids[0].Rows)}");
+                AppendShortSummaryToLog(defaultFileName, internalGrids[0], tempLevelsRef);
             }//end if the data isn't null
         }//end OpenView()
 
@@ -429,6 +488,21 @@ namespace ImageJImporter
         private void AppendShortSummaryToLog(string filename, Grid grid, LevelInformation levels)
         {
             AppendToHeaderLog(FileIO.FileLevelsProcessedToOneLine(filename, grid, levels));
+        }//end AppendShortSummaryToLog(filename, grid, levels)
+
+        /// <summary>
+        /// Appends the short format summary information for a particular file
+        /// to the log. 
+        /// </summary>
+        /// <param name="filenames">the file the data came from</param>
+        /// <param name="grids">the data from the file</param>
+        /// <param name="levels">the object which tells us how to categorize data</param>
+        private void AppendShortSummaryToLog(List<Grid> grids, LevelInformation levels)
+        {
+            for(int i = 0; i < grids.Count; i++)
+            {
+                AppendToHeaderLog(FileIO.FileLevelsProcessedToOneLine(grids[i].Filename, grids[i], levels));
+            }//end looping over all the grids and files
         }//end AppendShortSummaryToLog(filename, grid, levels)
     }//end class
 }//end namespace

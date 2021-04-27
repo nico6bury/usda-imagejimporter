@@ -52,6 +52,24 @@ namespace ImageJImporter
         }//end Cells
 
         /// <summary>
+        /// The number of cells in this grid that have data in them, ie
+        /// they're not just a new row flag or a seed start and seed end
+        /// flag.
+        /// </summary>
+        public int NonFlagCells
+        {
+            get
+            {
+                int counter = 0;
+                foreach(Cell cell in cells)
+                {
+                    if (cell.IsFullCell && !cell.IsEmptyCell) counter++;
+                }//end looping for each cell
+                return counter;
+            }//end getter
+        }//end NonFlagCells
+
+        /// <summary>
         /// read-only property for returning list of rows in this object
         /// </summary>
         public List<Row> Rows
@@ -185,6 +203,12 @@ namespace ImageJImporter
                 cells[cellIndex][rowIndex] = new Row(value);
             }//end setter
         }//end 2-dimensional indexer
+
+        /// <summary>
+        /// Just a string to hold the name of the file this grid came from.
+        /// Just for reference purposes
+        /// </summary>
+        public string Filename { get; set; } = "Filename not set";
 
         /// <summary>
         /// initializes the object and its cell list, nothing else

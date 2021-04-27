@@ -62,11 +62,16 @@ namespace ImageJImporter
             this.uxProcessingPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.uxGridPanel = new System.Windows.Forms.Panel();
             this.uxStartReference = new System.Windows.Forms.Button();
+            this.uxGridListView = new BrightIdeasSoftware.ObjectListView();
+            this.fileID = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.Rows = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.DataCells = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.uxMainMenuToolStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).BeginInit();
             this.uxGridDisplay.SuspendLayout();
             this.uxGridPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uxGridListView)).BeginInit();
             this.SuspendLayout();
             // 
             // uxMainMenuToolStrip
@@ -78,7 +83,7 @@ namespace ImageJImporter
             this.uxMainMenuToolStrip.Location = new System.Drawing.Point(0, 0);
             this.uxMainMenuToolStrip.Name = "uxMainMenuToolStrip";
             this.uxMainMenuToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(887, 28);
+            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(972, 28);
             this.uxMainMenuToolStrip.TabIndex = 0;
             this.uxMainMenuToolStrip.Text = "menuStrip1";
             // 
@@ -97,7 +102,7 @@ namespace ImageJImporter
             // uxMenuOpenFile
             // 
             this.uxMenuOpenFile.Name = "uxMenuOpenFile";
-            this.uxMenuOpenFile.Size = new System.Drawing.Size(180, 24);
+            this.uxMenuOpenFile.Size = new System.Drawing.Size(129, 24);
             this.uxMenuOpenFile.Text = "Open";
             this.uxMenuOpenFile.ToolTipText = "Allows you to load a file into the program. It\'s meant to use .txt files, so I\'m " +
     "not sure what would happen if you imported other file types.";
@@ -105,16 +110,18 @@ namespace ImageJImporter
             // 
             // uxMenuSaveFile
             // 
+            this.uxMenuSaveFile.Enabled = false;
             this.uxMenuSaveFile.Name = "uxMenuSaveFile";
-            this.uxMenuSaveFile.Size = new System.Drawing.Size(180, 24);
+            this.uxMenuSaveFile.Size = new System.Drawing.Size(129, 24);
             this.uxMenuSaveFile.Text = "Save";
             this.uxMenuSaveFile.ToolTipText = "Allows you to save the current data back into the original file you opened.";
             this.uxMenuSaveFile.Click += new System.EventHandler(this.SaveFile);
             // 
             // uxMenuSaveFileAs
             // 
+            this.uxMenuSaveFileAs.Enabled = false;
             this.uxMenuSaveFileAs.Name = "uxMenuSaveFileAs";
-            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(180, 24);
+            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(129, 24);
             this.uxMenuSaveFileAs.Text = "Save As";
             this.uxMenuSaveFileAs.ToolTipText = "Allows you to save the seed data you\'ve edited as a new .txt file with the same s" +
     "tructure as the original file.";
@@ -123,7 +130,7 @@ namespace ImageJImporter
             // uxMenuCloseFile
             // 
             this.uxMenuCloseFile.Name = "uxMenuCloseFile";
-            this.uxMenuCloseFile.Size = new System.Drawing.Size(180, 24);
+            this.uxMenuCloseFile.Size = new System.Drawing.Size(129, 24);
             this.uxMenuCloseFile.Text = "Close";
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
@@ -196,11 +203,11 @@ namespace ImageJImporter
             this.uxRowDisplayGroup.Controls.Add(this.uxRowListView);
             this.uxRowDisplayGroup.Enabled = false;
             this.uxRowDisplayGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxRowDisplayGroup.Location = new System.Drawing.Point(12, 228);
+            this.uxRowDisplayGroup.Location = new System.Drawing.Point(12, 342);
             this.uxRowDisplayGroup.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
             this.uxRowDisplayGroup.Name = "uxRowDisplayGroup";
             this.uxRowDisplayGroup.Padding = new System.Windows.Forms.Padding(4, 4, 6, 0);
-            this.uxRowDisplayGroup.Size = new System.Drawing.Size(605, 431);
+            this.uxRowDisplayGroup.Size = new System.Drawing.Size(605, 317);
             this.uxRowDisplayGroup.TabIndex = 6;
             this.uxRowDisplayGroup.TabStop = false;
             this.uxRowDisplayGroup.Text = "List Display";
@@ -240,7 +247,7 @@ namespace ImageJImporter
             this.uxRowListView.Name = "uxRowListView";
             this.uxRowListView.ShowCommandMenuOnRightClick = true;
             this.uxRowListView.ShowSortIndicators = false;
-            this.uxRowListView.Size = new System.Drawing.Size(589, 393);
+            this.uxRowListView.Size = new System.Drawing.Size(589, 279);
             this.uxRowListView.SortGroupItemsByPrimaryColumn = false;
             this.uxRowListView.TabIndex = 10;
             this.uxRowListView.UseCompatibleStateImageBehavior = false;
@@ -372,12 +379,55 @@ namespace ImageJImporter
             this.uxStartReference.UseVisualStyleBackColor = true;
             this.uxStartReference.Visible = false;
             // 
+            // REPLACETHISNAME
+            // 
+            this.uxGridListView.AllColumns.Add(this.fileID);
+            this.uxGridListView.AllColumns.Add(this.Rows);
+            this.uxGridListView.AllColumns.Add(this.DataCells);
+            this.uxGridListView.CellEditUseWholeCell = false;
+            this.uxGridListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.fileID,
+            this.Rows,
+            this.DataCells});
+            this.uxGridListView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.uxGridListView.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uxGridListView.FullRowSelect = true;
+            this.uxGridListView.GridLines = true;
+            this.uxGridListView.HideSelection = false;
+            this.uxGridListView.Location = new System.Drawing.Point(12, 227);
+            this.uxGridListView.Name = "REPLACETHISNAME";
+            this.uxGridListView.ShowGroups = false;
+            this.uxGridListView.Size = new System.Drawing.Size(605, 108);
+            this.uxGridListView.TabIndex = 10;
+            this.uxGridListView.UseCompatibleStateImageBehavior = false;
+            this.uxGridListView.View = System.Windows.Forms.View.Details;
+            this.uxGridListView.DoubleClick += new System.EventHandler(this.uxGridListView_DoubleClick);
+            // 
+            // fileID
+            // 
+            this.fileID.AspectName = "Filename";
+            this.fileID.Text = "File";
+            this.fileID.Width = 170;
+            // 
+            // Rows
+            // 
+            this.Rows.AspectName = "Rows.Count";
+            this.Rows.Text = "Rows";
+            this.Rows.Width = 80;
+            // 
+            // DataCells
+            // 
+            this.DataCells.AspectName = "NonFlagCells";
+            this.DataCells.Text = "Non-Flag Cells";
+            this.DataCells.Width = 106;
+            // 
             // View
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(904, 562);
+            this.ClientSize = new System.Drawing.Size(989, 562);
+            this.Controls.Add(this.uxGridListView);
             this.Controls.Add(this.uxGridDisplay);
             this.Controls.Add(this.uxCurrentDateTime);
             this.Controls.Add(this.uxHeaderLog);
@@ -399,6 +449,7 @@ namespace ImageJImporter
             this.uxGridDisplay.ResumeLayout(false);
             this.uxGridDisplay.PerformLayout();
             this.uxGridPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.uxGridListView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -437,6 +488,10 @@ namespace ImageJImporter
         private System.Windows.Forms.ToolStripMenuItem uxToggleGroupsCollapsed;
         private System.Windows.Forms.ToolStripMenuItem uxConfigureColorLevelsMenuItem;
         private System.Windows.Forms.FlowLayoutPanel uxProcessingPanel;
+        private BrightIdeasSoftware.ObjectListView uxGridListView;
+        private BrightIdeasSoftware.OLVColumn fileID;
+        private BrightIdeasSoftware.OLVColumn DataCells;
+        private BrightIdeasSoftware.OLVColumn Rows;
     }
 }
 

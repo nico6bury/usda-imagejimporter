@@ -63,6 +63,7 @@
       <DependentUpon>ColorLevelDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Grid.cs" />
+    <Compile Include="GridListItemWrapper.cs" />
     <Compile Include="LevelInformation.cs" />
     <Compile Include="LevelPanel.cs">
       <SubType>Component</SubType>

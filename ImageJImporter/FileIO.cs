@@ -31,7 +31,7 @@ namespace ImageJImporter
         /// the name this class uses for it's config file
         /// </summary>
         private string configFilename = "imageJImporterConfig.txt";
-
+        
         /// <summary>
         /// this is the absolute path of the configuration file
         /// (so it starts C//:... whatever else)

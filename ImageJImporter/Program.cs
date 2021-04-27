@@ -54,6 +54,7 @@ namespace ImageJImporter
             //this connects the delegates to the controller
             controller.showMessage = view.ShowMessage;
             controller.updateGrid = view.UpdateGrid;
+            controller.updateGrids = view.UpdateGrids;
             controller.closeSeedList = view.CloseRowList;
             controller.appendTextLog = view.AppendTextToLog;
             controller.getNewFilename = view.GetNewFilename;

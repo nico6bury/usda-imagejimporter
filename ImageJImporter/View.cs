@@ -219,15 +219,44 @@ namespace ImageJImporter
             //builds the buttons for selecting grid levels
             BuildLevelSelectionButtons(uxGridPanel, uxProcessingPanel, LevelSelectionButton_Click);
 
+            //add the grid to the other listview?
+            if (uxGridListView.Items.Count == 0)
+            {
+                List<Grid> tempGrids = new List<Grid>();
+                tempGrids.Add(grid);
+                SetOLVGrid(uxGridListView, tempGrids, this.allLevelInformation);
+            }//end if there's nothing there
+
             //makes the button grid visible
             uxGridDisplay.Visible = true;
-
+            
             //update list
             uxRowListView.SetObjects(tempRows);
 
             //tell whoever called us that we were successful
             return true;
         }//end UpdateGrid(grid)
+
+        /// <summary>
+        /// updates the GUI with information from the supplied grids
+        /// </summary>
+        /// <param name="grids">the grids to display</param>
+        /// <returns>returns true if the operation was successful, false otherwise</returns>
+        public List<bool> UpdateGrids(List<Grid> grids)
+        {
+            //initialize list of success outputs
+            List<bool> successOutputs = new List<bool>();
+
+            //update list view?
+            SetOLVGrid(uxGridListView, grids, this.allLevelInformation);
+            //uxGridListView.SetObjects(grids);
+
+            //just display the first one
+            successOutputs.Add(UpdateGrid(grids[0]));
+
+            //throw new NotImplementedException();
+            return successOutputs;
+        }//end UpdateGrids(grids)
 
         /// <summary>
         /// builds the grid of buttons that represents the current grid.
@@ -360,21 +389,25 @@ namespace ImageJImporter
         /// </summary>
         /// <param name="request">The type of request for a new filename that
         /// you are making. Either OpenFile or SaveFileAs</param>
-        public string GetNewFilename(Request request)
+        public string[] GetNewFilename(Request request)
         {
-            string filename = null;
+            string[] filenames = null;
             switch (request)
             {
                 case Request.OpenFile:
                     using(OpenFileDialog openDialog = new OpenFileDialog())
                     {
-                        if (openDialog.ShowDialog() == DialogResult.OK) filename = openDialog.FileName;
+                        openDialog.Multiselect = true;
+                        if (openDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            filenames = openDialog.FileNames;
+                        }//end if the user went through with the operation
                     }//end use of openDialog
                     break;
                 case Request.SaveFileAs:
                     using(SaveFileDialog saveDialog = new SaveFileDialog())
                     {
-                        if (saveDialog.ShowDialog() == DialogResult.OK) filename = saveDialog.FileName;
+                        if (saveDialog.ShowDialog() == DialogResult.OK) filenames = saveDialog.FileNames;
                     }//end use of saveDialog
                     break;
                 default:
@@ -382,7 +415,7 @@ namespace ImageJImporter
                         $" request {request} is not a valid parameter for GetFilename.");
             }//end switch case
 
-            return filename;
+            return filenames;
         }//end GetNewFilename(request)
 
         public CallMethod openFile;
@@ -439,7 +472,7 @@ namespace ImageJImporter
             uxHeaderLog.Lines = newLines;
         }//end AppendTextLogHelperMethod(text)
 
-        public CallMethod saveFile;
+        public CallMethodWithIndex saveFile;
         /// <summary>
         /// this method runs when the uxMenuSaveFile button is clicked. It uses a
         /// delegate to tell the Controller to save the file we loaded earlier
@@ -450,10 +483,10 @@ namespace ImageJImporter
         private void SaveFile(object sender, EventArgs e)
         {
             //tell controller to save our current file
-            saveFile();
+            saveFile(0);
         }//end event handler for saving a file
 
-        public CallMethod saveFileAs;
+        public CallMethodWithIndex saveFileAs;
         /// <summary>
         /// this method runs when the uxMenuSaveFileAs button is clicked. It uses
         /// a delegate to tell the Controller to save the data loaded as a new file
@@ -463,7 +496,7 @@ namespace ImageJImporter
         /// stored here</param>
         private void SaveFileAs(object sender, EventArgs e)
         {
-            saveFileAs();
+            saveFileAs(0);
         }//end event handler for creating a new file
 
         public CallMethod closeFile;
@@ -518,7 +551,7 @@ namespace ImageJImporter
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }//end NoFileLoadedMessage()
 
-        public CallMethodWithRowStringDictionary editCell;
+        public CallMethodWithRowStringDictionaryAndIndex editCell;
         private void uxRowListView_CellEditFinished(object sender, CellEditEventArgs e)
         {
             /*
@@ -545,7 +578,7 @@ namespace ImageJImporter
             rowIndexPairs.Add(sb.ToString(), index);
 
             //tell controller to save specified seed data
-            editCell(rowIndexPairs);
+            editCell(rowIndexPairs, 0);
         }//end CellEditFinished event handler
 
         /// <summary>
@@ -624,5 +657,56 @@ namespace ImageJImporter
                 e.Item.ForeColor = thisLevel.ForeColor;
             }//end if our model is a row
         }//end event handler for formatting each row in OLV
+
+        private void SetOLVGrid(ObjectListView olv, List<Grid> grids, LevelInformation levels)
+        {
+            //reset olv columns
+            olv.AllColumns.Clear();
+            //set static variable
+            GridListItemWrapper.levels = levels;
+            //initialize our list of gridItemWrappers
+            List<GridListItemWrapper> gridItems = new List<GridListItemWrapper>();
+            //initialize list of gridItemWrappers
+            foreach(Grid grid in grids)
+            {
+                gridItems.Add(new GridListItemWrapper(grid));
+            }//end looping for each grid in grids
+            //initialize columns for each of the items specified in our wrapper
+            for(int i = 0; i < GridListItemWrapper.OutputColumnsTitle.Count; i++)
+            {
+                OLVColumn column = new OLVColumn(GridListItemWrapper.OutputColumnsTitle[i],
+                    $"OutputColumnsText[{i}]");
+                string text = gridItems[0].OutputColumnsText[i];
+                column.Width = 70;
+                column.AspectGetter = delegate (object x)
+                {
+                if (x is GridListItemWrapper y)
+                    {
+                        return text;
+                    }//end if we know the right type
+                    else
+                    {
+                        return "invalid type";
+                    }//end else the type is invalid
+                };//end AspectGetter
+                olv.AllColumns.Add(column);
+            }//end looping for each grid item wrapper
+            //use the set objects thing
+            olv.SetObjects(gridItems);
+            //hopefully force olv to update columns
+            olv.RebuildColumns();
+            olv.AutoSizeColumns();
+        }//end SetOLVGrid(olv, grids, levels)
+
+        private void uxGridListView_DoubleClick(object sender, EventArgs e)
+        {
+            if(sender is ObjectListView olv)
+            {
+                if(olv.SelectedItem.RowObject is GridListItemWrapper gridItem)
+                {
+                    UpdateGrid(gridItem.Grid);
+                }//end else if the row has a griditem
+            }//end if the sender is an object listbox
+        }//end uxGridListView_DoubleClick event handler
     }//end class
 }//end namespace
