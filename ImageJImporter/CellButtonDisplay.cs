@@ -67,6 +67,12 @@ namespace ImageJImporter
             //actually give the cell to the OLV
             uxCellView.SetObjects(grid.Rows);
 
+            //set title of the form
+            if(cell.OwningGridObject != null)
+            {
+                this.Text = cell.OwningGridObject.Filename + " Cell Display";
+            }
+
             //set up germ report
             FormatGermReport();
         }//end constructor

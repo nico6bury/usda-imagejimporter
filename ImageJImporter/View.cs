@@ -374,6 +374,9 @@ namespace ImageJImporter
             //clear the seeds displayed in the list
             uxRowListView.ClearObjects();
 
+            //clear the displayed grids
+            uxGridListView.Clear();
+
             //disable the elements for editing seeds so they can't be interacted with by the user
             uxRowDisplayGroup.Enabled = false;
 
@@ -658,10 +661,19 @@ namespace ImageJImporter
             }//end if our model is a row
         }//end event handler for formatting each row in OLV
 
+        /// <summary>
+        /// this method sets up the object list view which displays all the available grids.
+        /// Tbh, it's pretty janky, but it works. Call this instead of olv.SetObjects()
+        /// </summary>
+        /// <param name="olv">the ObjectListView you want to set up</param>
+        /// <param name="grids">the grids you want to display</param>
+        /// <param name="levels">the level information for the grids</param>
         private void SetOLVGrid(ObjectListView olv, List<Grid> grids, LevelInformation levels)
         {
             //reset olv columns
             olv.AllColumns.Clear();
+            //set type of olv
+            TypedObjectListView<GridListItemWrapper> tolv = new TypedObjectListView<GridListItemWrapper>(olv);
             //set static variable
             GridListItemWrapper.levels = levels;
             //initialize our list of gridItemWrappers
@@ -674,28 +686,41 @@ namespace ImageJImporter
             //initialize columns for each of the items specified in our wrapper
             for(int i = 0; i < GridListItemWrapper.OutputColumnsTitle.Count; i++)
             {
-                OLVColumn column = new OLVColumn(GridListItemWrapper.OutputColumnsTitle[i],
-                    $"OutputColumnsText[{i}]");
-                string text = gridItems[0].OutputColumnsText[i];
-                column.Width = 70;
-                column.AspectGetter = delegate (object x)
+                OLVColumn column = new OLVColumn();
+                //sets text of column header
+                column.Text = GridListItemWrapper.OutputColumnsTitle[i];
+                //tells olv what type we're storing in this column
+                TypedColumn<GridListItemWrapper> tColumn = new TypedColumn<GridListItemWrapper>(column);
+                //tells olv how to find the contents for a specified item under this column
+                tColumn.AspectGetter = delegate (GridListItemWrapper value)
                 {
-                if (x is GridListItemWrapper y)
-                    {
-                        return text;
-                    }//end if we know the right type
-                    else
-                    {
-                        return "invalid type";
-                    }//end else the type is invalid
-                };//end AspectGetter
+                    //figures out what index of the columns list this is
+                    int likelyIndex = GridListItemWrapper.OutputColumnsTitle.IndexOf(column.Text);
+                    //returns index of textList in object stored at this spot in olv
+                    return value.OutputColumnsText[likelyIndex];
+                };//end converting aspect into what we want
+                //add the column to the olv so it's visible
                 olv.AllColumns.Add(column);
-            }//end looping for each grid item wrapper
+                //set width
+                column.Width = GridListItemWrapper.OutputColumnsWidth[i];
+                //tell it not to fill all the space to multiselect is better
+                column.FillsFreeSpace = false;
+            }//end looping for each column title
+            
             //use the set objects thing
             olv.SetObjects(gridItems);
+            olv.RebuildColumns();
+            //hopefully forec olv to autosize the columns
+            for (int i = 0; i < olv.AllColumns.Count; i++)
+            {
+                //set visibility and resize stuff
+                olv.AllColumns[i].IsVisible = GridListItemWrapper.OutputColumnsVisibility[i];
+                olv.AllColumns[i].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                olv.AllColumns[i].FillsFreeSpace = false;
+            }//end trying to set visibility and width for all the columns
             //hopefully force olv to update columns
             olv.RebuildColumns();
-            olv.AutoSizeColumns();
+            olv.AutoResizeColumns();
         }//end SetOLVGrid(olv, grids, levels)
 
         private void uxGridListView_DoubleClick(object sender, EventArgs e)

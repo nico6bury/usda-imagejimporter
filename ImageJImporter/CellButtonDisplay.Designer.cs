@@ -54,7 +54,7 @@ namespace ImageJImporter
             this.uxCloseAll.DialogResult = System.Windows.Forms.DialogResult.Abort;
             this.uxCloseAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.uxCloseAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.uxCloseAll.Location = new System.Drawing.Point(226, 447);
+            this.uxCloseAll.Location = new System.Drawing.Point(226, 427);
             this.uxCloseAll.Name = "uxCloseAll";
             this.uxCloseAll.Size = new System.Drawing.Size(244, 30);
             this.uxCloseAll.TabIndex = 1;
@@ -67,7 +67,7 @@ namespace ImageJImporter
             this.uxCloseThis.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.uxCloseThis.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.uxCloseThis.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.uxCloseThis.Location = new System.Drawing.Point(12, 447);
+            this.uxCloseThis.Location = new System.Drawing.Point(12, 427);
             this.uxCloseThis.Name = "uxCloseThis";
             this.uxCloseThis.Size = new System.Drawing.Size(208, 30);
             this.uxCloseThis.TabIndex = 0;
@@ -108,7 +108,7 @@ namespace ImageJImporter
             this.uxCellView.HideSelection = false;
             this.uxCellView.Location = new System.Drawing.Point(12, 12);
             this.uxCellView.Name = "uxCellView";
-            this.uxCellView.Size = new System.Drawing.Size(458, 232);
+            this.uxCellView.Size = new System.Drawing.Size(458, 204);
             this.uxCellView.TabIndex = 2;
             this.uxCellView.UseCompatibleStateImageBehavior = false;
             this.uxCellView.View = System.Windows.Forms.View.Details;
@@ -193,11 +193,11 @@ namespace ImageJImporter
             // 
             this.uxGermReportDisplay.AcceptsTab = true;
             this.uxGermReportDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxGermReportDisplay.Location = new System.Drawing.Point(12, 251);
+            this.uxGermReportDisplay.Location = new System.Drawing.Point(12, 222);
             this.uxGermReportDisplay.Name = "uxGermReportDisplay";
             this.uxGermReportDisplay.ReadOnly = true;
             this.uxGermReportDisplay.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.uxGermReportDisplay.Size = new System.Drawing.Size(458, 190);
+            this.uxGermReportDisplay.Size = new System.Drawing.Size(458, 199);
             this.uxGermReportDisplay.TabIndex = 3;
             this.uxGermReportDisplay.Text = "";
             // 
@@ -205,7 +205,7 @@ namespace ImageJImporter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(482, 489);
+            this.ClientSize = new System.Drawing.Size(482, 469);
             this.ControlBox = false;
             this.Controls.Add(this.uxGermReportDisplay);
             this.Controls.Add(this.uxCellView);

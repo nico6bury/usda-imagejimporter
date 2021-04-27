@@ -41,7 +41,7 @@ namespace ImageJImporter
         /// <param name="cell">the cell that this button represents</param>
         public CellButton(Cell cell) : base()
         {
-            this.cell = new Cell(cell);
+            this.cell = cell;
             cellPropertyNameToCompareToLevel = nameof(cell.Chalk);
         }//end CellButton no-arg constructor
 

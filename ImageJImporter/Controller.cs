@@ -88,10 +88,10 @@ namespace ImageJImporter
             this.allLevelInformation = levels;
             updateLevelInformation(allLevelInformation);
             updateGrids(internalGrids);
-            for(int i = 0; i < internalGrids.Count; i++)
-            {
-                AppendShortSummaryToLog(internalGrids[i].Filename, internalGrids[i], this.allLevelInformation);
-            }//end looping over all the grids
+            //for(int i = 0; i < internalGrids.Count; i++)
+            //{
+            //    AppendShortSummaryToLog(internalGrids[i].Filename, internalGrids[i], this.allLevelInformation);
+            //}//end looping over all the grids
         }//end GetLevelInfoFromView(levels)
 
         /// <summary>
@@ -364,7 +364,7 @@ namespace ImageJImporter
         public void UpdateLevelInformation(LevelInformation levelInformation)
         {
             this.allLevelInformation = levelInformation;
-            AppendShortSummaryToLog(internalGrids, this.allLevelInformation);
+            //AppendShortSummaryToLog(internalGrids, this.allLevelInformation);
         }//end UpdateLevelInformation(levelInformation)
 
         /// <summary>

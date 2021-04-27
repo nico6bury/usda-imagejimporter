@@ -230,6 +230,7 @@ namespace ImageJImporter
                 //add a deep copy to our internal cell list
                 this.cells.Add(new Cell(cell));
             }//end looping over cells
+            this.Filename = grid.Filename;
         }//end 1-arg copy constructor
 
         /// <summary>
@@ -465,7 +466,10 @@ namespace ImageJImporter
                     jagged2DCellGrid.Add(new List<Cell>());
                 }//end if we have a flag for a new row
 
-                jagged2DCellGrid[firstDimensionIndex].Add(new Cell(cells[i]));
+                //add the cell to the jagged list
+                Cell tempCell = new Cell(cells[i]);
+                tempCell.OwningGridObject = this;
+                jagged2DCellGrid[firstDimensionIndex].Add(tempCell);
             }//end looping over all our cells
 
             return jagged2DCellGrid;

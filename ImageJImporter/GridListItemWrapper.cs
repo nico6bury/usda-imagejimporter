@@ -32,10 +32,10 @@ namespace ImageJImporter
 
                 //add filename title
                 titles.Add("Filename");
-                ////add timestamp title
-                //titles.Add(DateTime.Now.ToString("f"));
+                //add timestamp title
+                titles.Add("Timestamp");
                 //add level titles
-                foreach(LevelInformation.Level level in levels.Levels)
+                foreach (LevelInformation.Level level in levels.Levels)
                 {
                     titles.Add(level.LevelName);
                 }//end looping foreach level in levels
@@ -45,6 +45,53 @@ namespace ImageJImporter
                 return titles;
             }//end getter
         }//end OutputColumnsTitle
+
+        public static List<int> OutputColumnsWidth
+        {
+            get
+            {
+                //initialize output list
+                List<int> widths = new List<int>();
+
+                //add filename width
+                widths.Add(170);
+                //add timestamp width
+                widths.Add(70);
+                //add level widths
+                foreach (LevelInformation.Level level in levels.Levels)
+                {
+                    widths.Add(level.LevelName.Length * 10);
+                }//end looping foreach level in levels
+                //add total seeds width
+                widths.Add(50);
+
+                return widths;
+            }//end getter
+        }//end OutputColumnsWidth
+
+        public static List<bool> OutputColumnsVisibility
+        {
+            get
+            {
+                //initialize output list
+                List<bool> visibilities = new List<bool>();
+
+                //add filename visibility
+                visibilities.Add(true);
+                //add timestamp visisbility
+                visibilities.Add(false);
+                //add level visibilities
+                foreach(LevelInformation.Level level in levels.Levels)
+                {
+                    //set to visible if levelstart is greater than 0
+                    visibilities.Add(level.LevelStart > 0);
+                }//end looping over each level
+                //add total seeds visibility
+                visibilities.Add(true);
+
+                return visibilities;
+            }//end getter
+        }//end OutputColunsVisibility
 
         /// <summary>
         /// the list of text for each column for this grid
@@ -58,8 +105,8 @@ namespace ImageJImporter
 
                 //add filename text
                 texts.Add(System.IO.Path.GetFileName(grid.Filename));
-                ////add timestamp text
-                //texts.Add(DateTime.Now.ToString("f"));
+                //add timestamp text
+                texts.Add(DateTime.Now.ToString("f"));
                 //add the level information
                 List<int> counters = new List<int>(levels.Count);
                 foreach (LevelInformation.Level level in levels.Levels)
