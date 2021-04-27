@@ -1,12 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ImageJImporter
@@ -70,8 +65,8 @@ namespace ImageJImporter
             //set title of the form
             if(cell.OwningGridObject != null)
             {
-                this.Text = cell.OwningGridObject.Filename + " Cell Display";
-            }
+                this.Text = System.IO.Path.GetFileName(cell.OwningGridObject.Filename) + " Cell Display";
+            }//end if we don't know what grid this cell is in
 
             //set up germ report
             FormatGermReport();

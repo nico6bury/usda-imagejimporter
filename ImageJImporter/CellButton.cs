@@ -81,9 +81,14 @@ namespace ImageJImporter
             Font = new Font(FontFamily.GenericSansSerif, 10);
 
             //basically we're figuring out what the levels are based off of here
-            Tuple<string, int> correctLevel = levels.FindLevel((decimal)Cell.GetType().GetProperty(cellPropertyNameToCompareToLevel).GetValue(cell));
+            Tuple<string, int> correctLevel = levels
+                    .FindLevel((decimal)Cell
+                    .GetType()
+                    .GetProperty(cellPropertyNameToCompareToLevel)
+                    .GetValue(cell));
 
-            if(correctLevel.Item1 != null)
+
+            if (correctLevel.Item1 != null)
             {
                 BackColor = levels.Levels[correctLevel.Item2].BackColor;
                 ForeColor = levels.Levels[correctLevel.Item2].ForeColor;

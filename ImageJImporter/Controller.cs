@@ -118,66 +118,41 @@ namespace ImageJImporter
                 for(int i = 0; i < curLists.Count; i++)
                 {
                     Grid grid = new Grid(curLists[i]);
-                    grid.Filename = Path.GetFileName(curFilenames[i]);
+                    grid.Filename = curFilenames[i];
                     grids.Add(grid);
                 }//end looping foreach row list in curlists
 
                 //reset the view before we update it
                 closeSeedList();
 
-                //update list of seeds in the view
-                if(grids.Count == 1)
+                //tries updating view with all grids, then gets whether we were successful
+                List<bool> successes = updateGrids(grids);
+
+                //update boolean
+                IsFileCurrentlyLoaded = true;
+
+                if (successes.Contains(false))
                 {
-                    if (updateGrid(grids[0]))
-                    {
-                        //reset and update internal grid
-                        internalGrids = new List<Grid>();
-                        internalGrids.Add(new Grid(curLists[0]));
-
-                        //updates boolean
-                        IsFileCurrentlyLoaded = true;
-
-                        //update log
-                        AppendToHeaderLog($"Loaded {BuildFileMessage(internalGrids[0].Filename, internalGrids[0].Rows)}");
-                        AppendShortSummaryToLog(internalGrids[0].Filename, grids[0], this.allLevelInformation);
-                    }//end if operation was successful
-                    else
-                    {
-                        showMessage("An error has occured while updating the row list.",
-                            "File Open Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }//end else the operation failed
-                }//end if we're only doing one grid
+                    //display error message
+                    showMessage("Some or all of the grids we tried to display have failed.",
+                        "Grid Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //append short error message to log
+                    AppendToHeaderLog("An attempt to display multiple grids was made, but some of" +
+                        "them failed to be properly displayed.");
+                }//end if we had an error
                 else
                 {
-                    //tries updating view with all grids, then gets whether we were successful
-                    List<bool> successes = updateGrids(grids);
+                    //reset and update internal grid
+                    internalGrids = new List<Grid>();
+                    internalGrids = grids;
 
-                    //update boolean
-                    IsFileCurrentlyLoaded = true;
-
-                    if (successes.Contains(false))
+                    //update log
+                    for (int i = 0; i < grids.Count; i++)
                     {
-                        //display error message
-                        showMessage("Some or all of the grids we tried to display have failed.",
-                            "Grid Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        //append short error message to log
-                        AppendToHeaderLog("An attempt to display multiple grids was made, but some of" +
-                            "them failed to be properly displayed.");
-                    }//end if we had an error
-                    else
-                    {
-                        //reset and update internal grid
-                        internalGrids = new List<Grid>();
-                        internalGrids = grids;
-
-                        //update log
-                        for (int i = 0; i < grids.Count; i++)
-                        {
-                            AppendToHeaderLog($"Loaded {BuildFileMessage(grids[i].Filename, grids[i].Rows)}");
-                            AppendShortSummaryToLog(grids[i].Filename, grids[i], this.allLevelInformation);
-                        }//end looping over all the grids
-                    }//end else we're all clear
-                }//end else we're doing several grids
+                        AppendToHeaderLog($"Loaded {BuildFileMessage(grids[i].Filename, grids[i].Rows)}");
+                        AppendShortSummaryToLog(grids[i].Filename, grids[i], this.allLevelInformation);
+                    }//end looping over all the grids
+                }//end else we're all clear
             }//end if the filename isn't empty
             //if the filename was empty, don't do anything
         }//end OpenDataFile()
@@ -194,7 +169,7 @@ namespace ImageJImporter
 
                 //update log
                 AppendToHeaderLog($"Successfully saved {internalGrids[index].Count}" +
-                    $" rows to \"{fileIO.file}\"");
+                    $" rows to \"{fileIO.mostRecentAccessedFile}\"");
             }//end if a file is currently loaded
             else
             {
@@ -239,10 +214,10 @@ namespace ImageJImporter
             internalGrids.Clear();
             IsFileCurrentlyLoaded = false;
 
-            StringBuilder tempFileNameRef = new StringBuilder(fileIO.file);
+            StringBuilder tempFileNameRef = new StringBuilder(fileIO.mostRecentAccessedFile);
 
             //removes last file reference from fileIO
-            fileIO.file = "";
+            fileIO.mostRecentAccessedFile = "";
 
             //updates seed list in view
             closeSeedList();
@@ -375,42 +350,61 @@ namespace ImageJImporter
         {
             //Make a level information object to pass as out param
             LevelInformation tempLevelsRef;
+            string[] defaultFileNames;
 
             //get data file to load plus level information
-            string defaultFileName = fileIO.LoadConfigFile(out tempLevelsRef);
+            bool success = fileIO.LoadConfigFile(out tempLevelsRef, out defaultFileNames);
 
-            //set our level information up correctly, we hope
-            allLevelInformation = tempLevelsRef;
-
-            //we should always send level information to the view
-            updateLevelInformation(allLevelInformation);
-
-            //load data if there was a file to load
-            if(!String.IsNullOrEmpty(defaultFileName) && File.Exists(defaultFileName))
+            //send stuff to the view based on what we found
+            if (success)
             {
-                //load all the row information from config file
-                List<Row> rows = fileIO.LoadFile(defaultFileName);
+                //update our level information
+                allLevelInformation = tempLevelsRef;
 
-                //save our row list to our internal grid
-                Grid tempGrid = new Grid(rows);
-                tempGrid.Filename = Path.GetFileName(defaultFileName);
+                //set level information as default if it's not set up
+                if (allLevelInformation.Count == 0 || String.IsNullOrEmpty(allLevelInformation.PropertyToTest))
+                    allLevelInformation = LevelInformation.DefaultLevels; allLevelInformation.PropertyToTest = nameof(Cell.Chalk);
+
+                //tell the view to update its level information
+                updateLevelInformation(allLevelInformation);
+
                 internalGrids.Clear();
-                internalGrids.Add(tempGrid);
+                for (int i = 0; i < defaultFileNames.Length; i++)
+                {
+                    if (!String.IsNullOrEmpty(defaultFileNames[i]) && File.Exists(defaultFileNames[i]))
+                    {
+                        //load row information from this file
+                        List<Row> rows = fileIO.LoadFile(defaultFileNames[i]);
 
-                //pass grid back to the view
-                updateGrid(internalGrids[0]);
+                        //save our row list to our internal grid
+                        Grid tempGrid = new Grid(rows);
+                        tempGrid.Filename = defaultFileNames[i];
+                        internalGrids.Add(tempGrid);
 
-                //update boolean flag
-                IsFileCurrentlyLoaded = true;
+                        //update boolean flag
+                        IsFileCurrentlyLoaded = true;
 
-                //update fileIO's most recently used file property
-                fileIO.file = defaultFileName;
-
-                //update log with recent file name and row count
-                AppendToHeaderLog("Found configuration file. Loaded" +
-                    $" {BuildFileMessage(fileIO.file, internalGrids[0].Rows)}");
-                AppendShortSummaryToLog(defaultFileName, internalGrids[0], tempLevelsRef);
-            }//end if the data isn't null
+                        //update log with recent file name and row count
+                        AppendToHeaderLog("Found configuration file. Loaded" +
+                            $" {BuildFileMessage(defaultFileNames[i], tempGrid.Rows)}");
+                        AppendShortSummaryToLog(defaultFileNames[i], tempGrid, tempLevelsRef);
+                    }//end if the specified name is actually valid
+                    //pass grid back to the view
+                    if (internalGrids.Count > 0) updateGrids(internalGrids);
+                    else
+                        AppendToHeaderLog("A configuration file was found, but none of the files " +
+                            "were valid");
+                }//end looping over all the filenames
+                
+            }//end if we successfully found a config file
+            else
+            {
+                //generate level information and send it to the view
+                allLevelInformation = LevelInformation.DefaultLevels;
+                allLevelInformation.PropertyToTest = "Chalk";
+                updateLevelInformation(allLevelInformation);
+                AppendToHeaderLog("No Configuration File Found. Loading Defaults.");
+            }//end else we didn't find a config file
         }//end OpenView()
 
         /// <summary>
@@ -458,8 +452,15 @@ namespace ImageJImporter
         /// </summary>
         public void CloseView()
         {
+            //get an array of filenames
+            string[] filenamesFromGrids = new string[internalGrids.Count];
+            for(int i = 0; i < internalGrids.Count; i++)
+            {
+                filenamesFromGrids[i] = internalGrids[i].Filename;
+            }//end getting filename from each grid in internalGrids
+
             //saves configuration info to config file
-            fileIO.SaveConfigFile(allLevelInformation);
+            fileIO.SaveConfigFile(allLevelInformation, filenamesFromGrids);
         }//end CloseView()
 
         /// <summary>

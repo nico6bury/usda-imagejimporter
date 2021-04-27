@@ -82,11 +82,11 @@ namespace ImageJImporter
                 outputLevels.PropertyToTest = "Chalk";
 
                 //define level0 (-10 - 0)
-                Level level0 = new Level(-10, 0, "Lvl0", Color.Black, Color.White);
+                Level level0 = new Level(-10, 0.001M, "Lvl0", Color.Black, Color.White);
                 outputLevels.AddNewLevel(level0);
 
                 //define level1 (0 - 10)
-                Level level1 = new Level(0, 10, "Lvl1", Color.White, Color.Black);
+                Level level1 = new Level(0.001M, 10, "Lvl1", Color.White, Color.Black);
                 outputLevels.AddNewLevel(level1);
 
                 //define level2 (10 - 25)
@@ -226,7 +226,7 @@ namespace ImageJImporter
             List<string> output = new List<string>();
 
             //add line for property we want to test
-            output.Add($"LIE1;{nameof(PropertyToTest)}:{PropertyToTest}");
+            output.Add($"LIE2|{nameof(PropertyToTest)}*{PropertyToTest}");
 
             //add all the lines for each level
             for(int i = 0; i < Levels.Count; i++)
@@ -242,16 +242,25 @@ namespace ImageJImporter
             List<Level> levels = new List<Level>();
 
             //read property we want to test from file
-            string[] option1 = lines[0].Split(';');
-            if(option1[0] == "LIE1")
+            string[] option1 = lines[0].Split('|');
+            if(option1[0] == "LIE2")
             {
-                string[] option1Info = option1[1].Split(':');
+                string[] option1Info = option1[1].Split('*');
                 GetType().GetProperty(option1Info[0]).SetValue(this, option1Info[1]);
             }//end if we can set option level info options
+            else
+            {
+                if(option1[0] == "LIE1")
+                {
+                    string[] option1Info = option1[1].Split(':');
+                    GetType().GetProperty(option1Info[0]).SetValue(this, option1Info[1]);
+                }//end if it's the first serialization version
+            }//end else we either have an unrecognized format or old serialization method
 
             //add all the levels from the lines
             for(int i = 1; i < lines.Count; i++)
             {
+                //if the format isn't recognized, then null will be added
                 levels.Add(Level.ReadSerializedString(lines[i]));
             }//end looping over each line
 
@@ -306,7 +315,7 @@ namespace ImageJImporter
             public string FormatSerializedString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append($"LI1");
+                sb.Append($"LI2");
                 foreach(PropertyInfo property in this.GetType().GetProperties())
                 {
                     string serializedPrintout = property.GetValue(this).ToString();
@@ -317,7 +326,7 @@ namespace ImageJImporter
                         serializedPrintout = someColor.ToArgb().ToString();
                     }//end if we have a color type
 
-                    sb.Append($";{property.Name}:{serializedPrintout}");
+                    sb.Append($"|{property.Name}*{serializedPrintout}");
                 }//end looping over all the properties
                 return sb.ToString();
             }//end FormatSerializedString()
@@ -326,33 +335,72 @@ namespace ImageJImporter
             {
                 Level output = new Level(-1, -1, String.Empty, Color.Black, Color.Black);
                 //split up each of the properties
-                string[] lineComponents = serialized.Split(';');
-                //loop over all the properties we found
-                for(int i = 1; i < lineComponents.Length; i++)
+                string[] lineComponents = serialized.Split('|');
+                if(lineComponents[0] == "LI2")
                 {
-                    //get the name (index 0) and the value (index 1) as strings
-                    string[] nameAndValue = lineComponents[i].Split(':');
-                    //convert the name into the corresponding property
-                    PropertyInfo property = typeof(Level).GetProperty(nameAndValue[0]);
-                    //grab the type from the propertyInfo
-                    Type type = property.PropertyType;
-                    //parse the value based on the type of the property
-                    if(type == typeof(decimal))
+                    //loop over all the properties we found
+                    for (int i = 1; i < lineComponents.Length; i++)
                     {
-                        //parse value to decimal and set corresponding value in output
-                        property.SetValue(output, Convert.ToDecimal(nameAndValue[1]));
-                    }//end if it's a decimal type
-                    else if(type == typeof(string))
+                        //get the name (index 0) and the value (index 1) as strings
+                        string[] nameAndValue = lineComponents[i].Split('*');
+                        //convert the name into the corresponding property
+                        PropertyInfo property = typeof(Level).GetProperty(nameAndValue[0]);
+                        //grab the type from the propertyInfo
+                        Type type = property.PropertyType;
+                        //parse the value based on the type of the property
+                        if (type == typeof(decimal))
+                        {
+                            //parse value to decimal and set corresponding value in output
+                            property.SetValue(output, Convert.ToDecimal(nameAndValue[1]));
+                        }//end if it's a decimal type
+                        else if (type == typeof(string))
+                        {
+                            //parse value to string and set corresponding value in output
+                            property.SetValue(output, nameAndValue[1]);
+                        }//end if it's a string type
+                        else if (type == typeof(Color))
+                        {
+                            //parse value to color and set corresponding value in output
+                            property.SetValue(output, Color.FromArgb(Convert.ToInt32(nameAndValue[1])));
+                        }//end if it's a color type
+                    }//end looping over all the components
+                }//end if we're reading the most recent version of serialization
+                else
+                {
+                    if(lineComponents[0] == "LI1")
                     {
-                        //parse value to string and set corresponding value in output
-                        property.SetValue(output, nameAndValue[1]);
-                    }//end if it's a string type
-                    else if(type == typeof(Color))
+                        //loop over all the properties we found
+                        for (int i = 1; i < lineComponents.Length; i++)
+                        {
+                            //get the name (index 0) and the value (index 1) as strings
+                            string[] nameAndValue = lineComponents[i].Split(':');
+                            //convert the name into the corresponding property
+                            PropertyInfo property = typeof(Level).GetProperty(nameAndValue[0]);
+                            //grab the type from the propertyInfo
+                            Type type = property.PropertyType;
+                            //parse the value based on the type of the property
+                            if (type == typeof(decimal))
+                            {
+                                //parse value to decimal and set corresponding value in output
+                                property.SetValue(output, Convert.ToDecimal(nameAndValue[1]));
+                            }//end if it's a decimal type
+                            else if (type == typeof(string))
+                            {
+                                //parse value to string and set corresponding value in output
+                                property.SetValue(output, nameAndValue[1]);
+                            }//end if it's a string type
+                            else if (type == typeof(Color))
+                            {
+                                //parse value to color and set corresponding value in output
+                                property.SetValue(output, Color.FromArgb(Convert.ToInt32(nameAndValue[1])));
+                            }//end if it's a color type
+                        }//end looping over all the components
+                    }//end if we're looking at the first format
+                    else
                     {
-                        //parse value to color and set corresponding value in output
-                        property.SetValue(output, Color.FromArgb(Convert.ToInt32(nameAndValue[1])));
-                    }//end if it's a color type
-                }//end looping over all the components
+                        return null;
+                    }//end else we don't know what the format is
+                }//end else we must be reading an outdated format
 
                 //return the level object we built
                 return output;

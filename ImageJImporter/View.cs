@@ -127,12 +127,14 @@ namespace ImageJImporter
         public void UpdateLevelInformation(LevelInformation levelInformation)
         {
             this.allLevelInformation = levelInformation;
+            GridListItemWrapper.levels = levelInformation;
         }//end UpdateLevelInformation(levelInformation)
 
         public SendLevelInformation updateControllerLevelInformation;
         private void TellControllerToUpdateLevel(LevelInformation levelInformation)
         {
             updateControllerLevelInformation(levelInformation);
+            GridListItemWrapper.levels = levelInformation;
         }//end TellControllerToUpdateLevel(levelInformation)
 
         private SendString sendDateTime;
@@ -249,10 +251,9 @@ namespace ImageJImporter
 
             //update list view?
             SetOLVGrid(uxGridListView, grids, this.allLevelInformation);
-            //uxGridListView.SetObjects(grids);
 
-            //just display the first one
-            successOutputs.Add(UpdateGrid(grids[0]));
+            //just return true
+            successOutputs.Add(true);
 
             //throw new NotImplementedException();
             return successOutputs;
@@ -696,6 +697,12 @@ namespace ImageJImporter
                 {
                     //figures out what index of the columns list this is
                     int likelyIndex = GridListItemWrapper.OutputColumnsTitle.IndexOf(column.Text);
+                    if(likelyIndex == -1)
+                    {
+                        //if we're here, it's likely that this column is for a level that's been renamed
+                        //so therefore we'll just return some nonsense value
+                        return "Names Changing, Please Wait";
+                    }//end if it's likely the column headers are changing
                     //returns index of textList in object stored at this spot in olv
                     return value.OutputColumnsText[likelyIndex];
                 };//end converting aspect into what we want

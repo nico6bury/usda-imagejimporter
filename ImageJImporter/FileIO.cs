@@ -25,7 +25,7 @@ namespace ImageJImporter
         /// <summary>
         /// this is the name of the file that we most recently used
         /// </summary>
-        public string file = null;
+        public string mostRecentAccessedFile = null;
 
         /// <summary>
         /// the name this class uses for it's config file
@@ -66,7 +66,7 @@ namespace ImageJImporter
         public FileIO(FileIO m)
         {
             //sets the file variable of this class to that of the one provided
-            this.file = m.file;
+            this.mostRecentAccessedFile = m.mostRecentAccessedFile;
         }//end 1-arg constructor
 
         /// <summary>
@@ -81,10 +81,12 @@ namespace ImageJImporter
             levels = LevelInformation.DefaultLevels;
 
             //add the current file name to the file
-            linesToOutput.Add(file);
+            if (!String.IsNullOrEmpty(mostRecentAccessedFile))
+                linesToOutput.Add($"FN2|{mostRecentAccessedFile}*");
+            else linesToOutput.Add("NoFileSet");
 
             //add the level information options
-            linesToOutput.Add($"LIE1;{nameof(levels.PropertyToTest)}:{levels.PropertyToTest}");
+            linesToOutput.Add($"LIE2|{nameof(levels.PropertyToTest)}*{levels.PropertyToTest}");
 
             //add all the lines from the level information to our output list
             foreach (string line in levels.MakeLinesToSaveToFile())
@@ -101,23 +103,27 @@ namespace ImageJImporter
         /// </summary>
         /// <param name="levelInformation">The level information to save
         /// to this file. If this parameter is null, then no information
-        /// will be saved.</param>
-        /// <param name="cellParamName">The name of the property we're comparing
-        /// using the levels</param>
-        public void SaveConfigFile(LevelInformation levelInformation)
+        /// will be saved. This object also includes the property to test</param>
+        /// <param name="lastFiles">The filenames to save to the config file</param>
+        public void SaveConfigFile(LevelInformation levelInformation, string[] lastFiles)
         {
             //creates config file. If it already exists, we overwrite it
             using (StreamWriter scribe = new StreamWriter(configFileAbsolutePath))
             {
-                //write default filename to config file
-                scribe.WriteLine(file);
+                //write default filename(s) to config file
+                scribe.Write("FN2|");
+                foreach(string filename in lastFiles)
+                {
+                    scribe.Write($"{filename}*");
+                }//end looping for each file in lastFiles
+                scribe.Write("\n");
 
                 //write all the levelInformation
                 if(levelInformation != null)
                 {
                     string propName = levelInformation.PropertyToTest;
                     if (String.IsNullOrEmpty(propName)) propName = "Chalk";
-                    scribe.WriteLine($"LIE1;{nameof(levelInformation.PropertyToTest)}:{propName}");
+                    scribe.WriteLine($"LIE2|{nameof(levelInformation.PropertyToTest)}*{propName}");
                     foreach(string line in levelInformation.MakeLinesToSaveToFile())
                     {
                         scribe.WriteLine(line);
@@ -131,11 +137,13 @@ namespace ImageJImporter
         /// </summary>
         /// <param name="levelInformation">The level information that was loaded from
         /// the configuration file</param>
-        /// <returns>returns name of the file we should open</returns>
-        public string LoadConfigFile(out LevelInformation levelInformation)
+        /// <param name="filesToOpen">the files which according to the config file, should be opened</param>
+        /// <returns>returns whether a configuration file was successfully found</returns>
+        public bool LoadConfigFile(out LevelInformation levelInformation, out string[] filesToOpen)
         {
             //initialize levelInformation out parameter
             levelInformation = new LevelInformation();
+            filesToOpen = new string[0];
 
             if (File.Exists(configFilename))
             {
@@ -154,31 +162,41 @@ namespace ImageJImporter
                     }//end getting all the lines from the file
                 }//end use of StreamReader
 
-                //get the filename from the first line
-                string savedFileName = allLinesFromFile[0];
-
-                //loop through rest of the lines to get whatever other data we want
-                for(int i = 1; i < allLinesFromFile.Count; i++)
+                //loop through the lines to get whatever data we can find
+                for(int i = 0; i < allLinesFromFile.Count; i++)
                 {
-                    //get all the components
-                    string[] componentsFromThisLine = allLinesFromFile[i].Split(';');
-                    if(componentsFromThisLine[0] == "LIE1")
+                    //get all the components for this line
+                    string[] componentsFromThisLine = allLinesFromFile[i].Split('|');
+                    if(componentsFromThisLine[0] == "LIE2" || componentsFromThisLine[0] == "LIE1")
                     {
-                        string[] componentInfo = componentsFromThisLine[1].Split(':');
+                        string[] componentInfo = componentsFromThisLine[1].Split('*');
                         if(componentInfo[0] == nameof(levelInformation.PropertyToTest))
                         {
                             levelInformation.GetType().GetProperty(nameof(levelInformation.PropertyToTest)).SetValue(levelInformation, componentInfo[1]);
                         }//end if we can set the propertyToTest
                     }//end if we have a extended level options info here
-                    else if(componentsFromThisLine[0] == "LI1")
+                    else if(componentsFromThisLine[0] == "LI2" || componentsFromThisLine[0] == "LI1")
                     {
                         levelInformation.AddNewLevel(
                             LevelInformation.Level.ReadSerializedString(allLinesFromFile[i]));
                     }//end if we have level information here
-                }//end looping over all the lines of other configuration information
+                    else if(componentsFromThisLine[0] == "FN2")
+                    {
+                        string[] theLinesToOpen = componentsFromThisLine[1].Split(new char[] { '*' }, StringSplitOptions.RemoveEmptyEntries);
+                        filesToOpen = theLinesToOpen;
+                    }//end else if we have filename info to read
+                    else
+                    {
+                        if (componentsFromThisLine[0] == "FN1")
+                        {
+                            string[] theLinesToOpen = componentsFromThisLine[1].Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            filesToOpen = theLinesToOpen;
+                        }//end else if we have filename info to read
+                    }//end else we must be dealing with a weird outdated serialization format
+                }//end looping over all the lines of configuration information
 
-                //return information we just found
-                return savedFileName;
+                //return that we found config info
+                return true;
             }//end if the configuration file exists
             else
             {
@@ -201,8 +219,8 @@ namespace ImageJImporter
                 //save absolute path of config file
                 configFileAbsolutePath = Path.GetFullPath(configFilename);
 
-                //return that no configuration info was found
-                return null;
+                //return that we didn't find config info, so we made our own
+                return false;
             }//end else the configuration file does not exist
         }//end LoadConfigFile()
 
@@ -269,7 +287,7 @@ namespace ImageJImporter
             }//end use of streamreader
 
             //sets last used text file
-            this.file = file;
+            this.mostRecentAccessedFile = file;
 
             //return the list of rows to whatever called this method
             return data;
