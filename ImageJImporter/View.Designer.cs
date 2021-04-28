@@ -42,7 +42,6 @@ namespace ImageJImporter
             this.uxToggleGroupsCollapsed = new System.Windows.Forms.ToolStripMenuItem();
             this.uxConfigureColorLevelsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.uxHeaderLog = new System.Windows.Forms.TextBox();
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
             this.uxRowDisplayGroup = new System.Windows.Forms.GroupBox();
             this.uxRowListView = new BrightIdeasSoftware.ObjectListView();
@@ -63,6 +62,7 @@ namespace ImageJImporter
             this.uxGridPanel = new System.Windows.Forms.Panel();
             this.uxStartReference = new System.Windows.Forms.Button();
             this.uxGridListView = new BrightIdeasSoftware.ObjectListView();
+            this.uxHeaderLog = new System.Windows.Forms.RichTextBox();
             this.uxMainMenuToolStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).BeginInit();
@@ -80,7 +80,7 @@ namespace ImageJImporter
             this.uxMainMenuToolStrip.Location = new System.Drawing.Point(0, 0);
             this.uxMainMenuToolStrip.Name = "uxMainMenuToolStrip";
             this.uxMainMenuToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(1023, 28);
+            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(1057, 28);
             this.uxMainMenuToolStrip.TabIndex = 0;
             this.uxMainMenuToolStrip.Text = "menuStrip1";
             // 
@@ -99,7 +99,7 @@ namespace ImageJImporter
             // uxMenuOpenFile
             // 
             this.uxMenuOpenFile.Name = "uxMenuOpenFile";
-            this.uxMenuOpenFile.Size = new System.Drawing.Size(180, 24);
+            this.uxMenuOpenFile.Size = new System.Drawing.Size(129, 24);
             this.uxMenuOpenFile.Text = "Open";
             this.uxMenuOpenFile.ToolTipText = "Allows you to load a file into the program. It\'s meant to use .txt files, so I\'m " +
     "not sure what would happen if you imported other file types.";
@@ -109,7 +109,7 @@ namespace ImageJImporter
             // 
             this.uxMenuSaveFile.Enabled = false;
             this.uxMenuSaveFile.Name = "uxMenuSaveFile";
-            this.uxMenuSaveFile.Size = new System.Drawing.Size(180, 24);
+            this.uxMenuSaveFile.Size = new System.Drawing.Size(129, 24);
             this.uxMenuSaveFile.Text = "Save";
             this.uxMenuSaveFile.ToolTipText = "Allows you to save the current data back into the original file you opened.";
             this.uxMenuSaveFile.Click += new System.EventHandler(this.SaveFile);
@@ -118,7 +118,7 @@ namespace ImageJImporter
             // 
             this.uxMenuSaveFileAs.Enabled = false;
             this.uxMenuSaveFileAs.Name = "uxMenuSaveFileAs";
-            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(180, 24);
+            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(129, 24);
             this.uxMenuSaveFileAs.Text = "Save As";
             this.uxMenuSaveFileAs.ToolTipText = "Allows you to save the seed data you\'ve edited as a new .txt file with the same s" +
     "tructure as the original file.";
@@ -127,7 +127,7 @@ namespace ImageJImporter
             // uxMenuCloseFile
             // 
             this.uxMenuCloseFile.Name = "uxMenuCloseFile";
-            this.uxMenuCloseFile.Size = new System.Drawing.Size(180, 24);
+            this.uxMenuCloseFile.Size = new System.Drawing.Size(129, 24);
             this.uxMenuCloseFile.Text = "Close";
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
@@ -169,20 +169,6 @@ namespace ImageJImporter
             this.uxToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.uxToolTip.ToolTipTitle = "What This Does:";
             // 
-            // uxHeaderLog
-            // 
-            this.uxHeaderLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxHeaderLog.Location = new System.Drawing.Point(12, 67);
-            this.uxHeaderLog.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uxHeaderLog.Multiline = true;
-            this.uxHeaderLog.Name = "uxHeaderLog";
-            this.uxHeaderLog.ReadOnly = true;
-            this.uxHeaderLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.uxHeaderLog.Size = new System.Drawing.Size(605, 153);
-            this.uxHeaderLog.TabIndex = 0;
-            this.uxHeaderLog.Text = "Hello and welcome to 28 Apr 21 v2.8 of ImageJ Data Importation Program";
-            this.uxToolTip.SetToolTip(this.uxHeaderLog, "This is the header of the program");
-            // 
             // uxCurrentDateTime
             // 
             this.uxCurrentDateTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -204,7 +190,7 @@ namespace ImageJImporter
             this.uxRowDisplayGroup.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
             this.uxRowDisplayGroup.Name = "uxRowDisplayGroup";
             this.uxRowDisplayGroup.Padding = new System.Windows.Forms.Padding(4, 4, 6, 0);
-            this.uxRowDisplayGroup.Size = new System.Drawing.Size(605, 292);
+            this.uxRowDisplayGroup.Size = new System.Drawing.Size(605, 273);
             this.uxRowDisplayGroup.TabIndex = 6;
             this.uxRowDisplayGroup.TabStop = false;
             this.uxRowDisplayGroup.Text = "List Display";
@@ -248,7 +234,7 @@ namespace ImageJImporter
             this.uxRowListView.Name = "uxRowListView";
             this.uxRowListView.ShowCommandMenuOnRightClick = true;
             this.uxRowListView.ShowSortIndicators = false;
-            this.uxRowListView.Size = new System.Drawing.Size(589, 254);
+            this.uxRowListView.Size = new System.Drawing.Size(589, 235);
             this.uxRowListView.SortGroupItemsByPrimaryColumn = false;
             this.uxRowListView.TabIndex = 10;
             this.uxRowListView.UseCompatibleStateImageBehavior = false;
@@ -341,7 +327,7 @@ namespace ImageJImporter
             this.uxGridDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uxGridDisplay.Location = new System.Drawing.Point(623, 31);
             this.uxGridDisplay.Name = "uxGridDisplay";
-            this.uxGridDisplay.Size = new System.Drawing.Size(243, 308);
+            this.uxGridDisplay.Size = new System.Drawing.Size(243, 154);
             this.uxGridDisplay.TabIndex = 8;
             this.uxGridDisplay.TabStop = false;
             this.uxGridDisplay.Text = "Grid Display";
@@ -349,10 +335,11 @@ namespace ImageJImporter
             // 
             // uxProcessingPanel
             // 
+            this.uxProcessingPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.uxProcessingPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.uxProcessingPanel.Location = new System.Drawing.Point(7, 71);
             this.uxProcessingPanel.Name = "uxProcessingPanel";
-            this.uxProcessingPanel.Size = new System.Drawing.Size(200, 100);
+            this.uxProcessingPanel.Size = new System.Drawing.Size(200, 57);
             this.uxProcessingPanel.TabIndex = 11;
             // 
             // uxGridPanel
@@ -401,16 +388,29 @@ namespace ImageJImporter
             this.uxGridListView.View = System.Windows.Forms.View.Details;
             this.uxGridListView.DoubleClick += new System.EventHandler(this.uxGridListView_DoubleClick);
             // 
+            // uxHeaderLog
+            // 
+            this.uxHeaderLog.AcceptsTab = true;
+            this.uxHeaderLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.uxHeaderLog.Location = new System.Drawing.Point(12, 66);
+            this.uxHeaderLog.Name = "uxHeaderLog";
+            this.uxHeaderLog.ReadOnly = true;
+            this.uxHeaderLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.uxHeaderLog.Size = new System.Drawing.Size(605, 155);
+            this.uxHeaderLog.TabIndex = 11;
+            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.8B NS" +
+    " 28 Apr 21\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
+            // 
             // View
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(1040, 562);
+            this.ClientSize = new System.Drawing.Size(1074, 562);
+            this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxGridListView);
             this.Controls.Add(this.uxGridDisplay);
             this.Controls.Add(this.uxCurrentDateTime);
-            this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxRowDisplayGroup);
             this.Controls.Add(this.uxMainMenuToolStrip);
             this.DoubleBuffered = true;
@@ -446,7 +446,6 @@ namespace ImageJImporter
         private System.Windows.Forms.GroupBox uxRowDisplayGroup;
         private System.Windows.Forms.ToolStripMenuItem uxMenuCloseFile;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.TextBox uxHeaderLog;
         private System.Windows.Forms.GroupBox uxGridDisplay;
         private System.Windows.Forms.Button uxStartReference;
         private System.Windows.Forms.TextBox uxCurrentDateTime;
@@ -469,6 +468,7 @@ namespace ImageJImporter
         private System.Windows.Forms.ToolStripMenuItem uxConfigureColorLevelsMenuItem;
         private System.Windows.Forms.FlowLayoutPanel uxProcessingPanel;
         private BrightIdeasSoftware.ObjectListView uxGridListView;
+        private System.Windows.Forms.RichTextBox uxHeaderLog;
     }
 }
 

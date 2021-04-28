@@ -41,33 +41,14 @@ namespace ImageJImporter
                 }//end looping foreach level in levels
                 //add total seed number
                 titles.Add("Total");
+                //add germ detect
+                titles.Add("GermDetect");
+                //add twoSpot detect
+                titles.Add("TwoSpots");
 
                 return titles;
             }//end getter
         }//end OutputColumnsTitle
-
-        public static List<int> OutputColumnsWidth
-        {
-            get
-            {
-                //initialize output list
-                List<int> widths = new List<int>();
-
-                //add filename width
-                widths.Add(170);
-                //add timestamp width
-                widths.Add(70);
-                //add level widths
-                foreach (LevelInformation.Level level in levels.Levels)
-                {
-                    widths.Add(level.LevelName.Length * 10);
-                }//end looping foreach level in levels
-                //add total seeds width
-                widths.Add(50);
-
-                return widths;
-            }//end getter
-        }//end OutputColumnsWidth
 
         public static List<bool> OutputColumnsVisibility
         {
@@ -87,6 +68,10 @@ namespace ImageJImporter
                     visibilities.Add(level.LevelStart > 0);
                 }//end looping over each level
                 //add total seeds visibility
+                visibilities.Add(true);
+                //add germDetect visibility
+                visibilities.Add(true);
+                //add twoSpots visibility
                 visibilities.Add(true);
 
                 return visibilities;
@@ -115,6 +100,8 @@ namespace ImageJImporter
                 }//end initializing list of counters
                  //count up all the levels
                 int nonFlagCount = 0;
+                int germDetectCount = 0;
+                int twoSpotCount = 0;
                 foreach (Cell cell in grid.Cells)
                 {
                     //find out what level the cell is in
@@ -126,6 +113,8 @@ namespace ImageJImporter
                     {
                         nonFlagCount++;
                     }//end if cell 
+                    if (cell.isGerm) germDetectCount++;
+                    if (cell.twoSpots) twoSpotCount++;
                 }//end looping over cells in grid to add levels
                  //add all the level counts to the string
                 for (int i = 0; i < counters.Count; i++)
@@ -133,13 +122,16 @@ namespace ImageJImporter
                     //find the percentage for this level
                     decimal percent = (decimal)counters[i] / (decimal)nonFlagCount * 100;
                     string percentStr = "";
-                    if (levels.Levels[i].LevelStart > 0) percentStr = $"({percent.ToString("N0")}%)";
+                    //if (levels.Levels[i].LevelStart > 0) percentStr = $"({percent.ToString("N0")}%)";
                     //add this level text
                     texts.Add($"{counters[i]}{percentStr}");
                 }//end looping over counts of 
-
                 //add total seed number
                 texts.Add($"{nonFlagCount}");
+                //add germ detect count
+                texts.Add($"{germDetectCount}");
+                //add twoSpot detect count
+                texts.Add($"{twoSpotCount}");
 
                 return texts;
             }//end getter

@@ -67,7 +67,9 @@ namespace ImageJImporter
             uxGridDisplay.AutoSize = true;
 
             //resize form for similar reason as previous two statements
-            this.Height = 700;
+            this.Height = 680;
+
+            uxGridDisplay.MaximumSize = new Size(Int32.MaxValue, this.Height - uxGridDisplay.Location.Y);
 
             //initialize typedObjectListView
             tlist = new TypedObjectListView<Row>(this.uxRowListView);
@@ -605,7 +607,9 @@ namespace ImageJImporter
             uxProcessingPanel.MaximumSize = new Size(uxGridDisplay.Width, Int32.MaxValue);
 
             //go ahead and move the edge of the grid display group box down to cover the panel
-            uxGridDisplay.Size = new Size(uxGridDisplay.Width, uxGridDisplay.Height + uxProcessingPanel.Height + panelMargin);
+            int gridDisplayWidth = uxGridDisplay.Width;
+            int gridDisplayHeight = uxGridDisplay.Height + uxProcessingPanel.Height + panelMargin;
+            uxGridDisplay.Size = new Size(gridDisplayWidth, gridDisplayHeight);
         }//end uxGridPanel SizeChanged event handler
 
         private void uxMenuItemToggleListDisplay_Click(object sender, EventArgs e)
@@ -708,8 +712,6 @@ namespace ImageJImporter
                 };//end converting aspect into what we want
                 //add the column to the olv so it's visible
                 olv.AllColumns.Add(column);
-                //set width
-                column.Width = GridListItemWrapper.OutputColumnsWidth[i];
                 //tell it not to fill all the space to multiselect is better
                 column.FillsFreeSpace = false;
             }//end looping for each column title
