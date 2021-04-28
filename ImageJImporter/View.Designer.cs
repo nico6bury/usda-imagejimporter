@@ -406,7 +406,7 @@ namespace ImageJImporter
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(1074, 562);
+            this.ClientSize = new System.Drawing.Size(1074, 427);
             this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxGridListView);
             this.Controls.Add(this.uxGridDisplay);
