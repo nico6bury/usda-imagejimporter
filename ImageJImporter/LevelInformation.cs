@@ -201,8 +201,8 @@ namespace ImageJImporter
         /// <summary>
         /// Tests a specific value against the levels in this object, and then returns
         /// the name of the level and the index in the Levels list where the value matched.
-        /// For the purposes of the method, the start of the level is exclusive and the 
-        /// end of the level is inclusive. If the value is outside of all levels, then
+        /// For the purposes of the method, the start of the level is inclusive and the 
+        /// end of the level is exclusive. If the value is outside of all levels, then
         /// null and -1 will be returned.
         /// </summary>
         /// <param name="testValue">The value to test against the levels</param>
@@ -213,7 +213,7 @@ namespace ImageJImporter
         {
             for (int i = 0; i < Levels.Count; i++)
             {
-                if(testValue > Levels[i].LevelStart && testValue <= Levels[i].LevelEnd)
+                if(testValue >= Levels[i].LevelStart && testValue < Levels[i].LevelEnd)
                 {
                     return new Tuple<string, int>(Levels[i].LevelName, i);
                 }//end if the value is within this level
