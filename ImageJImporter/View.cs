@@ -775,7 +775,7 @@ namespace ImageJImporter
 
         private void uxAskGridFunctions_Click(object sender, EventArgs e)
         {
-            HelpMessageGeneration.AskGridSelection();
+            HelpMessageGeneration.AskGridFunction();
         }//end event handler
     }//end class
 }//end namespace

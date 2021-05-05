@@ -41,6 +41,14 @@ namespace ImageJImporter
             this.uxMenuItemToggleListDisplay = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToggleGroupsCollapsed = new System.Windows.Forms.ToolStripMenuItem();
             this.uxConfigureColorLevelsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxAskWhereStart = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxAskSelectFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxAskConfigFileStorage = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxAskAvailableOptions = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxAskLogFunction = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxAskListFunctions = new System.Windows.Forms.ToolStripMenuItem();
+            this.uxAskGridFunctions = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
             this.uxRowDisplayGroup = new System.Windows.Forms.GroupBox();
@@ -62,14 +70,6 @@ namespace ImageJImporter
             this.uxGridPanel = new System.Windows.Forms.Panel();
             this.uxStartReference = new System.Windows.Forms.Button();
             this.uxGridListView = new BrightIdeasSoftware.ObjectListView();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxAskWhereStart = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxAskSelectFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxAskConfigFileStorage = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxAskAvailableOptions = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxAskLogFunction = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxAskListFunctions = new System.Windows.Forms.ToolStripMenuItem();
-            this.uxAskGridFunctions = new System.Windows.Forms.ToolStripMenuItem();
             this.uxHeaderLog = new System.Windows.Forms.RichTextBox();
             this.uxMainMenuToolStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
@@ -109,7 +109,7 @@ namespace ImageJImporter
             // uxMenuOpenFile
             // 
             this.uxMenuOpenFile.Name = "uxMenuOpenFile";
-            this.uxMenuOpenFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuOpenFile.Size = new System.Drawing.Size(121, 22);
             this.uxMenuOpenFile.Text = "Open";
             this.uxMenuOpenFile.ToolTipText = "Allows you to load a file into the program. It\'s meant to use .txt files, so I\'m " +
     "not sure what would happen if you imported other file types.";
@@ -119,7 +119,7 @@ namespace ImageJImporter
             // 
             this.uxMenuSaveFile.Enabled = false;
             this.uxMenuSaveFile.Name = "uxMenuSaveFile";
-            this.uxMenuSaveFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuSaveFile.Size = new System.Drawing.Size(121, 22);
             this.uxMenuSaveFile.Text = "Save";
             this.uxMenuSaveFile.ToolTipText = "Allows you to save the current data back into the original file you opened.";
             this.uxMenuSaveFile.Click += new System.EventHandler(this.SaveFile);
@@ -128,7 +128,7 @@ namespace ImageJImporter
             // 
             this.uxMenuSaveFileAs.Enabled = false;
             this.uxMenuSaveFileAs.Name = "uxMenuSaveFileAs";
-            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(121, 22);
             this.uxMenuSaveFileAs.Text = "Save As";
             this.uxMenuSaveFileAs.ToolTipText = "Allows you to save the seed data you\'ve edited as a new .txt file with the same s" +
     "tructure as the original file.";
@@ -137,7 +137,7 @@ namespace ImageJImporter
             // uxMenuCloseFile
             // 
             this.uxMenuCloseFile.Name = "uxMenuCloseFile";
-            this.uxMenuCloseFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuCloseFile.Size = new System.Drawing.Size(121, 22);
             this.uxMenuCloseFile.Text = "Close";
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
@@ -173,6 +173,70 @@ namespace ImageJImporter
             this.uxConfigureColorLevelsMenuItem.Size = new System.Drawing.Size(274, 22);
             this.uxConfigureColorLevelsMenuItem.Text = "Configure Color Levels";
             this.uxConfigureColorLevelsMenuItem.Click += new System.EventHandler(this.uxConfigureColorLevelsMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.uxAskWhereStart,
+            this.uxAskSelectFile,
+            this.uxAskConfigFileStorage,
+            this.uxAskAvailableOptions,
+            this.uxAskLogFunction,
+            this.uxAskListFunctions,
+            this.uxAskGridFunctions});
+            this.helpToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(47, 21);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // uxAskWhereStart
+            // 
+            this.uxAskWhereStart.Name = "uxAskWhereStart";
+            this.uxAskWhereStart.Size = new System.Drawing.Size(334, 22);
+            this.uxAskWhereStart.Text = "Where to Start?";
+            this.uxAskWhereStart.Click += new System.EventHandler(this.uxAskWhereStart_Click);
+            // 
+            // uxAskSelectFile
+            // 
+            this.uxAskSelectFile.Name = "uxAskSelectFile";
+            this.uxAskSelectFile.Size = new System.Drawing.Size(334, 22);
+            this.uxAskSelectFile.Text = "Selecting A File/Grid";
+            this.uxAskSelectFile.Click += new System.EventHandler(this.uxAskSelectFile_Click);
+            // 
+            // uxAskConfigFileStorage
+            // 
+            this.uxAskConfigFileStorage.Name = "uxAskConfigFileStorage";
+            this.uxAskConfigFileStorage.Size = new System.Drawing.Size(334, 22);
+            this.uxAskConfigFileStorage.Text = "What\'s in Config File?";
+            this.uxAskConfigFileStorage.Click += new System.EventHandler(this.uxAskConfigFileStorage_Click);
+            // 
+            // uxAskAvailableOptions
+            // 
+            this.uxAskAvailableOptions.Name = "uxAskAvailableOptions";
+            this.uxAskAvailableOptions.Size = new System.Drawing.Size(334, 22);
+            this.uxAskAvailableOptions.Text = "What Options Are Available?";
+            this.uxAskAvailableOptions.Click += new System.EventHandler(this.uxAskAvailableOptions_Click);
+            // 
+            // uxAskLogFunction
+            // 
+            this.uxAskLogFunction.Name = "uxAskLogFunction";
+            this.uxAskLogFunction.Size = new System.Drawing.Size(334, 22);
+            this.uxAskLogFunction.Text = "What\'s the Log do?";
+            this.uxAskLogFunction.Click += new System.EventHandler(this.uxAskLogFunction_Click);
+            // 
+            // uxAskListFunctions
+            // 
+            this.uxAskListFunctions.Name = "uxAskListFunctions";
+            this.uxAskListFunctions.Size = new System.Drawing.Size(334, 22);
+            this.uxAskListFunctions.Text = "What Functions Does the List Display Have?";
+            this.uxAskListFunctions.Click += new System.EventHandler(this.uxAskListFunctions_Click);
+            // 
+            // uxAskGridFunctions
+            // 
+            this.uxAskGridFunctions.Name = "uxAskGridFunctions";
+            this.uxAskGridFunctions.Size = new System.Drawing.Size(334, 22);
+            this.uxAskGridFunctions.Text = "What Functions Does the Grid Display Have?";
+            this.uxAskGridFunctions.Click += new System.EventHandler(this.uxAskGridFunctions_Click);
             // 
             // uxToolTip
             // 
@@ -398,90 +462,28 @@ namespace ImageJImporter
             this.uxGridListView.View = System.Windows.Forms.View.Details;
             this.uxGridListView.DoubleClick += new System.EventHandler(this.uxGridListView_DoubleClick);
             // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.uxAskWhereStart,
-            this.uxAskSelectFile,
-            this.uxAskConfigFileStorage,
-            this.uxAskAvailableOptions,
-            this.uxAskLogFunction,
-            this.uxAskListFunctions,
-            this.uxAskGridFunctions});
-            this.helpToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(47, 21);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
-            // uxAskWhereStart
-            // 
-            this.uxAskWhereStart.Name = "uxAskWhereStart";
-            this.uxAskWhereStart.Size = new System.Drawing.Size(334, 22);
-            this.uxAskWhereStart.Text = "Where to Start?";
-            this.uxAskWhereStart.Click += new System.EventHandler(this.uxAskWhereStart_Click);
-            // 
-            // uxAskSelectFile
-            // 
-            this.uxAskSelectFile.Name = "uxAskSelectFile";
-            this.uxAskSelectFile.Size = new System.Drawing.Size(334, 22);
-            this.uxAskSelectFile.Text = "Selecting A File/Grid";
-            this.uxAskSelectFile.Click += new System.EventHandler(this.uxAskSelectFile_Click);
-            // 
-            // uxAskConfigFileStorage
-            // 
-            this.uxAskConfigFileStorage.Name = "uxAskConfigFileStorage";
-            this.uxAskConfigFileStorage.Size = new System.Drawing.Size(334, 22);
-            this.uxAskConfigFileStorage.Text = "What\'s in Config File?";
-            this.uxAskConfigFileStorage.Click += new System.EventHandler(this.uxAskConfigFileStorage_Click);
-            // 
-            // uxAskAvailableOptions
-            // 
-            this.uxAskAvailableOptions.Name = "uxAskAvailableOptions";
-            this.uxAskAvailableOptions.Size = new System.Drawing.Size(334, 22);
-            this.uxAskAvailableOptions.Text = "What Options Are Available?";
-            this.uxAskAvailableOptions.Click += new System.EventHandler(this.uxAskAvailableOptions_Click);
-            // 
-            // uxAskLogFunction
-            // 
-            this.uxAskLogFunction.Name = "uxAskLogFunction";
-            this.uxAskLogFunction.Size = new System.Drawing.Size(334, 22);
-            this.uxAskLogFunction.Text = "What\'s the Log do?";
-            this.uxAskLogFunction.Click += new System.EventHandler(this.uxAskLogFunction_Click);
-            // 
-            // uxAskListFunctions
-            // 
-            this.uxAskListFunctions.Name = "uxAskListFunctions";
-            this.uxAskListFunctions.Size = new System.Drawing.Size(334, 22);
-            this.uxAskListFunctions.Text = "What Functions Does the List Display Have?";
-            this.uxAskListFunctions.Click += new System.EventHandler(this.uxAskListFunctions_Click);
-            // 
-            // uxAskGridFunctions
-            // 
-            this.uxAskGridFunctions.Name = "uxAskGridFunctions";
-            this.uxAskGridFunctions.Size = new System.Drawing.Size(334, 22);
-            this.uxAskGridFunctions.Text = "What Functions Does the Grid Display Have?";
-            this.uxAskGridFunctions.Click += new System.EventHandler(this.uxAskGridFunctions_Click);
-            // 
             // uxHeaderLog
             // 
             this.uxHeaderLog.AcceptsTab = true;
             this.uxHeaderLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.uxHeaderLog.Location = new System.Drawing.Point(12, 66);
             this.uxHeaderLog.Name = "uxHeaderLog";
-            this.uxHeaderLog.ReadOnly = true;
             this.uxHeaderLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
             this.uxHeaderLog.Size = new System.Drawing.Size(605, 155);
             this.uxHeaderLog.TabIndex = 11;
             this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.8B NS" +
     " 28 Apr 21\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
+            this.uxToolTip.SetToolTip(this.uxHeaderLog, "This acts as both the log and header to the program. As you take actions in the p" +
+        "rogram, this will be updated, and when you exit the program, any text here will " +
+        "be exported to an external file.");
             // 
             // View
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.Controls.Add(this.uxHeaderLog);
             this.ClientSize = new System.Drawing.Size(1023, 562);
+            this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxGridListView);
             this.Controls.Add(this.uxGridDisplay);
             this.Controls.Add(this.uxCurrentDateTime);
