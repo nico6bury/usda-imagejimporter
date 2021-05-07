@@ -51,6 +51,7 @@ namespace ImageJImporter
             this.uxAskGridFunctions = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.uxCurrentDateTime = new System.Windows.Forms.TextBox();
+            this.uxHeaderLog = new System.Windows.Forms.RichTextBox();
             this.uxRowDisplayGroup = new System.Windows.Forms.GroupBox();
             this.uxRowListView = new BrightIdeasSoftware.ObjectListView();
             this.rowName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -70,7 +71,6 @@ namespace ImageJImporter
             this.uxGridPanel = new System.Windows.Forms.Panel();
             this.uxStartReference = new System.Windows.Forms.Button();
             this.uxGridListView = new BrightIdeasSoftware.ObjectListView();
-            this.uxHeaderLog = new System.Windows.Forms.RichTextBox();
             this.uxMainMenuToolStrip.SuspendLayout();
             this.uxRowDisplayGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxRowListView)).BeginInit();
@@ -253,6 +253,21 @@ namespace ImageJImporter
             this.uxCurrentDateTime.TabIndex = 9;
             this.uxCurrentDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.uxToolTip.SetToolTip(this.uxCurrentDateTime, "Shows the current date and time");
+            // 
+            // uxHeaderLog
+            // 
+            this.uxHeaderLog.AcceptsTab = true;
+            this.uxHeaderLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.uxHeaderLog.Location = new System.Drawing.Point(12, 66);
+            this.uxHeaderLog.Name = "uxHeaderLog";
+            this.uxHeaderLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.uxHeaderLog.Size = new System.Drawing.Size(605, 155);
+            this.uxHeaderLog.TabIndex = 11;
+            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.8.1B " +
+    "NS 7 May 21\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
+            this.uxToolTip.SetToolTip(this.uxHeaderLog, "This acts as both the log and header to the program. As you take actions in the p" +
+        "rogram, this will be updated, and when you exit the program, any text here will " +
+        "be exported to an external file.");
             // 
             // uxRowDisplayGroup
             // 
@@ -462,21 +477,6 @@ namespace ImageJImporter
             this.uxGridListView.View = System.Windows.Forms.View.Details;
             this.uxGridListView.DoubleClick += new System.EventHandler(this.uxGridListView_DoubleClick);
             // 
-            // uxHeaderLog
-            // 
-            this.uxHeaderLog.AcceptsTab = true;
-            this.uxHeaderLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.uxHeaderLog.Location = new System.Drawing.Point(12, 66);
-            this.uxHeaderLog.Name = "uxHeaderLog";
-            this.uxHeaderLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.uxHeaderLog.Size = new System.Drawing.Size(605, 155);
-            this.uxHeaderLog.TabIndex = 11;
-            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.8B NS" +
-    " 28 Apr 21\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
-            this.uxToolTip.SetToolTip(this.uxHeaderLog, "This acts as both the log and header to the program. As you take actions in the p" +
-        "rogram, this will be updated, and when you exit the program, any text here will " +
-        "be exported to an external file.");
-            // 
             // View
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -495,7 +495,7 @@ namespace ImageJImporter
             this.MainMenuStrip = this.uxMainMenuToolStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "View";
-            this.Text = "NS ImageJ Data 28 Apr 21 v2.8.1";
+            this.Text = "NS ImageJ Data 7 May 21 v2.8.1B";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
             this.Load += new System.EventHandler(this.OpenForm);
             this.uxMainMenuToolStrip.ResumeLayout(false);
