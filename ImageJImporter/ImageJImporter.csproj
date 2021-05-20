@@ -69,6 +69,7 @@
     <Compile Include="LevelPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="LogManager.cs" />
     <Compile Include="Row.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="DelegateDefinitions.cs" />
