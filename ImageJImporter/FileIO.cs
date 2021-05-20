@@ -315,8 +315,12 @@ namespace ImageJImporter
             //save our new file location for the log to a variable
             string newFileLocation = newDirectory + sb.ToString() + ".txt";
 
+            bool foundFile = File.Exists(newFileLocation);
             //make the file if it doesn't exist
-            if (!File.Exists(newFileLocation)) File.Create(newFileLocation).Close();
+            if (!foundFile)
+            {
+                File.Create(newFileLocation).Close();
+            }//end if the file does not exist
 
             //start writing the lines to the file
             using (StreamWriter scribe = File.AppendText(newFileLocation))
