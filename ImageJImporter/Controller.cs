@@ -71,6 +71,8 @@ namespace ImageJImporter
         /// </summary>
         private LevelInformation allLevelInformation = new LevelInformation();
 
+        private LogManager logManager;
+
         /// <summary>
         /// this is the standard constructor for this class. It requires a FileIO
         /// object, which it calls File IO functions from. In order to avoid accidental
@@ -81,6 +83,7 @@ namespace ImageJImporter
         public Controller(FileIO fileIO)
         {
             this.fileIO = new FileIO(fileIO);
+            this.logManager = new LogManager(fileIO.GenerateLogDirectory());
         }//end constructor
 
         public void GetLevelInfoFromView(LevelInformation levels)
@@ -138,7 +141,7 @@ namespace ImageJImporter
                         "Grid Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     //append short error message to log
                     AppendToHeaderLog("An attempt to display multiple grids was made, but some of" +
-                        "them failed to be properly displayed.");
+                        "them failed to be properly displayed.\n");
                 }//end if we had an error
                 else
                 {
@@ -147,11 +150,16 @@ namespace ImageJImporter
                     internalGrids = grids;
 
                     //update log
+                    string[] tempFilenames = new string[grids.Count];
                     for (int i = 0; i < grids.Count; i++)
                     {
                         AppendToHeaderLog($"Loaded {BuildFileMessage(grids[i].Filename, grids[i].Rows)}");
                         AppendShortSummaryToLog(grids[i].Filename, grids[i], this.allLevelInformation);
+                        tempFilenames[i] = grids[i].Filename;
                     }//end looping over all the grids
+                    AppendToHeaderLog("\n");
+                    //generate an array of filenames
+                    AppendLongSummaryToInternalLog(tempFilenames, grids, grids.Count, allLevelInformation);
                 }//end else we're all clear
             }//end if the filename isn't empty
             //if the filename was empty, don't do anything
@@ -169,7 +177,7 @@ namespace ImageJImporter
 
                 //update log
                 AppendToHeaderLog($"Successfully saved {internalGrids[index].Count}" +
-                    $" rows to \"{fileIO.mostRecentAccessedFile}\"");
+                    $" rows to \"{fileIO.mostRecentAccessedFile}\"\n");
             }//end if a file is currently loaded
             else
             {
@@ -194,7 +202,7 @@ namespace ImageJImporter
 
                     //update log
                     AppendToHeaderLog($"Successfully saved {internalGrids[index].Count}" +
-                        $" rows to \"{newFileNames[0]}\"");
+                        $" rows to \"{newFileNames[0]}\"\n");
                 }//end if we have a file
                 //if the filename was empty, we don't want to do anything
             }//end if there's currently a file loaded
@@ -223,7 +231,7 @@ namespace ImageJImporter
             closeSeedList();
 
             //update log
-            AppendToHeaderLog($"Successfully closed \"{tempFileNameRef}\"");
+            AppendToHeaderLog($"Successfully closed \"{tempFileNameRef}\"\n");
         }//end CloseCurrentFile()
 
         /// <summary>
@@ -308,14 +316,14 @@ namespace ImageJImporter
                     //update log so user knows save operation was successful
                     AppendToHeaderLog($"Successfully saved {processedRowIndexPairs.Count}" +
                         $" rows to internal reference list. To update file, select" +
-                        $" option to save data to a file.");
+                        $" option to save data to a file.\n");
                 }//end if we succeeded
                 else
                 {
                     //tell the user that something went wrong
                     showMessage("The operation to update the displayed grid has failed."
                         , "Operation Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AppendToHeaderLog("Failed to update grid display after successfully processing all rows.");
+                    AppendToHeaderLog("Failed to update grid display after successfully processing all rows.\n");
                 }//end else we failed somehow
             }//end trying to process all row strings
             catch
@@ -327,7 +335,7 @@ namespace ImageJImporter
 
                 //update log so user has record of failing to save seed data
                 AppendToHeaderLog($"Row Data" +
-                    $" Save Operation Failed.");
+                    $" Save Operation Failed.\n");
             }//end catching row string processing errors
         }//end SaveRowData(rowIndexPairs)
 
@@ -395,7 +403,8 @@ namespace ImageJImporter
                         AppendToHeaderLog("A configuration file was found, but none of the files " +
                             "were valid");
                 }//end looping over all the filenames
-                
+                AppendToHeaderLog("\n");
+                AppendLongSummaryToInternalLog(defaultFileNames, internalGrids, defaultFileNames.Length, tempLevelsRef);
             }//end if we successfully found a config file
             else
             {
@@ -403,7 +412,7 @@ namespace ImageJImporter
                 allLevelInformation = LevelInformation.DefaultLevels;
                 allLevelInformation.PropertyToTest = "Chalk";
                 updateLevelInformation(allLevelInformation);
-                AppendToHeaderLog("No Configuration File Found. Loading Defaults.");
+                AppendToHeaderLog("No Configuration File Found. Loading Defaults.\n");
             }//end else we didn't find a config file
         }//end OpenView()
 
@@ -469,14 +478,24 @@ namespace ImageJImporter
         /// <param name="lines">the lines to save to the log</param>
         public void SaveLogToFile(string[] lines)
         {
-            //tell the fileIO to save the lines to the monthly log file
-            fileIO.SaveLinesToLog(lines);
+            ////tell the fileIO to save the lines to the monthly log file
+            //fileIO.SaveLinesToLog(lines);
+            //tell the LOGmANAGER to save the lines to the monthly log fileS
+            StringBuilder lineAppender = new StringBuilder();
+            foreach(string line in lines)
+            {
+                lineAppender.Append($"{line}\n");
+            }//end looping over each line
+            logManager.AppendLog1(lineAppender.ToString());
+            logManager.WriteToLogs();
         }//end SaveLogToFile(lines)
 
         public SendString appendTextLog;
         public void AppendToHeaderLog(string text)
         {
             appendTextLog(text);
+            //logManager.AppendLog1("\n");
+            //logManager.AppendLog1(text);
         }//end AppendToHeaderLog(text)
 
         /// <summary>
@@ -491,19 +510,94 @@ namespace ImageJImporter
             AppendToHeaderLog(FileIO.FileLevelsProcessedToOneLine(filename, grid, levels));
         }//end AppendShortSummaryToLog(filename, grid, levels)
 
+        ///// <summary>
+        ///// Appends the short format summary information for a particular file
+        ///// to the log. 
+        ///// </summary>
+        ///// <param name="filenames">the file the data came from</param>
+        ///// <param name="grids">the data from the file</param>
+        ///// <param name="levels">the object which tells us how to categorize data</param>
+        //private void AppendShortSummaryToLog(List<Grid> grids, LevelInformation levels)
+        //{
+        //    for (int i = 0; i < grids.Count; i++)
+        //    {
+        //        AppendToHeaderLog(FileIO.FileLevelsProcessedToOneLine(grids[i].Filename, grids[i], levels));
+        //    }//end looping over all the grids and files
+        //}//end AppendShortSummaryToLog(filename, grid, levels)
+
         /// <summary>
-        /// Appends the short format summary information for a particular file
-        /// to the log. 
+        /// Appends a summary to the log managers second line set
         /// </summary>
-        /// <param name="filenames">the file the data came from</param>
-        /// <param name="grids">the data from the file</param>
-        /// <param name="levels">the object which tells us how to categorize data</param>
-        private void AppendShortSummaryToLog(List<Grid> grids, LevelInformation levels)
+        /// <param name="dataGrid">the grid of data</param>
+        /// <param name="levels">the level configuration settings</param>
+        /// <param name="filename">The name of this file</param>
+        /// <param name="gridCount">The number of grids being processed at once</param>
+        private void AppendLongSummaryToInternalLog(string[] filenames, List<Grid> dataGrids, int gridCount, LevelInformation levels)
         {
-            for(int i = 0; i < grids.Count; i++)
+            //initialize the strinbuilder for building the log message
+            StringBuilder logBuilder = new StringBuilder();
+
+            ////add a couple new lines for the sake of readability
+            //logBuilder.Append("\n\n");
+
+            //get a list of the filenames
+            StringBuilder fileLister = new StringBuilder();
+            foreach(string filename in filenames)
             {
-                AppendToHeaderLog(FileIO.FileLevelsProcessedToOneLine(grids[i].Filename, grids[i], levels));
-            }//end looping over all the grids and files
-        }//end AppendShortSummaryToLog(filename, grid, levels)
+                fileLister.Append($"{Path.GetFileName(filename)}, ");
+            }
+            fileLister.Length -= 2;
+
+            //add filenames, date, and grid number
+            logBuilder.Append($"{DateTime.Now:D}\t{gridCount}-Grids\t{fileLister}\n");
+
+            foreach(Grid dataGrid in dataGrids)
+            {
+                //figure out the number of each of the levels for this grid
+                List<int> counters = new List<int>(levels.Count);
+                foreach (LevelInformation.Level level in levels.Levels)
+                {
+                    counters.Add(0);
+                }//end initializing list of counters
+                 //count up all the levels
+                int nonFlagCount = 0;
+                foreach (Cell cell in dataGrid.Cells)
+                {
+                    //find out what level the cell is in
+                    Tuple<string, int> levelresult = levels.FindLevel((decimal)cell.GetType().GetProperty(levels.PropertyToTest).GetValue(cell));
+                    //increment the corresponding counter
+                    counters[levelresult.Item2]++;
+                    //increment nonFLagCount
+                    if (cell.IsFullCell && !cell.IsEmptyCell)
+                    {
+                        nonFlagCount++;
+                    }//end if cell 
+                }//end looping over cells in grid to add levels
+
+                //print out raw numbers for each level to log
+                for (int i = 0; i < counters.Count; i++)
+                {
+                    logBuilder.Append($"{levels.Levels[i].LevelName}={counters[i]}\t");
+                }//end looping for each level in the levels info
+                 //add total number of levelled cells
+                logBuilder.Append($"NonFlagTotal={nonFlagCount}\t\t");
+
+                //print out percentages for each level
+                decimal totalPercentage = 0;
+                for (int i = 0; i < counters.Count; i++)
+                {
+                    decimal percentForThisLevel = (decimal)counters[i] / (decimal)nonFlagCount;
+                    totalPercentage += percentForThisLevel;
+                    logBuilder.Append($"{levels.Levels[i].LevelName}={percentForThisLevel:N1}%\t");
+                }//end looping for each level in the levels info
+                logBuilder.Append("\n");
+            }//end looping over each grid
+
+            //logBuilder.Append("\n");
+            //and that's it, now we add this to the log manager
+
+            //go ahead and add our stuff to the log manager
+            logManager.AppendLog2(logBuilder.ToString());
+        }//end AppendKigSummaryToInternalLog()
     }//end class
 }//end namespace

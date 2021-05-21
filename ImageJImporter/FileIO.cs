@@ -299,18 +299,12 @@ namespace ImageJImporter
         /// <param name="lines">the lines from the log to save</param>
         public void SaveLinesToLog(string[] lines)
         {
-            //try and figure out the directory out config is in
-            string configDirectory = Path.GetDirectoryName(configFileAbsolutePath);
+            //get that directory location
+            string newDirectory = GenerateLogDirectory();
 
             //figure out what our log file for this month is called
             StringBuilder sb = new StringBuilder();
             sb.Append($"{DateTime.Now.ToString("MMMM")}-Monthly-ImageJDataProcessing-LogFile");
-
-            //try and do a new folder with the log file in it
-            string newDirectory = $"{configDirectory}{Path.DirectorySeparatorChar}{logFileFolderName}{Path.DirectorySeparatorChar}";
-
-            //ensure that our folder exists
-            Directory.CreateDirectory(newDirectory);
 
             //save our new file location for the log to a variable
             string newFileLocation = newDirectory + sb.ToString() + ".txt";
@@ -334,6 +328,25 @@ namespace ImageJImporter
         }//end SaveLinesToLog(lines)
 
         /// <summary>
+        /// Generates a string for the directory for the log files
+        /// </summary>
+        /// <returns>returns that string</returns>
+        public string GenerateLogDirectory()
+        {
+            //try and figure out the directory out config is in
+            string configDirectory = configFileAbsolutePath != "" ? Path.GetDirectoryName(configFileAbsolutePath): Directory.GetCurrentDirectory();
+
+            //try and do a new folder with the log file in it
+            string newDirectory = $"{configDirectory}{Path.DirectorySeparatorChar}{logFileFolderName}{Path.DirectorySeparatorChar}";
+
+            //ensure that our folder exists
+            Directory.CreateDirectory(newDirectory);
+
+            //return that directory name
+            return newDirectory;
+        }//end GenerateLogDirectory()
+
+        /// <summary>
         /// Format all the data for one file into a one-line summary based on the 
         /// provided level information. It should be noted that counts ignore
         /// cells which are not both full and non-empty, as does seed total.
@@ -353,8 +366,8 @@ namespace ImageJImporter
             //add the fileID
             summaryBuilder.Append($"  {Path.GetFileName(filename)}  ");
 
-            //add the timestamp
-            summaryBuilder.Append(DateTime.Now.ToString("f"));
+            ////add the timestamp
+            //summaryBuilder.Append(DateTime.Now.ToString("f"));
 
             //find sums for each level
             List<int> counters = new List<int>(levels.Count);
