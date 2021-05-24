@@ -537,10 +537,10 @@ namespace ImageJImporter
             StringBuilder sumLogBuilder = new StringBuilder();
 
             //get a list of the filenames
-            StringBuilder fileLister = new StringBuilder();
+            StringBuilder fileLister = new StringBuilder("\n");
             foreach(string filename in filenames)
             {
-                fileLister.Append($"{Path.GetFileName(filename)}, ");
+                fileLister.Append($"{TrimFileName(Path.GetFileName(filename))}, ");
             }
             fileLister.Length -= 2;
 
@@ -574,7 +574,7 @@ namespace ImageJImporter
                 }//end looping over cells in grid to add levels
 
                 //print the label for this grid
-                gridLogBuilder.Append($"{Path.GetFileName(filenames[i])}\n");
+                gridLogBuilder.Append($"{TrimFileName(Path.GetFileName(filenames[i]))}\n");
 
                 //print out raw numbers for each level to log
                 for (int j = 0; j < perGridCounters.Length; j++)
@@ -622,6 +622,34 @@ namespace ImageJImporter
             //go ahead and add our stuff to the log manager
             gridLog.AppendLog(gridLogBuilder.ToString());
             sumLog.AppendLog($"{sumLogBuilder}{lineTotalBuilder}{linePercentBuilder}");
-        }//end AppendKigSummaryToInternalLog()
+        }//end AppendLongSummaryToInternalLog()
+
+        /// <summary>
+        /// Trims away the ImageJ and file-extension from a filename with the
+        /// ImageJ-FGIS22-C-11-1-1.txt format
+        /// </summary>
+        /// <param name="filename">the name of the file you want to trim</param>
+        /// <returns>a trimmed filename, great for being displayed as text</returns>
+        private string TrimFileName(string filename)
+        {
+            StringBuilder outputBuilder = new StringBuilder();
+
+            if (!filename.Contains("ImageJ-") || !filename.Contains(".txt"))
+                return filename;
+
+            bool foundFirstHyphen = false;
+            foreach(char character in filename)
+            {
+                if (!foundFirstHyphen)
+                {
+                    if (character == '-')
+                        foundFirstHyphen = true;
+                }//end if we're still cutting ImageJ- out
+                else if (character == '.') break;
+                else outputBuilder.Append(character);
+            }//end looping over each character in the filename
+
+            return outputBuilder.ToString();
+        }//end TrimFileName(filename)
     }//end class
 }//end namespace
