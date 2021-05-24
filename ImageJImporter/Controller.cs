@@ -620,7 +620,7 @@ namespace ImageJImporter
                 linePercentBuilder.Append($"{levels[i].LevelName} = {percentForThisLevel:N1}%\t");
             }//end populating sumLogBuilder with info for each level
             //get total number and total percent to add to end
-            lineTotalBuilder.Append($"Total = {totalNonFlags} Non-Empty Cells\n");
+            lineTotalBuilder.Append($"Total = {totalNonFlags} Seeds\n");
             linePercentBuilder.Append($"Total = {totalPercents:N0}%\n");
 
             //go ahead and add our stuff to the log manager
