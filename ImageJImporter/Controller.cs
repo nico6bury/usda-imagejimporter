@@ -545,20 +545,20 @@ namespace ImageJImporter
             fileLister.Length -= 2;
 
             //add filenames, date, and grid number
-            string setHeader = $"{DateTime.Now:D}\t{gridCount}-Grids\t{fileLister}\n";
-            gridLogBuilder.Append(setHeader);
-            sumLogBuilder.Append(setHeader);
+            string setHeader = $"{DateTime.Now:F}\t{gridCount}-Grids";
+            gridLogBuilder.Append($"{setHeader}\n");
+            sumLogBuilder.Append($"{setHeader}\t{fileLister}\n");
 
             //each index should be 0 by default
             int[] allGridCounters = new int[levels.Count];
             int totalNonFlags = 0;
-            foreach(Grid dataGrid in dataGrids)
+            for(int i = 0; i < dataGrids.Count; i++)
             {
                 //figure out the number of each of the levels for this grid
                 int[] perGridCounters = new int[levels.Count];
                  //count up all the levels
                 int gridNonFlags = 0;
-                foreach (Cell cell in dataGrid.Cells)
+                foreach (Cell cell in dataGrids[i].Cells)
                 {
                     //find out what level the cell is in
                     Tuple<string, int> levelresult = levels.FindLevel((decimal)cell.GetType().GetProperty(levels.PropertyToTest).GetValue(cell));
@@ -573,21 +573,24 @@ namespace ImageJImporter
                     }//end if cell 
                 }//end looping over cells in grid to add levels
 
+                //print the label for this grid
+                gridLogBuilder.Append($"{Path.GetFileName(filenames[i])}\n");
+
                 //print out raw numbers for each level to log
-                for (int i = 0; i < perGridCounters.Length; i++)
+                for (int j = 0; j < perGridCounters.Length; j++)
                 {
-                    gridLogBuilder.Append($"{levels.Levels[i].LevelName} = {perGridCounters[i]}\t");
+                    gridLogBuilder.Append($"{levels.Levels[j].LevelName} = {perGridCounters[j]}\t");
                 }//end looping for each level in the levels info
                  //add total number of levelled cells
                 gridLogBuilder.Append($"Total = {gridNonFlags}\n");
 
                 //print out percentages for each level
                 decimal totalPercentage = 0;
-                for (int i = 0; i < perGridCounters.Length; i++)
+                for (int k = 0; k < perGridCounters.Length; k++)
                 {
                     decimal percentForThisLevel = (decimal)perGridCounters[i] / (decimal)gridNonFlags * 100;
                     totalPercentage += percentForThisLevel;
-                    gridLogBuilder.Append($"{levels.Levels[i].LevelName} = {percentForThisLevel:N1}%\t");
+                    gridLogBuilder.Append($"{levels.Levels[k].LevelName} = {percentForThisLevel:N1}%\t");
                 }//end looping for each level in the levels info
                 gridLogBuilder.Append($"Total = {totalPercentage:0}%\n");
             }//end looping over each grid to get stats and populate the gridLogBuilder
