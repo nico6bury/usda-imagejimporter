@@ -588,8 +588,12 @@ namespace ImageJImporter
                 decimal totalPercentage = 0;
                 for (int k = 0; k < perGridCounters.Length; k++)
                 {
-                    decimal percentForThisLevel = (decimal)perGridCounters[i] / (decimal)gridNonFlags * 100;
-                    totalPercentage += percentForThisLevel;
+                    decimal percentForThisLevel = (decimal)perGridCounters[k] / (decimal)gridNonFlags * 100;
+                    
+                    //make sure not to add non-data levels to percent total
+                    if(levels[k].LevelStart > 0)
+                        totalPercentage += percentForThisLevel;
+
                     gridLogBuilder.Append($"{levels.Levels[k].LevelName} = {percentForThisLevel:N1}%\t");
                 }//end looping for each level in the levels info
                 gridLogBuilder.Append($"Total = {totalPercentage:0}%\n");
