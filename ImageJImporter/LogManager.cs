@@ -34,20 +34,7 @@ namespace ImageJImporter
             }//end getter
         }//end Lines1
 
-        /// <summary>
-        /// internal storage for lines from log
-        /// </summary>
-        protected List<string> lines2 = new List<string>();
-        /// <summary>
-        /// the lines which are currently stored in this object
-        /// </summary>
-        public virtual string[] Lines2
-        {
-            get
-            {
-                return lines2.ToArray();
-            }//end getter
-        }//end Lines2
+        string Filename { get; set; }
 
         /// <summary>
         /// The directory which this object is currently outputting log files to
@@ -59,16 +46,19 @@ namespace ImageJImporter
         /// </summary>
         /// <param name="logDirectory">The directory in which log files should
         /// be exported to</param>
-        public LogManager(string logDirectory)
+        /// <param name="logFilename">The name of the file which this log will
+        /// be written to.</param>
+        public LogManager(string logDirectory, string logFilename)
         {
             this.LogDirectory = logDirectory;
+            this.Filename = logFilename;
         }//end 1-arg constructor
 
         /// <summary>
         /// Appends a single line of characters to the internal listing
         /// </summary>
         /// <param name="line">the line to add to the log</param>
-        public virtual void AppendLog1(string line)
+        public virtual void AppendLog(string line)
         {
             this.lines1.Add(line);
         }//end AppendLog(line)
@@ -77,29 +67,10 @@ namespace ImageJImporter
         /// Appends multiple lines of characters to the internal listing
         /// </summary>
         /// <param name="lines">the lines to add to the log</param>
-        public virtual void AppendLog1(IEnumerable<string> lines)
+        public virtual void AppendLog(IEnumerable<string> lines)
         {
             foreach (string line in lines)
                 this.lines1.Add(line);
-        }//end AppendLog(lines)
-
-        /// <summary>
-        /// Appends a single line of characters to the internal listing
-        /// </summary>
-        /// <param name="line">the line to add to the log</param>
-        public virtual void AppendLog2(string line)
-        {
-            this.lines2.Add(line);
-        }//end AppendLog(line)
-
-        /// <summary>
-        /// Appends multiple lines of characters to the internal listing
-        /// </summary>
-        /// <param name="lines">the lines to add to the log</param>
-        public virtual void AppendLog2(IEnumerable<string> lines)
-        {
-            foreach (string line in lines)
-                this.lines2.Add(line);
         }//end AppendLog(lines)
 
         /// <summary>
@@ -108,12 +79,12 @@ namespace ImageJImporter
         /// </summary>
         /// <returns>returns true if write was successful, false if any
         /// errors were encountered</returns>
-        public virtual bool WriteToLogs()
+        public virtual bool WriteToLog()
         {
             try
             {
                 //write to the first one
-                string firstFile = LogDirectory + Path.DirectorySeparatorChar + "HVAC - Grids - " + DateTime.Now.ToString("MMMM") + ".txt";
+                string firstFile = LogDirectory + Path.DirectorySeparatorChar + Filename;
                 if (!File.Exists(firstFile)) File.Create(firstFile).Close();
 
                 using(StreamWriter scribe = File.AppendText(firstFile))
@@ -122,18 +93,6 @@ namespace ImageJImporter
                     {
                         scribe.WriteLine(line);
                     }//end writing each line to the file
-                }//end use of scribe
-
-                //write to the second one
-                string secondFile = LogDirectory + Path.DirectorySeparatorChar + "HVAC - Sum - " + DateTime.Now.ToString("MMMM") + ".txt";
-                if (!File.Exists(secondFile)) File.Create(secondFile).Close();
-
-                using(StreamWriter scribe = File.AppendText(secondFile))
-                {
-                    foreach(string line in lines2)
-                    {
-                        scribe.WriteLine(line);
-                    }//ebd writing each line to the file
                 }//end use of scribe
 
                 return true;

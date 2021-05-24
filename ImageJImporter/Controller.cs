@@ -71,7 +71,9 @@ namespace ImageJImporter
         /// </summary>
         private LevelInformation allLevelInformation = new LevelInformation();
 
-        private LogManager logManager;
+        private LogManager generalLog;
+        private LogManager sumLog;
+        private LogManager gridLog;
 
         /// <summary>
         /// this is the standard constructor for this class. It requires a FileIO
@@ -83,7 +85,9 @@ namespace ImageJImporter
         public Controller(FileIO fileIO)
         {
             this.fileIO = new FileIO(fileIO);
-            this.logManager = new LogManager(fileIO.GenerateLogDirectory());
+            this.generalLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Log - {DateTime.Now:MMMM}.txt");
+            this.sumLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Sum - {DateTime.Now:MMMM}.txt");
+            this.gridLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Grids - {DateTime.Now:MMMM}.txt");
         }//end constructor
 
         public void GetLevelInfoFromView(LevelInformation levels)
@@ -478,24 +482,18 @@ namespace ImageJImporter
         /// <param name="lines">the lines to save to the log</param>
         public void SaveLogToFile(string[] lines)
         {
-            ////tell the fileIO to save the lines to the monthly log file
-            //fileIO.SaveLinesToLog(lines);
-            //tell the LOGmANAGER to save the lines to the monthly log fileS
-            StringBuilder lineAppender = new StringBuilder();
-            foreach(string line in lines)
-            {
-                lineAppender.Append($"{line}\n");
-            }//end looping over each line
-            logManager.AppendLog1(lineAppender.ToString());
-            logManager.WriteToLogs();
+            //save general log, then have all three write to files
+            generalLog.AppendLog(lines);
+
+            generalLog.WriteToLog();
+            gridLog.WriteToLog();
+            sumLog.WriteToLog();
         }//end SaveLogToFile(lines)
 
         public SendString appendTextLog;
         public void AppendToHeaderLog(string text)
         {
             appendTextLog(text);
-            //logManager.AppendLog1("\n");
-            //logManager.AppendLog1(text);
         }//end AppendToHeaderLog(text)
 
         /// <summary>
@@ -535,10 +533,8 @@ namespace ImageJImporter
         private void AppendLongSummaryToInternalLog(string[] filenames, List<Grid> dataGrids, int gridCount, LevelInformation levels)
         {
             //initialize the strinbuilder for building the log message
-            StringBuilder logBuilder = new StringBuilder();
-
-            ////add a couple new lines for the sake of readability
-            //logBuilder.Append("\n\n");
+            StringBuilder gridLogBuilder = new StringBuilder();
+            StringBuilder sumLogBuilder = new StringBuilder();
 
             //get a list of the filenames
             StringBuilder fileLister = new StringBuilder();
@@ -549,55 +545,80 @@ namespace ImageJImporter
             fileLister.Length -= 2;
 
             //add filenames, date, and grid number
-            logBuilder.Append($"{DateTime.Now:D}\t{gridCount}-Grids\t{fileLister}\n");
+            string setHeader = $"{DateTime.Now:D}\t{gridCount}-Grids\t{fileLister}\n";
+            gridLogBuilder.Append(setHeader);
+            sumLogBuilder.Append(setHeader);
 
+            //each index should be 0 by default
+            int[] allGridCounters = new int[levels.Count];
+            int totalNonFlags = 0;
             foreach(Grid dataGrid in dataGrids)
             {
                 //figure out the number of each of the levels for this grid
-                List<int> counters = new List<int>(levels.Count);
-                foreach (LevelInformation.Level level in levels.Levels)
-                {
-                    counters.Add(0);
-                }//end initializing list of counters
+                int[] perGridCounters = new int[levels.Count];
                  //count up all the levels
-                int nonFlagCount = 0;
+                int gridNonFlags = 0;
                 foreach (Cell cell in dataGrid.Cells)
                 {
                     //find out what level the cell is in
                     Tuple<string, int> levelresult = levels.FindLevel((decimal)cell.GetType().GetProperty(levels.PropertyToTest).GetValue(cell));
                     //increment the corresponding counter
-                    counters[levelresult.Item2]++;
+                    perGridCounters[levelresult.Item2]++;
+                    allGridCounters[levelresult.Item2]++;
                     //increment nonFLagCount
                     if (cell.IsFullCell && !cell.IsEmptyCell)
                     {
-                        nonFlagCount++;
+                        gridNonFlags++;
+                        totalNonFlags++;
                     }//end if cell 
                 }//end looping over cells in grid to add levels
 
                 //print out raw numbers for each level to log
-                for (int i = 0; i < counters.Count; i++)
+                for (int i = 0; i < perGridCounters.Length; i++)
                 {
-                    logBuilder.Append($"{levels.Levels[i].LevelName}={counters[i]}\t");
+                    gridLogBuilder.Append($"{levels.Levels[i].LevelName} = {perGridCounters[i]}\t");
                 }//end looping for each level in the levels info
                  //add total number of levelled cells
-                logBuilder.Append($"NonFlagTotal={nonFlagCount}\t\t");
+                gridLogBuilder.Append($"Total = {gridNonFlags}\n");
 
                 //print out percentages for each level
                 decimal totalPercentage = 0;
-                for (int i = 0; i < counters.Count; i++)
+                for (int i = 0; i < perGridCounters.Length; i++)
                 {
-                    decimal percentForThisLevel = (decimal)counters[i] / (decimal)nonFlagCount;
+                    decimal percentForThisLevel = (decimal)perGridCounters[i] / (decimal)gridNonFlags * 100;
                     totalPercentage += percentForThisLevel;
-                    logBuilder.Append($"{levels.Levels[i].LevelName}={percentForThisLevel:N1}%\t");
+                    gridLogBuilder.Append($"{levels.Levels[i].LevelName} = {percentForThisLevel:N1}%\t");
                 }//end looping for each level in the levels info
-                logBuilder.Append("\n");
-            }//end looping over each grid
+                gridLogBuilder.Append($"Total = {totalPercentage:0}%\n");
+            }//end looping over each grid to get stats and populate the gridLogBuilder
 
-            //logBuilder.Append("\n");
-            //and that's it, now we add this to the log manager
+            //go ahead and populate the sumLogBuilder
+            //initialize two string builders for separate lines
+            StringBuilder lineTotalBuilder = new StringBuilder();
+            StringBuilder linePercentBuilder = new StringBuilder();
+            //counter for total percentages
+            decimal totalPercents = 0;
+            for(int i = 0; i < levels.Count; i++)
+            {
+                //we'll just skip levels starting at 0 (that weeds out Lvl0)
+                if (levels[i].LevelStart <= 0) continue;
+
+                //get the total for this level
+                int countForThisLevel = allGridCounters[i];
+                lineTotalBuilder.Append($"{levels[i].LevelName} = {countForThisLevel}\t");
+
+                //get the percent for this level
+                decimal percentForThisLevel = (decimal)countForThisLevel / (decimal)totalNonFlags * 100;
+                totalPercents += percentForThisLevel;
+                linePercentBuilder.Append($"{levels[i].LevelName} = {percentForThisLevel:N1}%\t");
+            }//end populating sumLogBuilder with info for each level
+            //get total number and total percent to add to end
+            lineTotalBuilder.Append($"Total = {totalNonFlags} Non-Empty Cells\n");
+            linePercentBuilder.Append($"Total = {totalPercents:N0}%\n");
 
             //go ahead and add our stuff to the log manager
-            logManager.AppendLog2(logBuilder.ToString());
+            gridLog.AppendLog(gridLogBuilder.ToString());
+            sumLog.AppendLog($"{sumLogBuilder}{lineTotalBuilder}{linePercentBuilder}\n");
         }//end AppendKigSummaryToInternalLog()
     }//end class
 }//end namespace
