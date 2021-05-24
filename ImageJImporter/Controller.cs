@@ -618,7 +618,7 @@ namespace ImageJImporter
 
             //go ahead and add our stuff to the log manager
             gridLog.AppendLog(gridLogBuilder.ToString());
-            sumLog.AppendLog($"{sumLogBuilder}{lineTotalBuilder}{linePercentBuilder}\n");
+            sumLog.AppendLog($"{sumLogBuilder}{lineTotalBuilder}{linePercentBuilder}");
         }//end AppendKigSummaryToInternalLog()
     }//end class
 }//end namespace
