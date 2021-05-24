@@ -105,6 +105,13 @@ namespace ImageJImporter
                 "also assuming that the program exits normally (ie doesn\'t crash). You can change the thresholds for " +
                 "any of the levels, remove or add new levels, change the color of each level, and also change their name. " +
                 "Upon exiting the dialogue box for doing these things, all levels will be recalculated.\n\n");
+            sb.Append("As an additional tip for configuring levels, any level with a lower bound which is less than or" +
+                " equal to 0 is considered to not actually hold data, so they're often not including in logs or not" +
+                " displayed by default view settings. You can use this to your advantage by creating multiple non-data levels, such " +
+                "as -10 -> -1 for new rows flags and -1 -> 0 for empty cells, as new row flags are internally set to have " +
+                "a Chalk of -2, and empty cells are internally set to have a Chalk of -0.001.\n\n");
+            sb.Append("I suppose it should also be noted for color levels that the lower bound is inclusive, and the " +
+                "upper bound is exclusive.\n\n");
             sb.Append("The other two currently available options simply change the positioning of things and are not " +
                 "saved to any external file for persistence between sessions.\n");
             sb.Append("The \"Toggle List Display\" option toggles whether or not the list of rows is displayed. When it it " +
@@ -125,8 +132,13 @@ namespace ImageJImporter
             StringBuilder sb = new StringBuilder();
             sb.Append("The log at the top right of the program window stores summary information on what happens in each session as it happens.");
             sb.Append("All the lines in the log are stored to monthly summary logs in folders in the same directory as the executable. These " +
-                "are present for data keeping purposes and general ease of use. At the moment, it's possible to edit the text in the log in case " +
-                "you\'d like to add extra messages. This, along with how log files are stored, may change in the future.");
+                "are present for data keeping purposes and general ease of use. There are three types of logs, Sum, Grids, and Log.\n\n");
+            sb.Append("The Sum file only displays the totals of various levels (both # and %) for all of the files loaded at a particular time.\n\n");
+            sb.Append("The Grids file contains similar information to the sum file, but instead of each grid being totalled up, you get to see " +
+                "the stats for each individual grid.\n\n");
+            sb.Append("The Log file contains the most information, but it\'s also the least organized. It's simply a copy of the text in the " +
+                "header log when the program closes. It's possible to edit this while using the program, as any notes left in the header log " +
+                "will be saved to this log.");
             MessageBox.Show(sb.ToString(), "What the Log Does", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }//end AskLogFunction()
 
