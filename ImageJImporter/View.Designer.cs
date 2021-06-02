@@ -109,7 +109,7 @@ namespace ImageJImporter
             // uxMenuOpenFile
             // 
             this.uxMenuOpenFile.Name = "uxMenuOpenFile";
-            this.uxMenuOpenFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuOpenFile.Size = new System.Drawing.Size(121, 22);
             this.uxMenuOpenFile.Text = "Open";
             this.uxMenuOpenFile.ToolTipText = "Allows you to load a file into the program. It\'s meant to use .txt files, so I\'m " +
     "not sure what would happen if you imported other file types.";
@@ -119,7 +119,7 @@ namespace ImageJImporter
             // 
             this.uxMenuSaveFile.Enabled = false;
             this.uxMenuSaveFile.Name = "uxMenuSaveFile";
-            this.uxMenuSaveFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuSaveFile.Size = new System.Drawing.Size(121, 22);
             this.uxMenuSaveFile.Text = "Save";
             this.uxMenuSaveFile.ToolTipText = "Allows you to save the current data back into the original file you opened.\r\nCurr" +
     "ently Unavailable.";
@@ -129,7 +129,7 @@ namespace ImageJImporter
             // 
             this.uxMenuSaveFileAs.Enabled = false;
             this.uxMenuSaveFileAs.Name = "uxMenuSaveFileAs";
-            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(121, 22);
             this.uxMenuSaveFileAs.Text = "Save As";
             this.uxMenuSaveFileAs.ToolTipText = "Allows you to save the seed data you\'ve edited as a new .txt file with the same s" +
     "tructure as the original file.\r\nCurrently Unavailable.";
@@ -138,7 +138,7 @@ namespace ImageJImporter
             // uxMenuCloseFile
             // 
             this.uxMenuCloseFile.Name = "uxMenuCloseFile";
-            this.uxMenuCloseFile.Size = new System.Drawing.Size(180, 22);
+            this.uxMenuCloseFile.Size = new System.Drawing.Size(121, 22);
             this.uxMenuCloseFile.Text = "Close";
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
@@ -263,7 +263,7 @@ namespace ImageJImporter
             this.uxHeaderLog.Name = "uxHeaderLog";
             this.uxHeaderLog.Size = new System.Drawing.Size(605, 155);
             this.uxHeaderLog.TabIndex = 11;
-            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.9.1B " +
+            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.9.2B " +
     "NS 24 May 21\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This acts as both the log and header to the program. As you take actions in the p" +
         "rogram, this will be updated, and when you exit the program, any text here will " +
@@ -495,7 +495,7 @@ namespace ImageJImporter
             this.MainMenuStrip = this.uxMainMenuToolStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "View";
-            this.Text = "NS ImageJ Data 24 May v2.9.1B";
+            this.Text = "NS ImageJ Data 24 May v2.9.2B";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
             this.Load += new System.EventHandler(this.OpenForm);
             this.uxMainMenuToolStrip.ResumeLayout(false);

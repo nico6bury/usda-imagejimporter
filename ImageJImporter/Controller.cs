@@ -163,7 +163,8 @@ namespace ImageJImporter
                     }//end looping over all the grids
                     AppendToHeaderLog("\n");
                     //generate an array of filenames
-                    AppendLongSummaryToInternalLog(tempFilenames, grids, grids.Count, allLevelInformation);
+                    if(tempFilenames.Length > 0)
+                        AppendLongSummaryToInternalLog(tempFilenames, grids, allLevelInformation);
                 }//end else we're all clear
             }//end if the filename isn't empty
             //if the filename was empty, don't do anything
@@ -408,7 +409,8 @@ namespace ImageJImporter
                             "were valid");
                 }//end looping over all the filenames
                 AppendToHeaderLog("\n");
-                AppendLongSummaryToInternalLog(defaultFileNames, internalGrids, defaultFileNames.Length, tempLevelsRef);
+                if(defaultFileNames.Length > 0)
+                    AppendLongSummaryToInternalLog(defaultFileNames, internalGrids, tempLevelsRef);
             }//end if we successfully found a config file
             else
             {
@@ -524,13 +526,14 @@ namespace ImageJImporter
         //}//end AppendShortSummaryToLog(filename, grid, levels)
 
         /// <summary>
-        /// Appends a summary to the log managers second line set
+        /// Appends a summary to the log managers second line set.
+        /// An ArgumentOutOfRangeException can be thrown if there are no filenames.
         /// </summary>
-        /// <param name="dataGrid">the grid of data</param>
+        /// <param name="dataGrids">the grids of data</param>
         /// <param name="levels">the level configuration settings</param>
-        /// <param name="filename">The name of this file</param>
-        /// <param name="gridCount">The number of grids being processed at once</param>
-        private void AppendLongSummaryToInternalLog(string[] filenames, List<Grid> dataGrids, int gridCount, LevelInformation levels)
+        /// <param name="filenames">The names of the files we're getting the grids from</param>
+        /// <exception cref="ArgumentOutOfRangeException">Can be thrown if there are no files to process</exception>
+        private void AppendLongSummaryToInternalLog(string[] filenames, List<Grid> dataGrids, LevelInformation levels)
         {
             //initialize the strinbuilder for building the log message
             StringBuilder gridLogBuilder = new StringBuilder();
@@ -545,7 +548,7 @@ namespace ImageJImporter
             fileLister.Length -= 2;
 
             //add filenames, date, and grid number
-            string setHeader = $"{DateTime.Now:F}\t{gridCount}-Grids";
+            string setHeader = $"{DateTime.Now:F}\t{dataGrids.Count}-Grids";
             gridLogBuilder.Append($"{setHeader}\n");
             sumLogBuilder.Append($"{setHeader}\t{fileLister}\n");
 
