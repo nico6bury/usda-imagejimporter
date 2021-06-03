@@ -60,7 +60,29 @@ namespace ImageJImporter
         /// <param name="line">the line to add to the log</param>
         public virtual void AppendLog(string line)
         {
-            this.lines1.Add(line);
+            //check for empty string line
+            if (String.IsNullOrEmpty(line))
+            {
+                lines1.Add("");
+                return;
+            }//end if we have a blank line
+
+            StringBuilder tempLineHolder = new StringBuilder();
+            foreach(char character in line)
+            {
+                if(character == '\n')
+                {
+                    lines1.Add(tempLineHolder.ToString());
+                    tempLineHolder.Clear();
+                }//end if we need to insert a new line here
+                else
+                {
+                    tempLineHolder.Append(character);
+                }//end else we just add the character to the string builder
+            }//end looping over all the characters in the line
+            //add any excess characters as well
+            if (tempLineHolder.Length > 0)
+                lines1.Add(tempLineHolder.ToString());
         }//end AppendLog(line)
 
         /// <summary>
@@ -70,7 +92,7 @@ namespace ImageJImporter
         public virtual void AppendLog(IEnumerable<string> lines)
         {
             foreach (string line in lines)
-                this.lines1.Add(line);
+                this.AppendLog(line);
         }//end AppendLog(lines)
 
         /// <summary>

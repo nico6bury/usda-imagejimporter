@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -105,7 +106,7 @@ namespace ImageJImporter
         /// to this file. If this parameter is null, then no information
         /// will be saved. This object also includes the property to test</param>
         /// <param name="lastFiles">The filenames to save to the config file</param>
-        public void SaveConfigFile(LevelInformation levelInformation, string[] lastFiles)
+        public void SaveConfigFile(LevelInformation levelInformation, string[] lastFiles, Row.RowFlagProps flagProps)
         {
             //creates config file. If it already exists, we overwrite it
             using (StreamWriter scribe = new StreamWriter(configFileAbsolutePath))
@@ -118,12 +119,19 @@ namespace ImageJImporter
                 }//end looping for each file in lastFiles
                 scribe.Write("\n");
 
+                //write row flag information
+                FieldInfo[] flagPropFields = flagProps.GetType().GetFields();
+                foreach(FieldInfo field in flagPropFields)
+                {
+                    scribe.Write($"RF1|{field.Name}*{field.GetValue(flagProps)}\n");
+                }//end looping over each field in flagProps
+
                 //write all the levelInformation
                 if(levelInformation != null)
                 {
-                    string propName = levelInformation.PropertyToTest;
-                    if (String.IsNullOrEmpty(propName)) propName = "Chalk";
-                    scribe.WriteLine($"LIE2|{nameof(levelInformation.PropertyToTest)}*{propName}");
+                    //string propName = levelInformation.PropertyToTest;
+                    //if (String.IsNullOrEmpty(propName)) propName = "Chalk";
+                    //scribe.WriteLine($"LIE2|{nameof(levelInformation.PropertyToTest)}*{propName}");
                     foreach(string line in levelInformation.MakeLinesToSaveToFile())
                     {
                         scribe.WriteLine(line);
@@ -138,12 +146,15 @@ namespace ImageJImporter
         /// <param name="levelInformation">The level information that was loaded from
         /// the configuration file</param>
         /// <param name="filesToOpen">the files which according to the config file, should be opened</param>
+        /// <param name="rowProps">an object holding information to set up row flags</param>
         /// <returns>returns whether a configuration file was successfully found</returns>
-        public bool LoadConfigFile(out LevelInformation levelInformation, out string[] filesToOpen)
+        public bool LoadConfigFile(out LevelInformation levelInformation,
+            out string[] filesToOpen, out Row.RowFlagProps rowProps)
         {
             //initialize levelInformation out parameter
             levelInformation = new LevelInformation();
             filesToOpen = new string[0];
+            rowProps = new Row.RowFlagProps();
 
             if (File.Exists(configFilename))
             {
@@ -167,6 +178,8 @@ namespace ImageJImporter
                 {
                     //get all the components for this line
                     string[] componentsFromThisLine = allLinesFromFile[i].Split('|');
+
+                    //start trying to figure out what to do with what we've got
                     if(componentsFromThisLine[0] == "LIE2" || componentsFromThisLine[0] == "LIE1")
                     {
                         string[] componentInfo = componentsFromThisLine[1].Split('*');
@@ -185,6 +198,16 @@ namespace ImageJImporter
                         string[] theLinesToOpen = componentsFromThisLine[1].Split(new char[] { '*' }, StringSplitOptions.RemoveEmptyEntries);
                         filesToOpen = theLinesToOpen;
                     }//end else if we have filename info to read
+                    else if(componentsFromThisLine[0] == "RF1")
+                    {
+                        //this array should hold name and value of field
+                        string[] componentInfo = componentsFromThisLine[1].Split('*');
+                        FieldInfo rowFlagField = rowProps.GetType().GetField(componentInfo[0]);
+                        if(rowFlagField != null)
+                        {
+                            rowFlagField.SetValue(rowProps, Convert.ToDecimal(componentInfo[1]));
+                        }//end if we found a matching field for this line
+                    }//end else if we have row flag information here
                     else
                     {
                         if (componentsFromThisLine[0] == "FN1")
@@ -401,7 +424,7 @@ namespace ImageJImporter
             }//end looping over counts of 
 
             //add total seed number
-            summaryBuilder.Append($", TotalSeeds:{nonFlagCount}");
+            summaryBuilder.Append($", TotalSeeds:{nonFlagCount}\n");
 
             return summaryBuilder.ToString();
         }//end FileLevelsProcessedToOneLine(grid, levels)
