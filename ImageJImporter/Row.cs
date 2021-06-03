@@ -18,6 +18,23 @@ namespace ImageJImporter
     /// </summary>
     public class Row
     {
+        /// <summary>
+        /// 0.01M
+        /// </summary>
+        public const decimal DefaultFlagTolerance = 0.01M;
+        /// <summary>
+        /// 121M
+        /// </summary>
+        public const decimal DefaultNewRowFlagValue = 121M;
+        /// <summary>
+        /// 81.7M
+        /// </summary>
+        public const decimal DefaultSeedStartFlagValue = 81.7M;
+        /// <summary>
+        /// 95.3M
+        /// </summary>
+        public const decimal DefaultSeedEndFlagValue = 95.3M;
+
         public int RowNum;
         public decimal Area;
         public decimal X;
@@ -37,6 +54,26 @@ namespace ImageJImporter
         /// </summary>
         public Cell CurrentCellOwner { get; set; } = Cell.BlankCell;
 
+        private static decimal flagTolerance = DefaultFlagTolerance;
+        /// <summary>
+        /// The tolerance for the various row flags.
+        /// Cannot be set to anything below zero, default is 0.01
+        /// </summary>
+        public static decimal FlagTolerance
+        {
+            get { return flagTolerance; }
+            set
+            {
+                if (value <= 0) flagTolerance = 0;
+                else flagTolerance = value;
+            }//end setter
+        }//end FlagTolerance
+
+        /// <summary>
+        /// The value which is checked against the Area of a row in order to find out
+        /// if that row is a flag for a new row of cells on the grid. This is 121 by default.
+        /// </summary>
+        public static decimal NewRowFlagValue { get; protected set; } = DefaultNewRowFlagValue;
         /// <summary>
         /// whether or not this row is a flag for starting a new row in the
         /// grid which the seeds sit in when they're scanned
@@ -45,11 +82,18 @@ namespace ImageJImporter
         {
             get
             {
-                if (Area == 121) return true;
+                if (Area >= NewRowFlagValue - flagTolerance
+                    && Area <= NewRowFlagValue + flagTolerance)
+                    return true;
                 else return false;
             }//end getter
         }//end IsNewRowFlag
 
+        /// <summary>
+        /// The value which is checked against the Area of a row in order to find out if that
+        /// row is a flag for the beginning of cell information. This is 81.7 by default.
+        /// </summary>
+        public static decimal SeedStartFlagValue { get; protected set; } = DefaultSeedStartFlagValue;
         /// <summary>
         /// whether or not this row is a flag for starting a new seed
         /// </summary>
@@ -57,11 +101,18 @@ namespace ImageJImporter
         {
             get
             {
-                if (Area == (decimal)81.7) return true;
+                if (Area >= SeedStartFlagValue - flagTolerance
+                    && Area <= SeedStartFlagValue + flagTolerance)
+                    return true;
                 else return false;
             }//end getter
         }//end IsSeedStartFlag
 
+        /// <summary>
+        /// The value which is checked against the Area of a row in order to find out if that row
+        /// is a flag for the end of a cell. This is 95.3 by default.
+        /// </summary>
+        public static decimal SeedEndFlagValue { get; protected set; } = DefaultSeedEndFlagValue;
         /// <summary>
         /// whether or not this row is a flag for ending data for one seed
         /// </summary>
@@ -69,10 +120,34 @@ namespace ImageJImporter
         {
             get
             {
-                if (Area == (decimal)95.3) return true;
+                if (Area >= SeedEndFlagValue - flagTolerance
+                    && Area <= SeedEndFlagValue + flagTolerance)
+                    return true;
                 else return false;
             }//end getter
         }//end IsSeedEndFlag
+
+        /// <summary>
+        /// Holds a struct containing the current flag
+        /// properties for the row class.
+        /// </summary>
+        public RowFlagProps CurrentRowFlagProperties
+        {
+            get
+            {
+                //initialize struct
+                RowFlagProps returnObject = new RowFlagProps();
+                
+                //initialize the fields
+                returnObject.FlagTolerance = Row.FlagTolerance;
+                returnObject.NewRowFlagValue = Row.NewRowFlagValue;
+                returnObject.SeedStartFlagValue = Row.SeedStartFlagValue;
+                returnObject.SeedEndFlagValue = Row.SeedEndFlagValue;
+                
+                //return the object we initialized
+                return returnObject;
+            }//end getter
+        }//end CurrentRowFlagProperties
 
         /// <summary>
         /// normal constructor which initializes all fields as 0
@@ -359,5 +434,86 @@ namespace ImageJImporter
 
             return sb.ToString();
         }//end FormatData()
+
+        /// <summary>
+        /// Sets the static flag values and tolerance for those values for this class.
+        /// </summary>
+        /// <param name="flagTolerance">The tolerance level for the flags.</param>
+        /// <param name="newRowFlagValue">The value of Area which indicates a row
+        /// is a flag for a new row of cells in a grid.</param>
+        /// <param name="seedStartFlagValue">The value of Area which indicates the
+        /// beginning of seed data.</param>
+        /// <param name="seedEndFlagValue">The value of Area which indicates the
+        /// end of seed data.</param>
+        public static void SetFlagsAndTolerances(decimal flagTolerance, decimal newRowFlagValue,
+            decimal seedStartFlagValue, decimal seedEndFlagValue)
+        {
+            Row.FlagTolerance = flagTolerance;
+            Row.NewRowFlagValue = newRowFlagValue;
+            Row.SeedStartFlagValue = seedStartFlagValue;
+            Row.SeedEndFlagValue = seedEndFlagValue;
+        }//end SetFlagsAndTolerances(flagTolerance, newRowFlagValue, seedStartFlagValue, seedEndFlagValue)
+
+        /// <summary>
+        /// A struct for holding the properties concering row flags
+        /// and their tolerance level.
+        /// </summary>
+        public struct RowFlagProps
+        {
+            /// <summary>
+            /// The tolerance that should be applied to each flag.
+            /// </summary>
+            public decimal FlagTolerance;
+            /// <summary>
+            /// The value of Area which indicates a row is a flag for
+            /// a new row of cells in the grid.
+            /// </summary>
+            public decimal NewRowFlagValue;
+            /// <summary>
+            /// The value of Area which indicates a row is a flag for the beginning
+            /// of seed data.
+            /// </summary>
+            public decimal SeedStartFlagValue;
+            /// <summary>
+            /// The value of Area which indicates a row is a flag for
+            /// the end of seed data.
+            /// </summary>
+            public decimal SeedEndFlagValue;
+
+            /// <summary>
+            /// The copy constructor for this struct
+            /// </summary>
+            /// <param name="other">the struct you wish to copy</param>
+            public RowFlagProps(RowFlagProps other)
+            {
+                this.FlagTolerance = other.FlagTolerance;
+                this.NewRowFlagValue = other.NewRowFlagValue;
+                this.SeedStartFlagValue = other.SeedStartFlagValue;
+                this.SeedEndFlagValue = other.SeedEndFlagValue;
+            }//end 1-arg copy constructor
+
+            /// <summary>
+            /// A constructor for initializing this struct with all of its data specified.
+            /// </summary>
+            /// <param name="flagTolerance">The tolerance that
+            /// should be applied to each flag.</param>
+            /// <param name="newRowFlagValue">The value of Area
+            /// which indicates a row is a flag for a new row of
+            /// cells in the grid.</param>
+            /// <param name="seedStartFlagValue">The value of Area
+            /// which indicates a row is a flag for the beginning
+            /// of seed data.</param>
+            /// <param name="seedEndFlagValue">The value of Area
+            /// which indicaes a row is a flag for the end of
+            /// seed data.</param>
+            public RowFlagProps(decimal flagTolerance, decimal newRowFlagValue,
+                decimal seedStartFlagValue, decimal seedEndFlagValue)
+            {
+                this.FlagTolerance = flagTolerance;
+                this.NewRowFlagValue = newRowFlagValue;
+                this.SeedStartFlagValue = seedStartFlagValue;
+                this.SeedEndFlagValue = seedEndFlagValue;
+            }//end 4-arg constructor for making a new struct
+        }//end RowFlagProps
     }//end class
 }//end namespace

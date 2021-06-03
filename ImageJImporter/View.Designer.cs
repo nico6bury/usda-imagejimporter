@@ -263,8 +263,8 @@ namespace ImageJImporter
             this.uxHeaderLog.Name = "uxHeaderLog";
             this.uxHeaderLog.Size = new System.Drawing.Size(605, 155);
             this.uxHeaderLog.TabIndex = 11;
-            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.9.2B " +
-    "NS 24 May 21\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
+            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.9.3B " +
+    "NS 5 June 21\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This acts as both the log and header to the program. As you take actions in the p" +
         "rogram, this will be updated, and when you exit the program, any text here will " +
         "be exported to an external file.");
@@ -495,7 +495,7 @@ namespace ImageJImporter
             this.MainMenuStrip = this.uxMainMenuToolStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "View";
-            this.Text = "NS ImageJ Data 24 May v2.9.2B";
+            this.Text = "NS ImageJ Data 5 June v2.9.3B";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
             this.Load += new System.EventHandler(this.OpenForm);
             this.uxMainMenuToolStrip.ResumeLayout(false);
