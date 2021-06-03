@@ -128,14 +128,14 @@ namespace ImageJImporter
         }//end IsSeedEndFlag
 
         /// <summary>
-        /// Holds a struct containing the current flag
+        /// Holds a class containing the current flag
         /// properties for the row class.
         /// </summary>
-        public RowFlagProps CurrentRowFlagProperties
+        public static RowFlagProps CurrentRowFlagProperties
         {
             get
             {
-                //initialize struct
+                //initialize object
                 RowFlagProps returnObject = new RowFlagProps();
                 
                 //initialize the fields
@@ -455,10 +455,23 @@ namespace ImageJImporter
         }//end SetFlagsAndTolerances(flagTolerance, newRowFlagValue, seedStartFlagValue, seedEndFlagValue)
 
         /// <summary>
-        /// A struct for holding the properties concering row flags
+        /// Sets the static flag values and tolerance for those values for this class
+        /// </summary>
+        /// <param name="rowFlagProps">An object holding all the flag values and
+        /// tolerances which you wish to set.</param>
+        public static void SetFlagsAndTolerances(RowFlagProps rowFlagProps)
+        {
+            Row.FlagTolerance = rowFlagProps.FlagTolerance;
+            Row.NewRowFlagValue = rowFlagProps.NewRowFlagValue;
+            Row.SeedStartFlagValue = rowFlagProps.SeedStartFlagValue;
+            Row.SeedEndFlagValue = rowFlagProps.SeedEndFlagValue;
+        }//end SetFlagsAndTolerances(rowFlagProps)
+
+        /// <summary>
+        /// A simple class for holding the properties concering row flags
         /// and their tolerance level.
         /// </summary>
-        public struct RowFlagProps
+        public class RowFlagProps
         {
             /// <summary>
             /// The tolerance that should be applied to each flag.
@@ -481,9 +494,20 @@ namespace ImageJImporter
             public decimal SeedEndFlagValue;
 
             /// <summary>
-            /// The copy constructor for this struct
+            /// Initializes properties of this class with their default values
             /// </summary>
-            /// <param name="other">the struct you wish to copy</param>
+            public RowFlagProps()
+            {
+                this.FlagTolerance = Row.DefaultFlagTolerance;
+                this.NewRowFlagValue = Row.DefaultNewRowFlagValue;
+                this.SeedStartFlagValue = Row.DefaultSeedStartFlagValue;
+                this.SeedEndFlagValue = Row.DefaultSeedEndFlagValue;
+            }//end no-arg constructor
+
+            /// <summary>
+            /// The copy constructor for this class
+            /// </summary>
+            /// <param name="other">the RowFlagProps you wish to copy</param>
             public RowFlagProps(RowFlagProps other)
             {
                 this.FlagTolerance = other.FlagTolerance;
@@ -493,7 +517,7 @@ namespace ImageJImporter
             }//end 1-arg copy constructor
 
             /// <summary>
-            /// A constructor for initializing this struct with all of its data specified.
+            /// A constructor for initializing this class with all of its data specified.
             /// </summary>
             /// <param name="flagTolerance">The tolerance that
             /// should be applied to each flag.</param>
@@ -513,7 +537,7 @@ namespace ImageJImporter
                 this.NewRowFlagValue = newRowFlagValue;
                 this.SeedStartFlagValue = seedStartFlagValue;
                 this.SeedEndFlagValue = seedEndFlagValue;
-            }//end 4-arg constructor for making a new struct
+            }//end 4-arg constructor for making a new class 
         }//end RowFlagProps
     }//end class
 }//end namespace

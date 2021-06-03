@@ -364,9 +364,10 @@ namespace ImageJImporter
             //Make a level information object to pass as out param
             LevelInformation tempLevelsRef;
             string[] defaultFileNames;
+            Row.RowFlagProps rowFlagProps;
 
             //get data file to load plus level information
-            bool success = fileIO.LoadConfigFile(out tempLevelsRef, out defaultFileNames);
+            bool success = fileIO.LoadConfigFile(out tempLevelsRef, out defaultFileNames, out rowFlagProps);
 
             //send stuff to the view based on what we found
             if (success)
@@ -380,6 +381,9 @@ namespace ImageJImporter
 
                 //tell the view to update its level information
                 updateLevelInformation(allLevelInformation);
+
+                //update row flags based on what the config file told us
+                Row.SetFlagsAndTolerances(rowFlagProps);
 
                 internalGrids.Clear();
                 for (int i = 0; i < defaultFileNames.Length; i++)
@@ -475,7 +479,7 @@ namespace ImageJImporter
             }//end getting filename from each grid in internalGrids
 
             //saves configuration info to config file
-            fileIO.SaveConfigFile(allLevelInformation, filenamesFromGrids);
+            fileIO.SaveConfigFile(allLevelInformation, filenamesFromGrids, Row.CurrentRowFlagProperties);
         }//end CloseView()
 
         /// <summary>

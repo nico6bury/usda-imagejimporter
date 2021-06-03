@@ -77,7 +77,10 @@ namespace ImageJImporter
             sb.Append("which indicates version number. The version numbers are used so that the program can load a configuration file with ");
             sb.Append("an older format quickly and easily thanks to it knowing right away that the format is old.\n\nA header of \"FN\" ");
             sb.Append("indicates that a line holds filename information. For instance, the program stores the most recently used group ");
-            sb.Append("of files and automatically opens them again when the program is re-opened. A header of \"LI\" indicates that the line ");
+            sb.Append("of files and automatically opens them again when the program is re-opened.\n\n");
+            sb.Append("A header of \"RF\" indicates that a line holds information about the values or tolerances for row flags. For instance, " +
+                "the \"FlagTolerance\" setting can be used to change the tolerance value applied to all flags.");
+            sb.Append("\n\nA header of \"LI\" indicates that the line ");
             sb.Append("defines the boundaries and display properties for one level. It\'s generally unnecessary to edit these lines from the ");
             sb.Append("config file because they can be edited much easier by changing settings in the program through the \"configure color levels\" option, ");
             sb.Append(" considering that the program can automatically resave that information in the correct format by itself.\n\n");
@@ -130,7 +133,7 @@ namespace ImageJImporter
         public static void AskLogFunction()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("The log at the top right of the program window stores summary information on what happens in each session as it happens.");
+            sb.Append("The log at the top right of the program window stores summary information on what happens in each session as it happens. ");
             sb.Append("All the lines in the log are stored to monthly summary logs in folders in the same directory as the executable. These " +
                 "are present for data keeping purposes and general ease of use. There are three types of logs, Sum, Grids, and Log.\n\n");
             sb.Append("The Sum file only displays the totals of various levels (both # and %) for all of the files loaded at a particular time.\n\n");
@@ -138,7 +141,13 @@ namespace ImageJImporter
                 "the stats for each individual grid.\n\n");
             sb.Append("The Log file contains the most information, but it\'s also the least organized. It's simply a copy of the text in the " +
                 "header log when the program closes. It's possible to edit this while using the program, as any notes left in the header log " +
-                "will be saved to this log.");
+                "will be saved to this log.\n\n");
+            sb.Append("The location of the log files should also be noted. A folder with all the log files created and edited by this program " +
+                "is present in a folder labeled \"LogFiles\", in the same directory as the executable used to start this application. ");
+            sb.Append("If you're not sure where the executable is because you\'re using a shortcut, remember that you can find out where " +
+                "the shortcut goes by right clicking it and selecting \"Open File Location\". Well, that works on Windows at least.\n\n");
+            sb.Append("Alternatively, though it\'s possible I\'m wrong, it seems like the application is being run from " +
+                $"\"{AppDomain.CurrentDomain.BaseDirectory}\", so you might check there.");
             MessageBox.Show(sb.ToString(), "What the Log Does", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }//end AskLogFunction()
 
