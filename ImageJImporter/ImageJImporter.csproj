@@ -62,6 +62,7 @@
     <Compile Include="ColorLevelDialog.Designer.cs">
       <DependentUpon>ColorLevelDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="FlagConfigurer.cs" />
     <Compile Include="Grid.cs" />
     <Compile Include="GridListItemWrapper.cs" />
     <Compile Include="HelpMessageGeneration.cs" />
