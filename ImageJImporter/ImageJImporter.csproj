@@ -49,34 +49,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cell.cs" />
-    <Compile Include="CellButtonDisplay.cs">
+    <Compile Include="GridBasedDataStorage\Cell.cs" />
+    <Compile Include="CustomDialogs\CellButtonDisplay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CellButtonDisplay.Designer.cs">
+    <Compile Include="CustomDialogs\CellButtonDisplay.Designer.cs">
       <DependentUpon>CellButtonDisplay.cs</DependentUpon>
     </Compile>
-    <Compile Include="ColorLevelDialog.cs">
+    <Compile Include="CustomDialogs\ColorLevelDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ColorLevelDialog.Designer.cs">
+    <Compile Include="CustomDialogs\ColorLevelDialog.Designer.cs">
       <DependentUpon>ColorLevelDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="FlagConfigurer.cs" />
-    <Compile Include="Grid.cs" />
+    <Compile Include="DynamicImputParsing\FlagConfigurer.cs" />
+    <Compile Include="GridBasedDataStorage\Grid.cs" />
     <Compile Include="GridListItemWrapper.cs" />
-    <Compile Include="HelpMessageGeneration.cs" />
+    <Compile Include="StaticsAndDefinitions\HelpMessageGeneration.cs" />
     <Compile Include="LevelInformation.cs" />
-    <Compile Include="LevelPanel.cs">
+    <Compile Include="CustomControls\LevelPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="LogManager.cs" />
-    <Compile Include="Row.cs" />
+    <Compile Include="GridBasedDataStorage\Row.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="DelegateDefinitions.cs" />
+    <Compile Include="StaticsAndDefinitions\DelegateDefinitions.cs" />
     <Compile Include="FileIO.cs" />
-    <Compile Include="Request.cs" />
-    <Compile Include="CellButton.cs">
+    <Compile Include="StaticsAndDefinitions\Request.cs" />
+    <Compile Include="CustomControls\CellButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="View.cs">
@@ -87,10 +87,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CellButtonDisplay.resx">
+    <EmbeddedResource Include="CustomDialogs\CellButtonDisplay.resx">
       <DependentUpon>CellButtonDisplay.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ColorLevelDialog.resx">
+    <EmbeddedResource Include="CustomDialogs\ColorLevelDialog.resx">
       <DependentUpon>ColorLevelDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -119,5 +119,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

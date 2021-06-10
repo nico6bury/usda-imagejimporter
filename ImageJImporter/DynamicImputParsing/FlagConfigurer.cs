@@ -22,12 +22,12 @@ namespace ImageJImporter
         /// <summary>
         /// The name of the flag.
         /// </summary>
-        public string FlagName { get; set; }
+        public string FlagName { get; set; } = "";
 
         /// <summary>
         /// The value which this flag is testing for.
         /// </summary>
-        public decimal FlagValue { get; set; }
+        public decimal FlagValue { get; set; } = 0M;
 
         /// <summary>
         /// The raw string we got from the file.
