@@ -780,5 +780,31 @@ namespace ImageJImporter
         {
             HelpMessageGeneration.AskGridFunction();
         }//end event handler
+
+        internal CallMethod requestExcelStuff;
+        private void excelEToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            requestExcelStuff();
+        }//end click event for showing excel stuff
+
+        internal void ShowExcelExport(string[] excelExport)
+        {
+            Form tempForm = new Form
+            {
+                AutoSize = false,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                Font = new Font(FontFamily.GenericSerif, 15),
+            };
+
+            RichTextBox text = new RichTextBox();
+            tempForm.Controls.Add(text);
+
+            text.Width = tempForm.Width;
+            text.Height = tempForm.Height;
+
+            text.Lines = excelExport;
+
+            tempForm.Show();
+        }//end ShowExcelExport(excelExport)
     }//end class
 }//end namespace

@@ -37,6 +37,7 @@ namespace ImageJImporter
             this.uxMenuSaveFile = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuSaveFileAs = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuCloseFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.excelEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uxMenuItemToggleListDisplay = new System.Windows.Forms.ToolStripMenuItem();
             this.uxToggleGroupsCollapsed = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,7 +91,7 @@ namespace ImageJImporter
             this.uxMainMenuToolStrip.Location = new System.Drawing.Point(0, 0);
             this.uxMainMenuToolStrip.Name = "uxMainMenuToolStrip";
             this.uxMainMenuToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(1023, 25);
+            this.uxMainMenuToolStrip.Size = new System.Drawing.Size(1057, 25);
             this.uxMainMenuToolStrip.TabIndex = 0;
             this.uxMainMenuToolStrip.Text = "menuStrip1";
             // 
@@ -100,7 +101,8 @@ namespace ImageJImporter
             this.uxMenuOpenFile,
             this.uxMenuSaveFile,
             this.uxMenuSaveFileAs,
-            this.uxMenuCloseFile});
+            this.uxMenuCloseFile,
+            this.excelEToolStripMenuItem});
             this.fileToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
@@ -109,7 +111,7 @@ namespace ImageJImporter
             // uxMenuOpenFile
             // 
             this.uxMenuOpenFile.Name = "uxMenuOpenFile";
-            this.uxMenuOpenFile.Size = new System.Drawing.Size(121, 22);
+            this.uxMenuOpenFile.Size = new System.Drawing.Size(195, 22);
             this.uxMenuOpenFile.Text = "Open";
             this.uxMenuOpenFile.ToolTipText = "Allows you to load a file into the program. It\'s meant to use .txt files, so I\'m " +
     "not sure what would happen if you imported other file types.";
@@ -119,7 +121,7 @@ namespace ImageJImporter
             // 
             this.uxMenuSaveFile.Enabled = false;
             this.uxMenuSaveFile.Name = "uxMenuSaveFile";
-            this.uxMenuSaveFile.Size = new System.Drawing.Size(121, 22);
+            this.uxMenuSaveFile.Size = new System.Drawing.Size(195, 22);
             this.uxMenuSaveFile.Text = "Save";
             this.uxMenuSaveFile.ToolTipText = "Allows you to save the current data back into the original file you opened.\r\nCurr" +
     "ently Unavailable.";
@@ -129,7 +131,7 @@ namespace ImageJImporter
             // 
             this.uxMenuSaveFileAs.Enabled = false;
             this.uxMenuSaveFileAs.Name = "uxMenuSaveFileAs";
-            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(121, 22);
+            this.uxMenuSaveFileAs.Size = new System.Drawing.Size(195, 22);
             this.uxMenuSaveFileAs.Text = "Save As";
             this.uxMenuSaveFileAs.ToolTipText = "Allows you to save the seed data you\'ve edited as a new .txt file with the same s" +
     "tructure as the original file.\r\nCurrently Unavailable.";
@@ -138,10 +140,17 @@ namespace ImageJImporter
             // uxMenuCloseFile
             // 
             this.uxMenuCloseFile.Name = "uxMenuCloseFile";
-            this.uxMenuCloseFile.Size = new System.Drawing.Size(121, 22);
+            this.uxMenuCloseFile.Size = new System.Drawing.Size(195, 22);
             this.uxMenuCloseFile.Text = "Close";
             this.uxMenuCloseFile.ToolTipText = "Closes the currently loaded file without saving changes or exiting the program.";
             this.uxMenuCloseFile.Click += new System.EventHandler(this.CloseFile);
+            // 
+            // excelEToolStripMenuItem
+            // 
+            this.excelEToolStripMenuItem.Name = "excelEToolStripMenuItem";
+            this.excelEToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.excelEToolStripMenuItem.Text = "Excel Column Export";
+            this.excelEToolStripMenuItem.Click += new System.EventHandler(this.excelEToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -263,8 +272,8 @@ namespace ImageJImporter
             this.uxHeaderLog.Name = "uxHeaderLog";
             this.uxHeaderLog.Size = new System.Drawing.Size(605, 155);
             this.uxHeaderLog.TabIndex = 11;
-            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.9.3B " +
-    "NS 5 June 21\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
+            this.uxHeaderLog.Text = "Hello and welcome to ImageJ Data Processing\nProject Name: ImageJImporter\tv2.9.4B " +
+    "NS 16 June 2021\nby Nicholas Sixbury / Brabec\tUSDA-ARS Manhattan, KS\n";
             this.uxToolTip.SetToolTip(this.uxHeaderLog, "This acts as both the log and header to the program. As you take actions in the p" +
         "rogram, this will be updated, and when you exit the program, any text here will " +
         "be exported to an external file.");
@@ -482,7 +491,7 @@ namespace ImageJImporter
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.Linen;
-            this.ClientSize = new System.Drawing.Size(1040, 562);
+            this.ClientSize = new System.Drawing.Size(1074, 562);
             this.Controls.Add(this.uxHeaderLog);
             this.Controls.Add(this.uxGridListView);
             this.Controls.Add(this.uxGridDisplay);
@@ -495,7 +504,7 @@ namespace ImageJImporter
             this.MainMenuStrip = this.uxMainMenuToolStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "View";
-            this.Text = "NS ImageJ Data 5 June v2.9.3B";
+            this.Text = "NS ImageJ Data 16 June v2.9.4B";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CloseForm);
             this.Load += new System.EventHandler(this.OpenForm);
             this.uxMainMenuToolStrip.ResumeLayout(false);
@@ -553,6 +562,7 @@ namespace ImageJImporter
         private System.Windows.Forms.ToolStripMenuItem uxAskLogFunction;
         private System.Windows.Forms.ToolStripMenuItem uxAskListFunctions;
         private System.Windows.Forms.ToolStripMenuItem uxAskGridFunctions;
+        private System.Windows.Forms.ToolStripMenuItem excelEToolStripMenuItem;
     }
 }
 

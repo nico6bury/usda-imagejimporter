@@ -55,6 +55,11 @@ namespace ImageJImporter
         public SendLevelInformation updateLevelInformation;
 
         /// <summary>
+        /// Tell the view to show something to the user
+        /// </summary>
+        public SendStrings sendExcelExport;
+
+        /// <summary>
         /// the grid that represents all of this object's cells and the rows
         /// that comprise them
         /// </summary>
@@ -513,6 +518,69 @@ namespace ImageJImporter
         {
             AppendToHeaderLog(FileIO.FileLevelsProcessedToOneLine(filename, grid, levels));
         }//end AppendShortSummaryToLog(filename, grid, levels)
+
+        /// <summary>
+        /// Tells the view about some excel stuff.
+        /// </summary>
+        internal void GetExcelStuff()
+        {
+            // initialize counters for levels
+            int[] levelCounters = new int[allLevelInformation.Levels.Count];
+
+            // count up the levels
+            string[] export = new string[levelCounters.Length + 4];
+            foreach (Grid grid in internalGrids)
+            {
+                // initialize counters
+                int germCount = 0;
+                int twoSpot = 0;
+                int sum = 0;
+
+                // reset level counters
+                for (int i = 0; i < levelCounters.Length; i++)
+                {
+                    levelCounters[i] = 0;
+                }//end resetting levelCounters
+
+                // build all the stuff
+                foreach (Cell cell in grid.Cells)
+                {
+                    int levelIndex = allLevelInformation
+                        .FindLevel(cell.Chalk).Item2;
+                    levelCounters[levelIndex]++;
+
+                    if (cell.isGerm) germCount++;
+                    if (cell.twoSpots) twoSpot++;
+                    sum++;
+                }//end looping foreach cell in this grid
+
+                // format results for this grid
+                int j = 0;
+                for (j = 0; j < levelCounters.Length; j++)
+                {
+                    export[j] += $"{levelCounters[j]}\t";
+                }//end looping for each level counter
+                export[j] += $"{sum}\t"; j++;
+                export[j] += ""; j++;
+                export[j] += $"{germCount}\t"; j++;
+                export[j] += $"{twoSpot}\t"; j++;
+            }//end looping foreach grid in the program
+
+            // remove extra tabs
+            for (int i = 0; i < export.Length; i++)
+            {
+                string thisLine = export[i];
+                if (thisLine.Length < 1) continue;
+                if(thisLine[thisLine.Length-1] == '\t')
+                {
+                    export[i] = thisLine.Substring(0, thisLine.Length - 1);
+                }//end if export ends with a tab
+            }//end looping over export lines
+
+            if (allLevelInformation.Levels[0].LevelStart < 0) export[0] = "Don't copy this line";
+
+            sendExcelExport(export);
+        }//end GetExcelStuff()
 
         ///// <summary>
         ///// Appends the short format summary information for a particular file
