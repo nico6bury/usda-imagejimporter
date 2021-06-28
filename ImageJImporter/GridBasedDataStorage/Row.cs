@@ -176,7 +176,7 @@ namespace ImageJImporter
         public Row(string row)
         {
             //create an array holding all the values in the row
-            string[] values = row.Split(new char[] { '\t' });
+            string[] values = row.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
             //sets a variable to hold row number
             this.RowNum = Convert.ToInt32(values[0]);

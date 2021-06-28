@@ -117,17 +117,16 @@ namespace ImageJImporter
                 {
                     scribe.Write($"{filename}*");
                 }//end looping for each file in lastFiles
-                scribe.Write("\n");
+                scribe.WriteLine($"{Environment.NewLine}");
 
                 //write row flag information
                 FieldInfo[] flagPropFields = flagProps.GetType().GetFields();
                 foreach(FieldInfo field in flagPropFields)
                 {
-                    scribe.Write($"RF1|{field.Name}*{field.GetValue(flagProps)}\n");
+                    scribe.WriteLine($"RF1|{field.Name}*{field.GetValue(flagProps)}");
                 }//end looping over each field in flagProps
-
                 //write all the levelInformation
-                if(levelInformation != null)
+                if (levelInformation != null)
                 {
                     //string propName = levelInformation.PropertyToTest;
                     //if (String.IsNullOrEmpty(propName)) propName = "Chalk";
@@ -404,10 +403,15 @@ namespace ImageJImporter
             {
                 //find out what level the cell is in
                 Tuple<string, int> levelresult = levels.FindLevel((decimal)cell.GetType().GetProperty(levels.PropertyToTest).GetValue(cell));
-                //increment the corresponding counter
-                counters[levelresult.Item2]++;
+                try
+                {
+                    //increment the corresponding counter
+                    counters[levelresult.Item2]++;
+                }//end trying to ignore bad index ranges
+                catch (IndexOutOfRangeException) { }
+                catch (ArgumentOutOfRangeException) { }
                 //increment nonFLagCount
-                if(cell.IsFullCell && !cell.IsEmptyCell)
+                if (cell.IsFullCell && !cell.IsEmptyCell)
                 {
                     nonFlagCount++;
                 }//end if cell 

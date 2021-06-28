@@ -116,8 +116,14 @@ namespace ImageJImporter
                 {
                     //find out what level the cell is in
                     Tuple<string, int> levelresult = levels.FindLevel((decimal)cell.GetType().GetProperty(levels.PropertyToTest).GetValue(cell));
-                    //increment the corresponding counter
-                    counters[levelresult.Item2]++;
+                    try
+                    {
+                        //increment the corresponding counter
+                        counters[levelresult.Item2]++;
+                    }//end trying to ignore bad index ranges
+                    catch (IndexOutOfRangeException) { }
+                    catch (ArgumentOutOfRangeException) { }
+
                     //increment nonFLagCount
                     if (cell.IsFullCell && !cell.IsEmptyCell)
                     {

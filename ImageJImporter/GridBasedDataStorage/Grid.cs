@@ -454,13 +454,13 @@ namespace ImageJImporter
             int firstDimensionIndex = -1;
 
             //just fix a potential formatting issue for incorrectly formatted data
-            if (Count > 0 && !cells[0].IsNewRowFlag) firstDimensionIndex++;
+            //if (Count > 0 && !cells[0].IsNewRowFlag) firstDimensionIndex++;
 
             //actually start adding those cells
             for(int i = 0; i < cells.Count; i++)
             {
                 //do jagged multidimensional list things
-                if (cells[i].IsNewRowFlag)
+                if (cells[i].IsNewRowFlag || i == 0)
                 {
                     firstDimensionIndex++;
                     jagged2DCellGrid.Add(new List<Cell>());

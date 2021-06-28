@@ -113,7 +113,15 @@ namespace ImageJImporter
         /// <returns></returns>
         public Level this[int index]
         {
-            get { return Levels[index]; }
+            get
+            {
+                try
+                {
+                    return Levels[index];
+                }
+                catch (IndexOutOfRangeException) { return Levels[0]; }
+                catch (ArgumentOutOfRangeException) { return Levels[0]; }
+            }
             set
             {
                 //sets the index to what the user wants

@@ -561,7 +561,12 @@ namespace ImageJImporter
                 {
                     int levelIndex = allLevelInformation
                         .FindLevel(cell.Chalk).Item2;
-                    levelCounters[levelIndex]++;
+                    try
+                    {
+                        levelCounters[levelIndex]++;
+                    }//end trying to ignore bad indexes
+                    catch (IndexOutOfRangeException) { }
+                    catch (ArgumentOutOfRangeException) { }
 
                     if (cell.isGerm) germCount++;
                     if (cell.twoSpots) twoSpot++;
@@ -584,7 +589,7 @@ namespace ImageJImporter
             for (int i = 0; i < export.Length; i++)
             {
                 string thisLine = export[i];
-                if (thisLine.Length < 1) continue;
+                if (thisLine == null || thisLine.Length < 1) continue;
                 if (thisLine[thisLine.Length - 1] == '\t')
                 {
                     export[i] = thisLine.Substring(0, thisLine.Length - 1);
@@ -659,9 +664,14 @@ namespace ImageJImporter
                 {
                     //find out what level the cell is in
                     Tuple<string, int> levelresult = levels.FindLevel((decimal)cell.GetType().GetProperty(levels.PropertyToTest).GetValue(cell));
-                    //increment the corresponding counter
-                    perGridCounters[levelresult.Item2]++;
-                    allGridCounters[levelresult.Item2]++;
+                    try
+                    {
+                        //increment the corresponding counter
+                        perGridCounters[levelresult.Item2]++;
+                        allGridCounters[levelresult.Item2]++;
+                    }//end trying to ignore bad index ranges
+                    catch (IndexOutOfRangeException) { }
+                    catch (ArgumentOutOfRangeException) { }
                     //increment nonFLagCount
                     if (cell.IsFullCell && !cell.IsEmptyCell)
                     {
@@ -712,9 +722,16 @@ namespace ImageJImporter
                 lineTotalBuilder.Append($"{levels[i].LevelName} = {countForThisLevel}\t");
 
                 //get the percent for this level
-                decimal percentForThisLevel = (decimal)countForThisLevel / (decimal)totalNonFlags * 100;
-                totalPercents += percentForThisLevel;
-                linePercentBuilder.Append($"{levels[i].LevelName} = {percentForThisLevel:N1}%\t");
+                try
+                {
+                    decimal percentForThisLevel = (decimal)countForThisLevel / (decimal)totalNonFlags * 100;
+                    totalPercents += percentForThisLevel;
+                    linePercentBuilder.Append($"{levels[i].LevelName} = {percentForThisLevel:N1}%\t");
+                }//end trying to get the percent for this level
+                catch (DivideByZeroException)
+                {
+                    linePercentBuilder.Append("No Non-Flags\t");
+                }//end catching divide by zero exception
             }//end populating sumLogBuilder with info for each level
             //get total number and total percent to add to end
             lineTotalBuilder.Append($"Total = {totalNonFlags} Seeds\n");
