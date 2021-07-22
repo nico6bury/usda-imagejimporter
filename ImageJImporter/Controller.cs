@@ -80,6 +80,9 @@ namespace ImageJImporter
         private LogManager sumLog;
         private LogManager gridLog;
         private LogManager excelLog;
+        private LogManager chalkLog;
+        private LogManager chalkBlockLog;
+        private LogManager germLog;
 
         /// <summary>
         /// this is the standard constructor for this class. It requires a FileIO
@@ -95,6 +98,9 @@ namespace ImageJImporter
             this.sumLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Sum - {DateTime.Now:MMMM}.txt");
             this.gridLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Grids - {DateTime.Now:MMMM}.txt");
             this.excelLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Grids Excel Format - {DateTime.Now:MMMM}.txt");
+            this.chalkLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Chalk - {DateTime.Now:MMMM}.txt");
+            this.chalkBlockLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Chalk Block - {DateTime.Now:MMMM}.txt");
+            this.germLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Germ Detect - {DateTime.Now:MMMM}.txt");
         }//end constructor
 
         public void GetLevelInfoFromView(LevelInformation levels)
@@ -411,7 +417,7 @@ namespace ImageJImporter
                         //update log with recent file name and row count
                         AppendToHeaderLog("Found configuration file. Loaded" +
                             $" {BuildFileMessage(defaultFileNames[i], tempGrid.Rows)}");
-                        AppendShortSummaryToLog(defaultFileNames[i], tempGrid, tempLevelsRef);
+                        //AppendShortSummaryToLog(defaultFileNames[i], tempGrid, tempLevelsRef);
                     }//end if the specified name is actually valid
                     //pass grid back to the view
                     if (internalGrids.Count > 0) updateGrids(internalGrids);
@@ -420,8 +426,8 @@ namespace ImageJImporter
                             "were valid");
                 }//end looping over all the filenames
                 AppendToHeaderLog("\n");
-                if(defaultFileNames.Length > 0)
-                    AppendLongSummaryToInternalLog(defaultFileNames, internalGrids, tempLevelsRef);
+                if(defaultFileNames.Length > 0) { }
+                    //AppendLongSummaryToInternalLog(defaultFileNames, internalGrids, tempLevelsRef);
             }//end if we successfully found a config file
             else
             {
@@ -502,6 +508,9 @@ namespace ImageJImporter
             gridLog.WriteToLog();
             excelLog.WriteToLog();
             sumLog.WriteToLog();
+            chalkLog.WriteToLog();
+            chalkBlockLog.WriteToLog();
+            germLog.WriteToLog();
         }//end SaveLogToFile(lines)
 
         public SendString appendTextLog;
@@ -642,9 +651,9 @@ namespace ImageJImporter
             StringBuilder fileLister = new StringBuilder("\n");
             foreach(string filename in filenames)
             {
-                fileLister.Append($"{TrimFileName(Path.GetFileName(filename))}, ");
+                fileLister.Append($"{TrimFileName(Path.GetFileName(filename))}\n");
             }
-            fileLister.Length -= 2;
+            fileLister.Length -= 1;
 
             //add filenames, date, and grid number
             string setHeader = $"{DateTime.Now:F}\t{dataGrids.Count}-Grids";
@@ -686,7 +695,9 @@ namespace ImageJImporter
                 //print out raw numbers for each level to log
                 for (int j = 0; j < perGridCounters.Length; j++)
                 {
-                    gridLogBuilder.Append($"{levels.Levels[j].LevelName} = {perGridCounters[j]}\t");
+                    // only print data levels
+                    if(levels[j].LevelStart > 0)
+                        gridLogBuilder.Append($"{levels.Levels[j].LevelName} = {perGridCounters[j]}\t");
                 }//end looping for each level in the levels info
                  //add total number of levelled cells
                 gridLogBuilder.Append($"Total = {gridNonFlags}\n");
@@ -701,7 +712,9 @@ namespace ImageJImporter
                     if(levels[k].LevelStart > 0)
                         totalPercentage += percentForThisLevel;
 
-                    gridLogBuilder.Append($"{levels.Levels[k].LevelName} = {percentForThisLevel:N1}%\t");
+                    //honestly don't even print non-data levels
+                    if(levels[k].LevelStart > 0)
+                        gridLogBuilder.Append($"{levels.Levels[k].LevelName} = {percentForThisLevel:N1}%\t");
                 }//end looping for each level in the levels info
                 gridLogBuilder.Append($"Total = {totalPercentage:0}%\n");
             }//end looping over each grid to get stats and populate the gridLogBuilder
@@ -737,7 +750,60 @@ namespace ImageJImporter
             lineTotalBuilder.Append($"Total = {totalNonFlags} Seeds\n");
             linePercentBuilder.Append($"Total = {totalPercents:N0}%\n");
 
+            // go ahead and fill up the chalk log
+            StringBuilder chalkBuilder = new StringBuilder();
+            chalkBuilder.Append($"{setHeader}\n");
+            foreach (Grid grid in dataGrids)
+            {
+                chalkBuilder.Append($"{Path.GetFileName(grid.Filename)}:\n");
+                foreach(Cell cell in grid.Cells)
+                {
+                    if (!cell.IsEmptyCell && !cell.IsNewRowFlag && cell.IsFullCell)
+                        chalkBuilder.Append($"{cell.Chalk:N2}\n");
+                }//end looping over cells in grid
+                chalkBuilder.Append('\n');
+            }//end looping over each grid
+
+            // go ahead and fill up the chalk block log
+            StringBuilder chalkBlockBuilder = new StringBuilder();
+            chalkBlockBuilder.Append($"{setHeader}\n");
+            foreach(Grid grid in dataGrids)
+            {
+                chalkBlockBuilder.Append($"{Path.GetFileName(grid.Filename)}:\n");
+                List<List<Cell>> jaggedGrid = grid.FormatCellsAs2DList();
+                for(int i = 0; i < jaggedGrid.Count; i++)
+                {
+                    for(int j = 0; j < jaggedGrid[i].Count; j++)
+                    {
+                        if (!jaggedGrid[i][j].IsEmptyCell && !jaggedGrid[i][j].IsNewRowFlag && jaggedGrid[i][j].IsFullCell)
+                            chalkBlockBuilder.Append($"{jaggedGrid[i][j].Chalk:N2}\t");
+                    }//end looping over second dimension
+                    chalkBlockBuilder.Length--;
+                    chalkBlockBuilder.Append('\n');
+                }//end looping over first dimension
+                chalkBlockBuilder.Append('\n');
+            }//end looping over each grid
+
+            // finally go ahead and fill up the germ log
+            StringBuilder germBuilder = new StringBuilder();
+            germBuilder.Append($"{setHeader}\n");
+            foreach(Grid grid in dataGrids)
+            {
+                germBuilder.Append($"{Path.GetFileName(grid.Filename)}:\n");
+                foreach(Cell cell in grid.Cells)
+                {
+                    if(!cell.IsEmptyCell && !cell.IsNewRowFlag && cell.IsFullCell)
+                    {
+                        if (cell.isGerm) germBuilder.Append("1\n");
+                        else germBuilder.Append("0\n");
+                    }//end if this isn't a flag
+                }//end getting germ detect from each cell
+            }//end looping over each grid
+
             //go ahead and add our stuff to the log manager
+            germLog.AppendLog($"{germBuilder}");
+            chalkLog.AppendLog($"{chalkBuilder}\n");
+            chalkBlockLog.AppendLog($"{chalkBlockBuilder}");
             gridLog.AppendLog($"{gridLogBuilder}\n");
             excelLog.AppendLog(GenerateExcelFormat());
             excelLog.AppendLog("\n\n");
