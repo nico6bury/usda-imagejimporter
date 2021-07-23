@@ -419,12 +419,19 @@ namespace ImageJImporter
             //add all the level counts to the string
             for(int i = 0; i < counters.Count; i++)
             {
-                //find the percentage for this level
-                decimal percent = (decimal)counters[i] / (decimal)nonFlagCount * 100;
-                string percentStr = "";
-                if(levels.Levels[i].LevelStart > 0) percentStr = $"({percent.ToString("N0")}%)";
-                //add this to the output stringbuilder
-                summaryBuilder.Append($"  {levels.Levels[i].LevelName}:{counters[i]}{percentStr}");
+                try
+                {
+                    //find the percentage for this level
+                    decimal percent = (decimal)counters[i] / (decimal)nonFlagCount * 100;
+                    string percentStr = "";
+                    if (levels.Levels[i].LevelStart > 0) percentStr = $"({percent.ToString("N0")}%)";
+                    //add this to the output stringbuilder
+                    summaryBuilder.Append($"  {levels.Levels[i].LevelName}:{counters[i]}{percentStr}");
+                }//end trying to catch errors from division
+                catch (DivideByZeroException)
+                {
+                    summaryBuilder.Append($"  {levels.Levels[i].LevelName}:{counters[i]}/NULL TOTAL");
+                }//end catching divide by zero errors
             }//end looping over counts of 
 
             //add total seed number
