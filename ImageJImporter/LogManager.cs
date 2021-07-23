@@ -124,5 +124,14 @@ namespace ImageJImporter
                 return false;
             }//end catching any exceptions that get thrown
         }//end WriteToLog()
+
+        /// <summary>
+        /// Clears all log data from this object. Does not affect
+        /// directory or filename information
+        /// </summary>
+        public virtual void Clear()
+        {
+            lines1.Clear();
+        }//end Clear()
     }//end class LogManager
 }//end namespace

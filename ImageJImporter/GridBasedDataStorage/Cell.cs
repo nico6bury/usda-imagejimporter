@@ -225,7 +225,7 @@ namespace ImageJImporter
             }//end getter
         }//end Chalk1
 
-        private decimal germThreshold = 0.50M;
+        private decimal germThreshold = 0.8M;
         public decimal GermThreshold
         {
             get { return germThreshold; }

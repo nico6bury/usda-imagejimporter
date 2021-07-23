@@ -611,7 +611,7 @@ namespace ImageJImporter
                 StringBuilder sb = new StringBuilder();
                 for(int i = 0; i < internalGrids.Count; i++)
                 {
-                    sb.Append($"G{i + 1}\t");
+                    sb.Append($"Grid{i + 1}\t");
                 }//end looping for each grid in internal grids
                 if (sb.Length > 0) export[0] = sb.ToString();
             }//end if we can do level headers
