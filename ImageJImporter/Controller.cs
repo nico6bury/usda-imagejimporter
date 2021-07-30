@@ -706,7 +706,16 @@ namespace ImageJImporter
                 decimal totalPercentage = 0;
                 for (int k = 0; k < perGridCounters.Length; k++)
                 {
-                    decimal percentForThisLevel = (decimal)perGridCounters[k] / (decimal)gridNonFlags * 100;
+                    decimal percentForThisLevel;
+                    try
+                    {
+                        percentForThisLevel = (decimal)perGridCounters[k] / (decimal)gridNonFlags * 100;
+                    }//end trying to perform division
+                    catch (DivideByZeroException)
+                    {
+                        percentForThisLevel = 0;
+                    }//end catching divide by zero errors
+                    
                     
                     //make sure not to add non-data levels to percent total
                     if(levels[k].LevelStart > 0)

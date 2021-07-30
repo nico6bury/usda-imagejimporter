@@ -74,6 +74,11 @@ namespace ImageJImporter
         public bool IsReadOnly => false;
 
         /// <summary>
+        /// Whether or not germ detection will affect chalk
+        /// </summary>
+        public static bool UseGermDetection { get; set; } = false;
+
+        /// <summary>
         /// whether or not this cell consists of a single row which
         /// is a NewRowFlag
         /// </summary>
@@ -150,6 +155,10 @@ namespace ImageJImporter
                 {
                     return -0.1M;
                 }//end else if this cell is empty
+                else if(UseGermDetection == false)
+                {
+                    return Chalk1;
+                }//end else if we should just use normal germ detection
                 else
                 {
                     if (isGerm && !twoSpots)
@@ -225,7 +234,7 @@ namespace ImageJImporter
             }//end getter
         }//end Chalk1
 
-        private decimal germThreshold = 0.8M;
+        private decimal germThreshold = 0.5M;
         public decimal GermThreshold
         {
             get { return germThreshold; }
