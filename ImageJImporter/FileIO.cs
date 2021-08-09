@@ -106,7 +106,7 @@ namespace ImageJImporter
         /// to this file. If this parameter is null, then no information
         /// will be saved. This object also includes the property to test</param>
         /// <param name="lastFiles">The filenames to save to the config file</param>
-        public void SaveConfigFile(LevelInformation levelInformation, string[] lastFiles, Row.RowFlagProps flagProps)
+        public void SaveConfigFile(LevelInformation levelInformation, string[] lastFiles, Row.RowFlagProps flagProps,bool germDetection)
         {
             //creates config file. If it already exists, we overwrite it
             using (StreamWriter scribe = new StreamWriter(configFileAbsolutePath))
@@ -125,6 +125,8 @@ namespace ImageJImporter
                 {
                     scribe.WriteLine($"RF1|{field.Name}*{field.GetValue(flagProps)}");
                 }//end looping over each field in flagProps
+                //write whether or not we want to use germ detection
+                scribe.WriteLine($"BC1|{nameof(germDetection)}*{germDetection}");
                 //write all the levelInformation
                 if (levelInformation != null)
                 {
@@ -136,6 +138,7 @@ namespace ImageJImporter
                         scribe.WriteLine(line);
                     }//end looping over the lines of level information
                 }//end if levelInformation isn't null
+
             }//end use of StreamWriter
         }//end SaveConfigFile()
 
@@ -148,12 +151,13 @@ namespace ImageJImporter
         /// <param name="rowProps">an object holding information to set up row flags</param>
         /// <returns>returns whether a configuration file was successfully found</returns>
         public bool LoadConfigFile(out LevelInformation levelInformation,
-            out string[] filesToOpen, out Row.RowFlagProps rowProps)
+            out string[] filesToOpen, out Row.RowFlagProps rowProps, out bool germDetection)
         {
             //initialize levelInformation out parameter
             levelInformation = new LevelInformation();
             filesToOpen = new string[0];
             rowProps = new Row.RowFlagProps();
+            germDetection = true;
 
             if (File.Exists(configFilename))
             {
@@ -207,6 +211,15 @@ namespace ImageJImporter
                             rowFlagField.SetValue(rowProps, Convert.ToDecimal(componentInfo[1]));
                         }//end if we found a matching field for this line
                     }//end else if we have row flag information here
+                    else if(componentsFromThisLine[0] == "BC1")
+                    {
+                        //this array should hold name of boolean plus its value
+                        string[] componentInfo = componentsFromThisLine[1].Split('*');
+                        if(componentInfo[0] == nameof(germDetection))
+                        {
+                            germDetection = Convert.ToBoolean(componentInfo[1]);
+                        }//end if we're doing germ detection
+                    }//end else we have boolean configuration to read in
                     else
                     {
                         if (componentsFromThisLine[0] == "FN1")

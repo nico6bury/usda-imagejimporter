@@ -378,15 +378,19 @@ namespace ImageJImporter
             LevelInformation tempLevelsRef;
             string[] defaultFileNames;
             Row.RowFlagProps rowFlagProps;
+            bool useGermDetection;
 
             //get data file to load plus level information
-            bool success = fileIO.LoadConfigFile(out tempLevelsRef, out defaultFileNames, out rowFlagProps);
+            bool success = fileIO.LoadConfigFile(out tempLevelsRef, out defaultFileNames, out rowFlagProps, out useGermDetection);
 
             //send stuff to the view based on what we found
             if (success)
             {
                 //update our level information
                 allLevelInformation = tempLevelsRef;
+
+                //update whether or not we're using germ detection
+                Cell.UseGermDetection = useGermDetection;
 
                 //set level information as default if it's not set up
                 if (allLevelInformation.Count == 0 || String.IsNullOrEmpty(allLevelInformation.PropertyToTest))
@@ -492,7 +496,7 @@ namespace ImageJImporter
             }//end getting filename from each grid in internalGrids
 
             //saves configuration info to config file
-            fileIO.SaveConfigFile(allLevelInformation, filenamesFromGrids, Row.CurrentRowFlagProperties);
+            fileIO.SaveConfigFile(allLevelInformation, filenamesFromGrids, Row.CurrentRowFlagProperties, Cell.UseGermDetection);
         }//end CloseView()
 
         /// <summary>

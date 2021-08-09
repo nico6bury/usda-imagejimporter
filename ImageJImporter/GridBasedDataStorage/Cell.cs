@@ -76,7 +76,7 @@ namespace ImageJImporter
         /// <summary>
         /// Whether or not germ detection will affect chalk
         /// </summary>
-        public static bool UseGermDetection { get; set; } = false;
+        public static bool UseGermDetection { get; set; } = true;
 
         /// <summary>
         /// whether or not this cell consists of a single row which
