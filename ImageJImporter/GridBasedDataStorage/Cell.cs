@@ -400,7 +400,7 @@ namespace ImageJImporter
             {
                 //check to make sure stuff isn't borken
                 int dataRows = detectedDataRows;
-                if (dataRows != RowSpan && RowSpan >= 0) throw new InvalidOperationException("detectedDataRows and RowSpan don't match");
+                //if (dataRows != RowSpan && RowSpan >= 0) throw new InvalidOperationException("detectedDataRows and RowSpan don't match");
                 return dataRows > 2;
             }//end getter
         }//end twoSpots

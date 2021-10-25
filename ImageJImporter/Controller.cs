@@ -768,11 +768,26 @@ namespace ImageJImporter
             chalkBuilder.Append($"{setHeader}\n");
             foreach (Grid grid in dataGrids)
             {
+                // keep track of actual recorded cell count
+                int actualcellCount = 0;
                 chalkBuilder.Append($"{Path.GetFileName(grid.Filename)}:\n");
-                foreach(Cell cell in grid.Cells)
+                for(int i = 0; i < grid.Cells.Count; i++)
                 {
-                    if (!cell.IsEmptyCell && !cell.IsNewRowFlag && cell.IsFullCell)
-                        chalkBuilder.Append($"{cell.Chalk:N2}\n");
+                    // reference variable
+                    Cell cell = grid.Cells[i];
+                    // try and ignore what we know as corners
+                    if(grid.Cells.Count == 106 &&
+                        ((i == 1) || (i == 6) || (i == 50) ||
+                        (i == 55) || (i == 99) || (i == 104)))
+                    {
+                        continue;
+                    }//end if we're on one of the corner cells
+                    // do the actual appendation
+                    if (/*!cell.IsEmptyCell && */!cell.IsNewRowFlag && cell.IsFullCell)
+                    {
+                        chalkBuilder.Append($"#{actualcellCount}:\t{cell.Chalk:N2}\n");
+                        actualcellCount++;
+                    }//end if we have a data cell
                 }//end looping over cells in grid
                 chalkBuilder.Append('\n');
             }//end looping over each grid
@@ -788,7 +803,17 @@ namespace ImageJImporter
                 {
                     for(int j = 0; j < jaggedGrid[i].Count; j++)
                     {
-                        if (!jaggedGrid[i][j].IsEmptyCell && !jaggedGrid[i][j].IsNewRowFlag && jaggedGrid[i][j].IsFullCell)
+                        // try to cut out what we know as corners
+                        if(grid.Cells.Count == 106 &&
+                            (i == 0 && j == 1) || (i == 0 && j == 6) ||
+                            (i == 7 && j == 1) || (i == 7 && j == 6) ||
+                            (i == 14 && j == 1) || (i == 14 && j == 6))
+                        {
+                            chalkBlockBuilder.Append($" \t");
+                            continue;
+                        }//end if we're on one of the corner cells
+                        // do the actual appendation
+                        if (/*!jaggedGrid[i][j].IsEmptyCell && */!jaggedGrid[i][j].IsNewRowFlag && jaggedGrid[i][j].IsFullCell)
                             chalkBlockBuilder.Append($"{jaggedGrid[i][j].Chalk:N2}\t");
                     }//end looping over second dimension
                     chalkBlockBuilder.Length--;
