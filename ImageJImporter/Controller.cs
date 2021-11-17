@@ -769,7 +769,7 @@ namespace ImageJImporter
             foreach (Grid grid in dataGrids)
             {
                 // keep track of actual recorded cell count
-                int actualcellCount = 0;
+                int actualcellCount = 1;
                 chalkBuilder.Append($"{Path.GetFileName(grid.Filename)}:\n");
                 for(int i = 0; i < grid.Cells.Count; i++)
                 {
@@ -785,7 +785,7 @@ namespace ImageJImporter
                     // do the actual appendation
                     if (/*!cell.IsEmptyCell && */!cell.IsNewRowFlag && cell.IsFullCell)
                     {
-                        chalkBuilder.Append($"#{actualcellCount}:\t{cell.Chalk:N2}\n");
+                        chalkBuilder.Append($"{actualcellCount}\t{cell.Chalk:N2}\n");
                         actualcellCount++;
                     }//end if we have a data cell
                 }//end looping over cells in grid
