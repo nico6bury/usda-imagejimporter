@@ -551,6 +551,9 @@ namespace ImageJImporter
         /// <returns></returns>
         private string[] GenerateExcelFormat()
         {
+            // column separator
+            char sep = ',';
+
             // initialize counters for levels
             int[] levelCounters = new int[allLevelInformation.Levels.Count];
 
@@ -583,19 +586,20 @@ namespace ImageJImporter
 
                     if (cell.isGerm) germCount++;
                     if (cell.twoSpots) twoSpot++;
-                    sum++;
+                    // only increment sum if cell contains data
+                    if(!cell.IsEmptyCell && !cell.IsNewRowFlag) sum++;
                 }//end looping foreach cell in this grid
 
                 // format results for this grid
                 int j = 0;
                 for (j = 0; j < levelCounters.Length; j++)
                 {
-                    export[j] += $"{levelCounters[j]}\t";
+                    export[j] += $"{levelCounters[j]}{sep}";
                 }//end looping for each level counter
-                export[j] += $"{sum}\t"; j++;
+                export[j] += $"{sum}{sep}"; j++;
                 export[j] += ""; j++;
-                export[j] += $"{germCount}\t"; j++;
-                export[j] += $"{twoSpot}\t"; j++;
+                export[j] += $"{germCount}{sep}"; j++;
+                export[j] += $"{twoSpot}{sep}"; j++;
             }//end looping foreach grid in the program
 
             // remove extra tabs
@@ -603,7 +607,7 @@ namespace ImageJImporter
             {
                 string thisLine = export[i];
                 if (thisLine == null || thisLine.Length < 1) continue;
-                if (thisLine[thisLine.Length - 1] == '\t')
+                if (thisLine[thisLine.Length - 1] == sep)
                 {
                     export[i] = thisLine.Substring(0, thisLine.Length - 1);
                 }//end if export ends with a tab
@@ -615,7 +619,7 @@ namespace ImageJImporter
                 StringBuilder sb = new StringBuilder();
                 for(int i = 0; i < internalGrids.Count; i++)
                 {
-                    sb.Append($"Grid{i + 1}\t");
+                    sb.Append($"{Path.GetFileName(internalGrids[i].Filename)}{sep}");
                 }//end looping for each grid in internal grids
                 if (sb.Length > 0) export[0] = sb.ToString();
             }//end if we can do level headers
