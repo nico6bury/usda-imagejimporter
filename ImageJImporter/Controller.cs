@@ -552,7 +552,7 @@ namespace ImageJImporter
         private string[] GenerateExcelFormat()
         {
             // column separator
-            char sep = ',';
+            char sep = '\t';
 
             // initialize counters for levels
             int[] levelCounters = new int[allLevelInformation.Levels.Count];
