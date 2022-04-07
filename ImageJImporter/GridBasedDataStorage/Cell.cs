@@ -234,6 +234,26 @@ namespace ImageJImporter
             }//end getter
         }//end Chalk1
 
+        /// <summary>
+        /// A placeholder method to get the area of the kernel.
+        /// In cases where applicable, just returns area of first
+        /// data row. Otherwise, returns -0.10
+        /// </summary>
+        public decimal KernelArea
+        {
+            get
+            {
+                if(IsFullCell && !IsEmptyCell)
+                {
+                    return this.Rows[1].Area;
+                }//end if this is a data cell with at least one row
+                else
+                {
+                    return -0.10M;
+                }//end else this cell has no kernel information
+            }//end getter
+        }//end KernelArea
+
         private decimal germThreshold = 0.5M;
         public decimal GermThreshold
         {
