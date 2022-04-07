@@ -83,6 +83,7 @@ namespace ImageJImporter
         private LogManager chalkLog;
         private LogManager chalkBlockLog;
         private LogManager germLog;
+        private LogManager kernelLog;
 
         /// <summary>
         /// this is the standard constructor for this class. It requires a FileIO
@@ -101,6 +102,7 @@ namespace ImageJImporter
             this.chalkLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Chalk - {DateTime.Now:MMMM}.txt");
             this.chalkBlockLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Chalk Block - {DateTime.Now:MMMM}.txt");
             this.germLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Germ Detect - {DateTime.Now:MMMM}.txt");
+            this.kernelLog = new LogManager(fileIO.GenerateLogDirectory(), $"HVAC - Kernel Area - {DateTime.Now:MMMM}.txt");
         }//end constructor
 
         public void GetLevelInfoFromView(LevelInformation levels)
@@ -515,6 +517,7 @@ namespace ImageJImporter
             chalkLog.WriteToLog();
             chalkBlockLog.WriteToLog();
             germLog.WriteToLog();
+            kernelLog.WriteToLog();
         }//end SaveLogToFile(lines)
 
         public SendString appendTextLog;
@@ -767,15 +770,18 @@ namespace ImageJImporter
             lineTotalBuilder.Append($"Total = {totalNonFlags} Seeds\n");
             linePercentBuilder.Append($"Total = {totalPercents:N0}%\n");
 
-            // go ahead and fill up the chalk log
+            // go ahead and fill up the chalk and kernel log
             StringBuilder chalkBuilder = new StringBuilder();
+            StringBuilder kernelBuilder = new StringBuilder();
             chalkBuilder.Append($"{setHeader}\n");
+            kernelBuilder.Append($"{setHeader}\n");
             foreach (Grid grid in dataGrids)
             {
                 // keep track of actual recorded cell count
                 int actualcellCount = 1;
                 chalkBuilder.Append($"{Path.GetFileName(grid.Filename)}:\n");
-                for(int i = 0; i < grid.Cells.Count; i++)
+                kernelBuilder.Append($"{Path.GetFileName(grid.Filename)}:\n");
+                for (int i = 0; i < grid.Cells.Count; i++)
                 {
                     // reference variable
                     Cell cell = grid.Cells[i];
@@ -790,10 +796,12 @@ namespace ImageJImporter
                     if (/*!cell.IsEmptyCell && */!cell.IsNewRowFlag && cell.IsFullCell)
                     {
                         chalkBuilder.Append($"{actualcellCount}\t{cell.Chalk:N2}\n");
+                        kernelBuilder.Append($"{actualcellCount}\t{cell.KernelArea:N2}\n");
                         actualcellCount++;
                     }//end if we have a data cell
                 }//end looping over cells in grid
                 chalkBuilder.Append('\n');
+                kernelBuilder.Append('\n');
             }//end looping over each grid
 
             // go ahead and fill up the chalk block log
@@ -845,6 +853,7 @@ namespace ImageJImporter
             //go ahead and add our stuff to the log manager
             germLog.AppendLog($"{germBuilder}");
             chalkLog.AppendLog($"{chalkBuilder}\n");
+            kernelLog.AppendLog($"{kernelBuilder}\n");
             chalkBlockLog.AppendLog($"{chalkBlockBuilder}");
             gridLog.AppendLog($"{gridLogBuilder}\n");
             excelLog.AppendLog(GenerateExcelFormat());
